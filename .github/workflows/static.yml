@@ -21,12 +21,18 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
+defaults:
+  run:
+    shell: sh
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Build
-        run: sh build.sh --release
+        run: |
+          ls -la
+          sh build.sh --release
         
   # Single deploy job since we're just deploying
   deploy:
