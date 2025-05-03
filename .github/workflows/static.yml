@@ -27,24 +27,21 @@ defaults:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Build
-        run: |
-          ls -la
-          sh build.sh --release
-        
-  # Single deploy job since we're just deploying
-  deploy:
+  
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+      
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Add rust target
+        run: rustup target add wasm32-unknown-unknown
+      - name: Build
+        run: ./build.sh --release
+        
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
