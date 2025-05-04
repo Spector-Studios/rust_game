@@ -1,7 +1,7 @@
 use crate::prelude::*;
 
 const NUM_ROOMS: usize = 20;
-const PADDING: i32 = 2;
+const PADDING: i32 = 4;
 
 pub struct MapBuilder {
     pub map: Map,
@@ -10,9 +10,9 @@ pub struct MapBuilder {
 }
 
 impl MapBuilder {
-    pub fn new(rng: &mut Rng) -> Self {
+    pub fn new(rng: &mut Rng, floor_texture: Texture2D, wall_texture: Texture2D) -> Self {
         let mut mb = MapBuilder {
-            map: Map::new(),
+            map: Map::new(floor_texture, wall_texture),
             rooms: Vec::new(),
             player_start: TilePoint::zero(),
         };
@@ -37,7 +37,7 @@ impl MapBuilder {
                 rng.i32(4..10),
             );
 
-            let mut appropriate = true;
+            let mut overlaps = false;
             let padded_room = TileRect::with_corners(
                 room.x1 - PADDING,
                 room.y1 - PADDING,
@@ -46,19 +46,16 @@ impl MapBuilder {
             );
             for r in self.rooms.iter() {
                 if padded_room.intersects(r) {
-                    appropriate = false;
+                    overlaps = true;
                     break;
                 }
             }
 
-            if appropriate {
+            if !overlaps {
                 room.for_each(|p| {
                     if p.x > 0 && p.x < TILE_MAP_WIDTH && p.y > 0 && p.y < TILE_MAP_HEIGHT {
                         let idx = map_idx(p.x, p.y);
                         self.map.tiles[idx] = TileType::Floor;
-
-                        // DEBUG
-                        self.map.tiles[idx] = TileType::FRoom;
                     }
                 });
 
@@ -72,9 +69,6 @@ impl MapBuilder {
         for y in min(y1, y2)..=max(y1, y2) {
             if let Some(idx) = self.map.try_idx(TilePoint::new(x, y)) {
                 self.map.tiles[idx] = TileType::Floor;
-
-                // DEBUG
-                self.map.tiles[idx] = TileType::FCorridor;
             }
         }
     }
@@ -84,9 +78,6 @@ impl MapBuilder {
         for x in min(x1, x2)..=max(x1, x2) {
             if let Some(idx) = self.map.try_idx(TilePoint::new(x, y)) {
                 self.map.tiles[idx] = TileType::Floor;
-
-                // DEBUG
-                self.map.tiles[idx] = TileType::FCorridor;
             }
         }
     }

@@ -6,9 +6,6 @@ edition = "2024"
 [dependencies]
 fastrand = "2.3.0"
 input_lib = { version = "0.1.0", path = "../input_lib" }
-legion = { version = "0.4.0", default-features = false }
 macroquad = "0.4.14"
 getrandom = { version = "*", default-features = false, features = ["js"] }
-
-[target.wasm32-unknown-unknown]
-rustflags = ['--cfg', 'getrandom_backend="wasm_js"']
+bevy_ecs = "0.16.0"

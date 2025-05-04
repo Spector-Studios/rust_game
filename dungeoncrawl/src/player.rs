@@ -1,36 +1,39 @@
-use crate::prelude::*;
+use crate::{camera::Camera, prelude::*};
 
 pub struct Player {
     pub position: TilePoint,
     frame_time: f32,
+    player_texture: Texture2D,
 }
 
 impl Player {
-    pub fn new(position: TilePoint) -> Self {
+    pub fn new(position: TilePoint, player_texture: Texture2D) -> Self {
         Self {
             position,
             frame_time: 0.0,
+            player_texture,
         }
     }
 
-    /* pub fn render(&self, area: &TileRect) {
-        draw_rectangle(
-            self.position.to_screen_pos(area).x + 10.0,
-            self.position.to_screen_pos(area).y + 10.0,
-            30.0,
-            30.0,
+    pub fn render(&self, camera: &Camera) {
+        /* draw_rectangle(
+            (player.position.x - self.view_area.x1) as f32 * TILE_SIZE + VIEWPORT_X + 5.0,
+            (player.position.y - self.view_area.y1) as f32 * TILE_SIZE + VIEWPORT_Y + 5.0,
+            40.0,
+            40.0,
             BLUE,
+        ); */
+        draw_texture_ex(
+            &self.player_texture,
+            (self.position.x - camera.view_area.x1) as f32 * TILE_SIZE + VIEWPORT_X + 5.0,
+            (self.position.y - camera.view_area.y1) as f32 * TILE_SIZE + VIEWPORT_Y + 5.0,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(50.0, 50.0)),
+                ..Default::default()
+            },
         );
-
-        #[cfg(debug_assertions)]
-        draw_text(
-            format!("{}, {}", self.position.x, self.position.y).as_str(),
-            0.0,
-            20.0,
-            30.0,
-            BLACK,
-        );
-    } */
+    }
 
     pub fn update(&mut self, input: ButtonState, map: &Map) {
         if self.frame_time < 8.0 {

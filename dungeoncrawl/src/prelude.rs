@@ -1,11 +1,18 @@
 pub use fastrand::Rng;
 pub use input_lib::*;
+pub use legion::systems::CommandBuffer;
+pub use legion::world::SubWorld;
+pub use legion::*;
 pub use macroquad::prelude::*;
 
 pub use crate::camera::Camera;
+pub use crate::components::*;
 pub use crate::map::*;
 pub use crate::map_builder::*;
-pub use crate::player::*;
+//pub use crate::player::*;
+pub use crate::spawner::*;
+pub use crate::systems::*;
+pub use crate::texture_store::*;
 
 pub const FRAME_RATE: f32 = 60.0;
 
@@ -16,8 +23,8 @@ pub const VIEWPORT_HEIGHT_T: i32 = 10;
 
 pub const VIEWPORT_X: f32 = I_VIEWPORT_X as f32;
 pub const VIEWPORT_Y: f32 = I_VIEWPORT_Y as f32;
-// pub const VIEWPORT_WIDTH: f32 = VIEWPORT_WIDTH_T as f32 * TILE_SIZE;
-// pub const VIEWPORT_HEIGHT: f32 = VIEWPORT_HEIGHT_T as f32 * TILE_SIZE;
+pub const VIEWPORT_WIDTH: f32 = VIEWPORT_WIDTH_T as f32 * TILE_SIZE;
+pub const VIEWPORT_HEIGHT: f32 = VIEWPORT_HEIGHT_T as f32 * TILE_SIZE;
 
 pub const TILE_SIZE: f32 = 50.0;
 
@@ -30,7 +37,7 @@ pub const D_DOWN: TilePoint = TilePoint { x: 0, y: -1 };
 pub const D_LEFT: TilePoint = TilePoint { x: -1, y: 0 };
 pub const D_RIGHT: TilePoint = TilePoint { x: 1, y: 0 };
 
-#[derive(Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct TilePoint {
     pub x: i32,
     pub y: i32,

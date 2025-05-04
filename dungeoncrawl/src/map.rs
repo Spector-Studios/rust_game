@@ -1,11 +1,11 @@
-use crate::prelude::*;
+use crate::{camera::Camera, prelude::*};
 
 #[derive(Clone, Copy, PartialEq)]
 pub enum TileType {
     Wall,
     Floor,
-    FRoom,
-    FCorridor,
+    // FRoom,
+    // FCorridor,
 }
 
 pub fn map_idx(x: i32, y: i32) -> usize {
@@ -14,49 +14,61 @@ pub fn map_idx(x: i32, y: i32) -> usize {
 
 pub struct Map {
     pub tiles: Vec<TileType>,
+    floor_texture: Texture2D,
+    wall_texture: Texture2D,
     //pub displayed_corner_tile: TilePoint,
 }
 
 impl Map {
-    pub fn new() -> Self {
+    pub fn new(floor_texture: Texture2D, wall_texture: Texture2D) -> Self {
         Self {
             tiles: vec![TileType::Floor; NUM_TILES],
+            floor_texture,
+            wall_texture,
             //displayed_corner_tile: TilePoint::new(3, 3),
         }
     }
 
-    /*
-    pub fn render(&self, area: &TileRect) {
-        for y in area.y1..area.y2 {
-            for x in area.x1..area.x2 {
-                let idx = map_idx(x, y);
-                let screen_pos = TilePoint::new(x, y).to_screen_pos(area);
+    pub fn render(&self, camera: &Camera) {
+        let mut screen_x;
+        let mut screen_y;
+        // map
+        for y in camera.view_area.y1..camera.view_area.y2 {
+            screen_y = (y - camera.view_area.y1) as f32 * TILE_SIZE + VIEWPORT_Y;
+            for x in camera.view_area.x1..camera.view_area.x2 {
+                let idx = (y * TILE_MAP_WIDTH + x) as usize;
+                screen_x = (x - camera.view_area.x1) as f32 * TILE_SIZE + VIEWPORT_X;
 
                 match self.tiles[idx] {
-                    TileType::Wall => {
-                        draw_rectangle(screen_pos.x, screen_pos.y, TILE_SIZE, TILE_SIZE, GREEN)
-                    }
                     TileType::Floor => {
-                        draw_rectangle(screen_pos.x, screen_pos.y, TILE_SIZE, TILE_SIZE, RED);
-
-                        #[cfg(debug_assertions)]
-                        draw_text(
-                            idx.to_string().as_str(),
-                            screen_pos.x + 5.0,
-                            screen_pos.y + TILE_SIZE / 2.0 + 10.0,
-                            TILE_SIZE - 20.0,
-                            BLACK,
-                        );
+                        draw_rectangle(screen_x, screen_y, TILE_SIZE, TILE_SIZE, SKYBLUE)
+                    }
+                    TileType::Wall => {
+                        draw_rectangle(screen_x, screen_y, TILE_SIZE, TILE_SIZE, GREEN)
                     }
                 }
 
                 #[cfg(debug_assertions)]
-                draw_rectangle_lines(screen_pos.x, screen_pos.y, TILE_SIZE, TILE_SIZE, 2.0, BLACK);
+                {
+                    draw_rectangle_lines(screen_x, screen_y, TILE_SIZE, TILE_SIZE, 2.0, BLACK);
+                    draw_text(
+                        format!("{}", x).as_str(),
+                        screen_x + 5.0,
+                        screen_y + 15.0,
+                        30.0,
+                        BLACK,
+                    );
+                    draw_text(
+                        format!("{}", y).as_str(),
+                        screen_x + 20.0,
+                        screen_y + 45.0,
+                        30.0,
+                        BLACK,
+                    );
+                }
             }
         }
     }
-    */
-
     pub fn in_bounds(&self, point: TilePoint) -> bool {
         (point.x >= 0)
             && (point.y >= 0)
@@ -65,10 +77,7 @@ impl Map {
     }
 
     pub fn can_enter_tile(&self, point: TilePoint) -> bool {
-        self.in_bounds(point)
-            && (self.tiles[map_idx(point.x, point.y)] == TileType::Floor
-                || self.tiles[map_idx(point.x, point.y)] == TileType::FRoom
-                || self.tiles[map_idx(point.x, point.y)] == TileType::FCorridor)
+        self.in_bounds(point) && (self.tiles[map_idx(point.x, point.y)] == TileType::Floor)
     }
 
     pub fn try_idx(&self, point: TilePoint) -> Option<usize> {
