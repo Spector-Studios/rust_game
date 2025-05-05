@@ -1,32 +1,46 @@
-use crate::prelude::*;
+use crate::{camera::Camera, prelude::*};
 
-#[system]
-#[write_component(TilePoint)]
-#[read_component(Player)]
-pub fn player_input(
-    ecs: &mut SubWorld,
-    #[resource] map: &Map,
-    #[resource] input: &ButtonState,
-    #[resource] camera: &mut Camera,
+pub fn player_input_system(
+    mut frame_time: ResMut<FrameTime>,
+    mut button_state: ResMut<ButtonState>,
+    map: Res<Map>,
+    mut camera: ResMut<Camera>,
+    mut player_pos_query: Query<(&mut TilePoint, &mut Timer), With<Player>>,
 ) {
-    if input == &ButtonState::default() {
-        #[cfg(debug_assertions)]
-        draw_rectangle(screen_width() - 50.0, 0.0, 50.0, 50.0, YELLOW);
+    for (mut pos, mut timer) in player_pos_query.iter_mut() {
+        if timer.time < 0.1 {
+            timer.time += get_frame_time();
+            break;
+        }
 
-        return;
-    }
+        if *button_state != ButtonState::new() {
+            timer.time = 0.0;
 
-    //macroquad has "inverted" y axis
-    let delta = TilePoint::new(input.dpad_x, -input.dpad_y);
-    if delta != TilePoint::zero() {
-        let mut players = <&mut TilePoint>::query().filter(component::<Player>());
+            let delta = TilePoint::new(
+                button_state.dpad_x.clamp(-1, 1),
+                -(button_state.dpad_y.clamp(-1, 1)),
+            );
 
-        players.iter_mut(ecs).for_each(|pos| {
-            let destination = *pos + delta;
-            if map.can_enter_tile(destination) {
-                *pos = destination;
-                camera.on_player_move(destination);
+            if delta != TilePoint::zero() {
+                let destination = *pos + delta;
+
+                if map.can_enter_tile(destination) {
+                    *pos = destination;
+                    camera.on_player_move(destination);
+                }
+
+                draw_text(
+                    format!("{}, {}", pos.x, pos.y).as_str(),
+                    20.0,
+                    20.0,
+                    40.0,
+                    BLACK,
+                );
             }
-        });
+        }
+
+        button_state.reset();
+
+        //draw_circle(500.0, 1200.0, 40.0, BLACK);
     }
 }

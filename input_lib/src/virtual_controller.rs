@@ -1,3 +1,4 @@
+use bevy_ecs::prelude::*;
 use macroquad::prelude::*;
 use macroquad_ex_ui::XButton;
 
@@ -13,7 +14,7 @@ pub enum Buttons {
     Start = 0b0100_0000,
 } // Add to Controller if adding new Buttons
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Resource, Debug, Clone, Copy, PartialEq)]
 pub struct ButtonState {
     pub dpad_x: i32,
     pub dpad_y: i32,
@@ -34,7 +35,7 @@ impl ButtonState {
         }
     }
 
-    fn reset(&mut self) {
+    pub fn reset(&mut self) {
         self.dpad_x = 0;
         self.dpad_y = 0;
         self.action = false;

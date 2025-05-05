@@ -1,8 +1,9 @@
 pub use fastrand::Rng;
 pub use input_lib::*;
-pub use legion::systems::CommandBuffer;
-pub use legion::world::SubWorld;
-pub use legion::*;
+//pub use legion::systems::CommandBuffer;
+//pub use legion::world::SubWorld;
+//pub use legion::*;
+pub use bevy_ecs::prelude::*;
 pub use macroquad::prelude::*;
 
 pub use crate::camera::Camera;
@@ -14,12 +15,12 @@ pub use crate::spawner::*;
 pub use crate::systems::*;
 pub use crate::texture_store::*;
 
-pub const FRAME_RATE: f32 = 60.0;
+pub const FRAME_RATE: f32 = 30.0;
 
 pub const I_VIEWPORT_X: i32 = 15;
 pub const I_VIEWPORT_Y: i32 = 300;
-pub const VIEWPORT_WIDTH_T: i32 = 19;
-pub const VIEWPORT_HEIGHT_T: i32 = 10;
+pub const VIEWPORT_WIDTH_T: i32 = 17;
+pub const VIEWPORT_HEIGHT_T: i32 = 9;
 
 pub const VIEWPORT_X: f32 = I_VIEWPORT_X as f32;
 pub const VIEWPORT_Y: f32 = I_VIEWPORT_Y as f32;
@@ -37,7 +38,7 @@ pub const D_DOWN: TilePoint = TilePoint { x: 0, y: -1 };
 pub const D_LEFT: TilePoint = TilePoint { x: -1, y: 0 };
 pub const D_RIGHT: TilePoint = TilePoint { x: 1, y: 0 };
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Component, Debug, Clone, Copy, PartialEq)]
 pub struct TilePoint {
     pub x: i32,
     pub y: i32,
@@ -94,8 +95,8 @@ impl TileRect {
         Self {
             x1: x,
             y1: y,
-            x2: x + w,
-            y2: y + h,
+            x2: (x + w + 1),
+            y2: (y + h + 1),
         }
     }
 
@@ -125,4 +126,11 @@ impl TileRect {
             }
         }
     }
+
+    pub fn contains(&self, point: TilePoint) -> bool {
+        (self.x1 <= point.x) && (self.x2 >= point.x) && (self.y1 <= point.y) && (self.y2 >= point.y)
+    }
 }
+
+#[derive(Resource)]
+pub struct FrameTime(pub f32);

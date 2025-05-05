@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = [ "macroquad_ex_ui", "input_lib","srpg_game", "dungeoncrawl"]
+members = [ "macroquad_ex_ui", "input_lib", "srpg_game", "dungeoncrawl"]
 
 [profile.dev]
 opt-level = "z"

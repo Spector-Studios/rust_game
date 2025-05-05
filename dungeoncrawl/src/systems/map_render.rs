@@ -1,33 +1,41 @@
+use crate::camera::Camera;
 use crate::prelude::*;
 
-#[system]
-pub fn map_render(
-    #[resource] map: &Map,
-    #[resource] camera: &Camera,
-    #[resource] texture_store: &TextureStore,
-) {
-    // let mut render_target = render_target(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
-    // let offset = TilePoint::new(camera.view_area.x1, camera.view_area.y1);
-
-    let mut render_camera =
-        Camera2D::from_display_rect(Rect::new(0.0, 0.0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT));
-    render_camera.render_target = Some(texture_store.map_render.clone());
-    //set_camera(&render_camera);
-
+pub fn map_render_system(map: Res<Map>, camera: Res<Camera>) {
     for y in camera.view_area.y1..=camera.view_area.y2 {
+        let screen_y = camera.get_screen_y(y);
         for x in camera.view_area.x1..=camera.view_area.x2 {
+            let screen_x = camera.get_screen_x(x);
             let pt = TilePoint::new(x, y);
 
             if map.in_bounds(pt) {
                 let idx = map_idx(pt.x, pt.y);
-                let screen_pos = camera.get_screen_pos(pt);
+                //let screen_pos = camera.get_screen_pos(pt);
+
                 match map.tiles[idx] {
                     TileType::Wall => {
-                        draw_rectangle(screen_pos.x, screen_pos.y, TILE_SIZE, TILE_SIZE, RED)
+                        draw_texture_ex(
+                            &map.wall_texture,
+                            screen_x,
+                            screen_y,
+                            WHITE,
+                            DrawTextureParams {
+                                dest_size: Some(vec2(TILE_SIZE, TILE_SIZE)),
+                                ..Default::default()
+                            },
+                        );
+                        //draw_rectangle(screen_x, screen_y, TILE_SIZE, TILE_SIZE, RED);
                     }
-                    TileType::Floor => {
-                        draw_rectangle(screen_pos.x, screen_pos.y, TILE_SIZE, TILE_SIZE, GREEN)
-                    }
+                    TileType::Floor => draw_texture_ex(
+                        &map.floor_texture,
+                        screen_x,
+                        screen_y,
+                        WHITE,
+                        DrawTextureParams {
+                            dest_size: Some(vec2(TILE_SIZE, TILE_SIZE)),
+                            ..Default::default()
+                        },
+                    ),
                 }
             }
         }

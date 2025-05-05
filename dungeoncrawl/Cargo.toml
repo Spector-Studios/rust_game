@@ -7,5 +7,5 @@ edition = "2024"
 fastrand = "2.3.0"
 input_lib = { version = "0.1.0", path = "../input_lib" }
 macroquad = "0.4.14"
-getrandom = { version = "*", default-features = false, features = ["js"] }
+getrandom = { version = "*", features = ["js"] }
 bevy_ecs = "0.16.0"

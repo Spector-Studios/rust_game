@@ -10,10 +10,10 @@ impl Game {
     }
 
     pub fn update(&mut self, input: ButtonState) {
-        todo!()
+        //todo!()
     }
 
     pub fn draw(&self) {
-        todo!()
+        //todo!()
     }
 }

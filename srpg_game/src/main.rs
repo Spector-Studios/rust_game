@@ -1,29 +1,16 @@
-mod core;
-use core::App;
 use macroquad::prelude::*;
-use macroquad::window;
 
-#[macroquad::main(window_conf)]
+#[macroquad::main("BasicShapes")]
 async fn main() {
-    macroquad::file::set_pc_assets_folder("assets");
-
-    let mut app = App::new();
-
     loop {
-        clear_background(BLUE);
-        draw_text("hello", 100.0, 400.0, 120.0, SKYBLUE);
+        clear_background(RED);
 
-        app.update();
-        app.draw();
+        draw_line(40.0, 40.0, 100.0, 200.0, 15.0, BLUE);
+        draw_rectangle(screen_width() / 2.0 - 60.0, 100.0, 120.0, 60.0, GREEN);
+        draw_circle(screen_width() - 30.0, screen_height() - 30.0, 15.0, YELLOW);
+
+        draw_text("IT WORKS!", 20.0, 20.0, 30.0, DARKGRAY);
 
         next_frame().await
-    }
-}
-
-fn window_conf() -> window::Conf {
-    window::Conf {
-        window_title: "TEST TITLE 1".to_owned(),
-        //high_dpi: true,
-        ..Default::default()
     }
 }

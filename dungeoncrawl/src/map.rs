@@ -1,6 +1,6 @@
 use crate::{camera::Camera, prelude::*};
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum TileType {
     Wall,
     Floor,
@@ -12,10 +12,11 @@ pub fn map_idx(x: i32, y: i32) -> usize {
     (y * TILE_MAP_WIDTH + x) as usize
 }
 
+#[derive(Resource, Debug)]
 pub struct Map {
     pub tiles: Vec<TileType>,
-    floor_texture: Texture2D,
-    wall_texture: Texture2D,
+    pub floor_texture: Texture2D,
+    pub wall_texture: Texture2D,
     //pub displayed_corner_tile: TilePoint,
 }
 
