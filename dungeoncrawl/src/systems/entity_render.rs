@@ -1,11 +1,21 @@
 use crate::camera::Camera;
 use crate::prelude::*;
 
-pub fn entity_render_system(camera: Res<Camera>, entity_query: Query<(&TilePoint, &Render)>) {
+pub fn entity_render_system(
+    camera: Res<Camera>,
+    texture_store: Res<TextureStore>,
+    entity_query: Query<(&TilePoint, &Render)>,
+) {
     for (pos, render) in entity_query.iter() {
         if camera.view_area.contains(*pos) {
             draw_texture_ex(
-                &render.texture,
+                match render.texture {
+                    EntityTexture::Player => &texture_store.player,
+                    EntityTexture::Goblin => &texture_store.goblin,
+                    EntityTexture::Giant => &texture_store.giant,
+                    EntityTexture::Twoheads => &texture_store.twoheads,
+                    EntityTexture::Warrior => &texture_store.warrior,
+                },
                 camera.get_screen_x(pos.x),
                 camera.get_screen_y(pos.y),
                 WHITE,

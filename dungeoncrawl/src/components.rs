@@ -2,7 +2,7 @@ use crate::prelude::*;
 
 #[derive(Component, Debug)]
 pub struct Render {
-    pub texture: Texture2D,
+    pub texture: EntityTexture,
 }
 
 #[derive(Component, Debug)]
