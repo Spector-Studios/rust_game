@@ -5,10 +5,9 @@ pub fn player_collision_system(
     player_query: Query<&TilePoint, With<Player>>,
     enemy_query: Query<(Entity, &TilePoint), With<Enemy>>,
 ) {
-    let mut player_pos = TilePoint::zero();
-    for pos in player_query.iter() {
-        player_pos = *pos;
-    }
+    let player_pos = *player_query
+        .single_inner()
+        .expect("More than one or no players present.");
 
     enemy_query
         .iter()

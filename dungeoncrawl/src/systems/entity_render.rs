@@ -24,5 +24,5 @@ pub fn entity_render_system(camera: Res<Camera>, entity_query: Query<(&TilePoint
         }
     }
 
-    draw_rectangle(400.0, 1300.0, 100.0, 200.0, MAGENTA);
+    //draw_rectangle(400.0, 1300.0, 100.0, 200.0, MAGENTA);
 }

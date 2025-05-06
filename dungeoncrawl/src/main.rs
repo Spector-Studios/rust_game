@@ -18,22 +18,30 @@ struct Game {
 }
 
 impl Game {
-    fn new(player_texture: Texture2D, wall_texture: Texture2D, floor_texture: Texture2D, enemy_texture: Texture2D) -> Self {
+    fn new(
+        player_texture: Texture2D,
+        wall_texture: Texture2D,
+        floor_texture: Texture2D,
+        enemy_texture: Texture2D,
+    ) -> Self {
         let mut ecs = World::default();
 
         let mut rng = Rng::with_seed(macroquad::miniquad::date::now() as _);
         let map_builder = MapBuilder::new(&mut rng, floor_texture, wall_texture);
-        
+
         ecs.insert_resource(map_builder.map);
         ecs.insert_resource(Camera::new(map_builder.player_start));
         ecs.insert_resource(TextureStore::new());
         ecs.insert_resource(FrameTime(0.0));
 
         spawn_player(&mut ecs, map_builder.player_start, player_texture);
-        map_builder.rooms
-            .iter().skip(1).map(|r| r.centre())
+        map_builder
+            .rooms
+            .iter()
+            .skip(1)
+            .map(|r| r.centre())
             .for_each(|pos| spawn_enemy(&mut ecs, pos, enemy_texture.clone(), &mut rng));
-        
+
         Self {
             ecs,
             systems: build_scheduler(),
@@ -63,7 +71,9 @@ async fn main() {
     let wall_texture = load_texture("resources/Wall.png")
         .await
         .expect("Wall texture.");
-    let goblin_texture = load_texture("resources/Goblin.png").await.expect("Goblin Texture");
+    let goblin_texture = load_texture("resources/Goblin.png")
+        .await
+        .expect("Goblin Texture");
 
     let mut game = Game::new(player_texture, wall_texture, floor_texture, goblin_texture);
     let mut frame_time = 0.0;
