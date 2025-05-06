@@ -1,5 +1,14 @@
 use crate::prelude::*;
 
+pub enum EntityType {
+    Player,
+
+    Goblin,
+    Giant,
+    Twoheads,
+    Warrior,
+}
+
 #[derive(Component, Debug)]
 pub struct Render {
     pub texture: Texture2D,

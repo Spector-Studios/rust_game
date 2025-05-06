@@ -19,6 +19,7 @@ struct Game {
 
 impl Game {
     fn new(
+        sprite_sheet: SpriteSheet,
         player_texture: Texture2D,
         wall_texture: Texture2D,
         floor_texture: Texture2D,
@@ -32,6 +33,7 @@ impl Game {
         ecs.insert_resource(map_builder.map);
         ecs.insert_resource(Camera::new(map_builder.player_start));
         ecs.insert_resource(TextureStore::new());
+        ecs.insert_resource(sprite_sheet);
         ecs.insert_resource(FrameTime(0.0));
 
         spawn_player(&mut ecs, map_builder.player_start, player_texture);
@@ -75,7 +77,18 @@ async fn main() {
         .await
         .expect("Goblin Texture");
 
-    let mut game = Game::new(player_texture, wall_texture, floor_texture, goblin_texture);
+    let sprites = load_texture("resources/sprites.png")
+        .await
+        .expect("Sprite sheet");
+    let sprit_sheet = SpriteSheet { sprites };
+
+    let mut game = Game::new(
+        sprit_sheet,
+        player_texture,
+        wall_texture,
+        floor_texture,
+        goblin_texture,
+    );
     let mut frame_time = 0.0;
 
     loop {
@@ -91,13 +104,6 @@ async fn main() {
         } */
 
         game.tick();
-        draw_text(
-            format!("{}", screen_width()).as_str(),
-            100.0,
-            200.0,
-            100.0,
-            SKYBLUE,
-        );
         next_frame().await;
     }
 }
