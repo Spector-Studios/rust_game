@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+#[derive(Debug)]
 pub enum EntityType {
     Player,
 
@@ -11,7 +12,7 @@ pub enum EntityType {
 
 #[derive(Component, Debug)]
 pub struct Render {
-    pub texture: Texture2D,
+    pub texture: EntityType,
 }
 
 #[derive(Component, Debug)]
