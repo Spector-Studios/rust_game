@@ -11,12 +11,6 @@ mod texture_store;
 use crate::prelude::*;
 use input_lib::Controller;
 
-macro_rules! texture_from_file {
-    ($path:literal) => {
-        load_texture($path).await.expect("$path texture")
-    };
-}
-
 struct Game {
     ecs: World,
     systems: Schedule,
@@ -24,26 +18,22 @@ struct Game {
 }
 
 impl Game {
-    fn new(texture_store: TextureStore, floor_texture: Texture2D, wall_texture: Texture2D) -> Self {
+    fn new(player_texture: Texture2D, wall_texture: Texture2D, floor_texture: Texture2D, enemy_texture: Texture2D) -> Self {
         let mut ecs = World::default();
 
         let mut rng = Rng::with_seed(macroquad::miniquad::date::now() as _);
         let map_builder = MapBuilder::new(&mut rng, floor_texture, wall_texture);
-
+        
         ecs.insert_resource(map_builder.map);
         ecs.insert_resource(Camera::new(map_builder.player_start));
-        ecs.insert_resource(texture_store);
+        ecs.insert_resource(TextureStore::new());
         ecs.insert_resource(FrameTime(0.0));
 
-        spawn_player(&mut ecs, map_builder.player_start);
+        spawn_player(&mut ecs, map_builder.player_start, player_texture);
+        map_builder.rooms
+            .iter().skip(1).map(|r| r.centre())
+            .for_each(|pos| spawn_enemy(&mut ecs, pos, enemy_texture.clone(), &mut rng));
         
-        /* map_builder
-            .rooms
-            .iter()
-            .skip(1)
-            .map(|r| r.centre())
-            .for_each(|pos| spawn_enemy(&mut ecs, pos, &mut rng)); */
-
         Self {
             ecs,
             systems: build_scheduler(),
@@ -64,35 +54,18 @@ impl Game {
 
 #[macroquad::main("Dungeon Crawl")]
 async fn main() {
-    let texture_store = TextureStore {
-        player: load_texture("resources/Player.png")
-            .await
-            .expect("Player texture"),
-
-        goblin: load_texture("resources/Goblin.png")
-            .await
-            .expect("Goblin texture"),
-        giant: load_texture("resources/Giant.png")
-            .await
-            .expect("Giant texture"),
-        twoheads: load_texture("resources/Twoheads.png")
-            .await
-            .expect("Twoheads texture"),
-        warrior: load_texture("resources/Warrior.png")
-            .await
-            .expect("Warrior texture"),
-        map_render: Texture2D::empty(),
-        entity_render: Texture2D::empty(),
-    };
-
+    let player_texture = load_texture("resources/Player.png")
+        .await
+        .expect("Player texture");
     let floor_texture = load_texture("resources/Floor.png")
         .await
-        .expect("Floor texture");
+        .expect("Floor texture.");
     let wall_texture = load_texture("resources/Wall.png")
         .await
-        .expect("Wall texture");
+        .expect("Wall texture.");
+    let goblin_texture = load_texture("resources/Goblin.png").await.expect("Goblin Texture");
 
-    let mut game = Game::new(texture_store, floor_texture, wall_texture);
+    let mut game = Game::new(player_texture, wall_texture, floor_texture, goblin_texture);
     let mut frame_time = 0.0;
 
     loop {
@@ -108,5 +81,13 @@ async fn main() {
         } */
 
         game.tick();
+        draw_text(
+            format!("{}", screen_width()).as_str(),
+            100.0,
+            200.0,
+            100.0,
+            SKYBLUE,
+        );
+        next_frame().await;
     }
 }
