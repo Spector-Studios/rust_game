@@ -1,11 +1,7 @@
 use crate::camera::Camera;
 use crate::prelude::*;
 
-pub fn map_render_system(
-    map: Res<Map>,
-    camera: Res<Camera>,
-    //sprite_sheet: Res<SpritesStore>
-) {
+pub fn map_render_system(map: Res<Map>, camera: Res<Camera>, sprite_sheet: Res<SpritesStore>) {
     for y in camera.view_area.y1..=camera.view_area.y2 {
         let screen_y = camera.get_screen_y(y);
         for x in camera.view_area.x1..=camera.view_area.x2 {
@@ -18,33 +14,30 @@ pub fn map_render_system(
 
                 match map.tiles[idx] {
                     TileType::Wall => {
-                        // draw_texture_ex(
-                        //     &sprite_sheet.sprites,
-                        //     screen_x,
-                        //     screen_y,
-                        //     WHITE,
-                        //     DrawTextureParams {
-                        //         dest_size: Some(vec2(TILE_SIZE, TILE_SIZE)),
-                        //         source: Some(map.wall_texture),
-                        //         ..Default::default()
-                        //     },
-                        // );
-                        draw_rectangle(screen_x, screen_y, TILE_SIZE, TILE_SIZE, RED);
+                        draw_texture_ex(
+                            &sprite_sheet.sprites,
+                            screen_x,
+                            screen_y,
+                            WHITE,
+                            DrawTextureParams {
+                                dest_size: Some(vec2(TILE_SIZE, TILE_SIZE)),
+                                source: Some(map.wall_texture),
+                                ..Default::default()
+                            },
+                        );
+                        //draw_rectangle(screen_x, screen_y, TILE_SIZE, TILE_SIZE, RED);
                     }
-                    TileType::Floor => {
-                        // draw_texture_ex(
-                        //     &sprite_sheet.sprites,
-                        //     screen_x,
-                        //     screen_y,
-                        //     WHITE,
-                        //     DrawTextureParams {
-                        //         dest_size: Some(vec2(TILE_SIZE, TILE_SIZE)),
-                        //         source: Some(map.floor_texture),
-                        //         ..Default::default()
-                        //     },
-                        // );
-                        draw_rectangle(screen_x, screen_y, TILE_SIZE, TILE_SIZE, GREEN);
-                    }
+                    TileType::Floor => draw_texture_ex(
+                        &sprite_sheet.sprites,
+                        screen_x,
+                        screen_y,
+                        WHITE,
+                        DrawTextureParams {
+                            dest_size: Some(vec2(TILE_SIZE, TILE_SIZE)),
+                            source: Some(map.floor_texture),
+                            ..Default::default()
+                        },
+                    ),
                 }
             }
         }
