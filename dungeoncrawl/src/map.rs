@@ -15,13 +15,13 @@ pub fn map_idx(x: i32, y: i32) -> usize {
 #[derive(Resource, Debug)]
 pub struct Map {
     pub tiles: Vec<TileType>,
-    pub floor_texture: Texture2D,
-    pub wall_texture: Texture2D,
+    pub floor_texture: Rect,
+    pub wall_texture: Rect,
     //pub displayed_corner_tile: TilePoint,
 }
 
 impl Map {
-    pub fn new(floor_texture: Texture2D, wall_texture: Texture2D) -> Self {
+    pub fn new(floor_texture: Rect, wall_texture: Rect) -> Self {
         Self {
             tiles: vec![TileType::Floor; NUM_TILES],
             floor_texture,

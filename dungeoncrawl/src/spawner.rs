@@ -1,27 +1,22 @@
 use crate::prelude::*;
 
-pub fn spawn_player(ecs: &mut World, pos: TilePoint) {
+pub fn spawn_player(ecs: &mut World, pos: TilePoint, texture: Rect) {
     ecs.spawn(PlayerBundle {
         player: Player,
         pos,
         render: Render {
-            texture: EntityTexture::Player,
+            texture_source: texture,
         },
         timer: Timer { time: 0.0 },
     });
 }
 
-pub fn spawn_enemy(ecs: &mut World, pos: TilePoint, rng: &mut Rng) {
+pub fn spawn_enemy(ecs: &mut World, rng: &mut Rng, pos: TilePoint, textures: [Rect; 4]) {
     ecs.spawn(EnemyBundle {
         enemy: Enemy,
         pos,
         render: Render {
-            texture: match rng.u8(1..=4) {
-                1 => EntityTexture::Goblin,
-                2 => EntityTexture::Giant,
-                3 => EntityTexture::Twoheads,
-                _ => EntityTexture::Warrior,
-            },
+            texture_source: rng.choice(textures).expect("Texture"),
         }, // TODO random generation
     });
 }

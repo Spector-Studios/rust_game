@@ -1,6 +1,7 @@
 // TODO May be move to prelude/texture_store.rs?
 use crate::prelude::*;
 
+/*
 #[derive(Debug)]
 pub enum EntityTexture {
     Player,
@@ -24,4 +25,10 @@ pub struct TextureStore {
 
     pub map_render: Texture2D,
     pub entity_render: Texture2D,
+}
+*/
+
+#[derive(Resource)]
+pub struct SpritesStore {
+    pub sprites: Texture2D,
 }

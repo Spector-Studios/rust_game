@@ -10,7 +10,7 @@ pub struct MapBuilder {
 }
 
 impl MapBuilder {
-    pub fn new(rng: &mut Rng, floor_texture: Texture2D, wall_texture: Texture2D) -> Self {
+    pub fn new(rng: &mut Rng, floor_texture: Rect, wall_texture: Rect) -> Self {
         let mut mb = MapBuilder {
             map: Map::new(floor_texture, wall_texture),
             rooms: Vec::new(),
