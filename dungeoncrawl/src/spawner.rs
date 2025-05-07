@@ -25,6 +25,7 @@ pub fn spawn_enemy(ecs: &mut World, pos: TilePoint, texture: Texture2D, rng: &mu
                         .collect::<Vec<EntityType>>(),
                 )
                 .expect("Rng"),
-        }, // TODO random generation
+        },
+        moves_randomly: MovesRandomly,
     });
 }

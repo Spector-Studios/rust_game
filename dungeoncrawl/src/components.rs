@@ -23,6 +23,9 @@ pub struct Player;
 pub struct Enemy;
 
 #[derive(Component, Debug)]
+pub struct MovesRandomly;
+
+#[derive(Component, Debug)]
 pub struct Timer {
     pub time: f32,
 }
@@ -40,4 +43,5 @@ pub struct EnemyBundle {
     pub enemy: Enemy,
     pub pos: TilePoint,
     pub render: Render,
+    pub moves_randomly: MovesRandomly,
 }
