@@ -1,6 +1,7 @@
 use crate::prelude::*;
+use strum_macros::EnumIter;
 
-#[derive(Debug)]
+#[derive(EnumIter, Debug, PartialEq)]
 pub enum EntityType {
     Player,
 

@@ -1,3 +1,5 @@
+use strum::IntoEnumIterator;
+
 use crate::prelude::*;
 
 pub fn spawn_player(ecs: &mut World, pos: TilePoint, texture: Texture2D) {
@@ -16,7 +18,13 @@ pub fn spawn_enemy(ecs: &mut World, pos: TilePoint, texture: Texture2D, rng: &mu
         enemy: Enemy,
         pos,
         render: Render {
-            texture: EntityType::Goblin,
+            texture: rng
+                .choice(
+                    EntityType::iter()
+                        .filter(|t| *t != EntityType::Player)
+                        .collect::<Vec<EntityType>>(),
+                )
+                .expect("Rng"),
         }, // TODO random generation
     });
 }
