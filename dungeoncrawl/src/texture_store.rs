@@ -1,7 +1,7 @@
 // TODO May be move to prelude/texture_store.rs?
 use crate::prelude::*;
 
-#[derive(Resource, Debug)]
+/* #[derive(Resource, Debug)]
 pub struct TextureStore {
     pub map_render: Texture2D,
     pub entity_render: Texture2D,
@@ -23,7 +23,7 @@ impl TextureStore {
             entity_render,
         }
     }
-}
+} */
 
 #[derive(Resource)]
 pub struct SpriteSheet {

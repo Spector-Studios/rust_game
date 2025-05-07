@@ -15,7 +15,7 @@ pub use crate::spawner::*;
 pub use crate::systems::*;
 pub use crate::texture_store::*;
 
-pub const FRAME_RATE: f32 = 30.0;
+//pub const FRAME_RATE: f32 = 30.0;
 
 pub const I_VIEWPORT_X: i32 = 15;
 pub const I_VIEWPORT_Y: i32 = 300;
@@ -24,8 +24,8 @@ pub const VIEWPORT_HEIGHT_T: i32 = 9;
 
 pub const VIEWPORT_X: f32 = I_VIEWPORT_X as f32;
 pub const VIEWPORT_Y: f32 = I_VIEWPORT_Y as f32;
-pub const VIEWPORT_WIDTH: f32 = VIEWPORT_WIDTH_T as f32 * TILE_SIZE;
-pub const VIEWPORT_HEIGHT: f32 = VIEWPORT_HEIGHT_T as f32 * TILE_SIZE;
+pub const VIEWPORT_WIDTH: f32 = (VIEWPORT_WIDTH_T + 2) as f32 * TILE_SIZE;
+pub const VIEWPORT_HEIGHT: f32 = (VIEWPORT_HEIGHT_T + 2) as f32 * TILE_SIZE;
 
 pub const TILE_SIZE: f32 = 50.0;
 
@@ -33,10 +33,10 @@ pub const TILE_MAP_WIDTH: i32 = 80;
 pub const TILE_MAP_HEIGHT: i32 = 50;
 pub const NUM_TILES: usize = (TILE_MAP_WIDTH * TILE_MAP_HEIGHT) as usize;
 
-pub const D_UP: TilePoint = TilePoint { x: 0, y: 1 };
+/* pub const D_UP: TilePoint = TilePoint { x: 0, y: 1 };
 pub const D_DOWN: TilePoint = TilePoint { x: 0, y: -1 };
 pub const D_LEFT: TilePoint = TilePoint { x: -1, y: 0 };
-pub const D_RIGHT: TilePoint = TilePoint { x: 1, y: 0 };
+pub const D_RIGHT: TilePoint = TilePoint { x: 1, y: 0 }; */
 
 #[derive(Component, Debug, Clone, Copy, PartialEq)]
 pub struct TilePoint {
@@ -132,5 +132,5 @@ impl TileRect {
     }
 }
 
-#[derive(Resource)]
-pub struct FrameTime(pub f32);
+/* #[derive(Resource)]
+pub struct FrameTime(pub f32); */

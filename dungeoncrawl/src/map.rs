@@ -1,4 +1,4 @@
-use crate::{camera::Camera, prelude::*};
+use crate::prelude::*;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum TileType {
@@ -15,61 +15,61 @@ pub fn map_idx(x: i32, y: i32) -> usize {
 #[derive(Resource, Debug)]
 pub struct Map {
     pub tiles: Vec<TileType>,
-    pub floor_texture: Texture2D,
-    pub wall_texture: Texture2D,
+    //pub floor_texture: Texture2D,
+    //pub wall_texture: Texture2D,
     //pub displayed_corner_tile: TilePoint,
 }
 
 impl Map {
-    pub fn new(floor_texture: Texture2D, wall_texture: Texture2D) -> Self {
+    pub fn new() -> Self {
         Self {
             tiles: vec![TileType::Floor; NUM_TILES],
-            floor_texture,
-            wall_texture,
+            //floor_texture,
+            //wall_texture,
             //displayed_corner_tile: TilePoint::new(3, 3),
         }
     }
 
-    pub fn render(&self, camera: &Camera) {
-        let mut screen_x;
-        let mut screen_y;
-        // map
-        for y in camera.view_area.y1..camera.view_area.y2 {
-            screen_y = (y - camera.view_area.y1) as f32 * TILE_SIZE + VIEWPORT_Y;
-            for x in camera.view_area.x1..camera.view_area.x2 {
-                let idx = (y * TILE_MAP_WIDTH + x) as usize;
-                screen_x = (x - camera.view_area.x1) as f32 * TILE_SIZE + VIEWPORT_X;
+    // pub fn render(&self, camera: &Camera) {
+    //     let mut screen_x;
+    //     let mut screen_y;
+    //     // map
+    //     for y in camera.view_area.y1..camera.view_area.y2 {
+    //         screen_y = (y - camera.view_area.y1) as f32 * TILE_SIZE + VIEWPORT_Y;
+    //         for x in camera.view_area.x1..camera.view_area.x2 {
+    //             let idx = (y * TILE_MAP_WIDTH + x) as usize;
+    //             screen_x = (x - camera.view_area.x1) as f32 * TILE_SIZE + VIEWPORT_X;
 
-                match self.tiles[idx] {
-                    TileType::Floor => {
-                        draw_rectangle(screen_x, screen_y, TILE_SIZE, TILE_SIZE, SKYBLUE)
-                    }
-                    TileType::Wall => {
-                        draw_rectangle(screen_x, screen_y, TILE_SIZE, TILE_SIZE, GREEN)
-                    }
-                }
+    //             match self.tiles[idx] {
+    //                 TileType::Floor => {
+    //                     draw_rectangle(screen_x, screen_y, TILE_SIZE, TILE_SIZE, SKYBLUE)
+    //                 }
+    //                 TileType::Wall => {
+    //                     draw_rectangle(screen_x, screen_y, TILE_SIZE, TILE_SIZE, GREEN)
+    //                 }
+    //             }
 
-                #[cfg(debug_assertions)]
-                {
-                    draw_rectangle_lines(screen_x, screen_y, TILE_SIZE, TILE_SIZE, 2.0, BLACK);
-                    draw_text(
-                        format!("{}", x).as_str(),
-                        screen_x + 5.0,
-                        screen_y + 15.0,
-                        30.0,
-                        BLACK,
-                    );
-                    draw_text(
-                        format!("{}", y).as_str(),
-                        screen_x + 20.0,
-                        screen_y + 45.0,
-                        30.0,
-                        BLACK,
-                    );
-                }
-            }
-        }
-    }
+    //             #[cfg(debug_assertions)]
+    //             {
+    //                 draw_rectangle_lines(screen_x, screen_y, TILE_SIZE, TILE_SIZE, 2.0, BLACK);
+    //                 draw_text(
+    //                     format!("{}", x).as_str(),
+    //                     screen_x + 5.0,
+    //                     screen_y + 15.0,
+    //                     30.0,
+    //                     BLACK,
+    //                 );
+    //                 draw_text(
+    //                     format!("{}", y).as_str(),
+    //                     screen_x + 20.0,
+    //                     screen_y + 45.0,
+    //                     30.0,
+    //                     BLACK,
+    //                 );
+    //             }
+    //         }
+    //     }
+    // }
     pub fn in_bounds(&self, point: TilePoint) -> bool {
         (point.x >= 0)
             && (point.y >= 0)

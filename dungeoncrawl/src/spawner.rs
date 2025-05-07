@@ -2,7 +2,7 @@ use strum::IntoEnumIterator;
 
 use crate::prelude::*;
 
-pub fn spawn_player(ecs: &mut World, pos: TilePoint, texture: Texture2D) {
+pub fn spawn_player(ecs: &mut World, pos: TilePoint) {
     ecs.spawn(PlayerBundle {
         player: Player,
         pos,
@@ -13,7 +13,7 @@ pub fn spawn_player(ecs: &mut World, pos: TilePoint, texture: Texture2D) {
     });
 }
 
-pub fn spawn_enemy(ecs: &mut World, pos: TilePoint, texture: Texture2D, rng: &mut Rng) {
+pub fn spawn_enemy(ecs: &mut World, rng: &mut Rng, pos: TilePoint) {
     ecs.spawn(EnemyBundle {
         enemy: Enemy,
         pos,

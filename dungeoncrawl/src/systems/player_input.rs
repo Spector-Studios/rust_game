@@ -1,7 +1,7 @@
 use crate::{camera::Camera, prelude::*};
 
 pub fn player_input_system(
-    mut frame_time: ResMut<FrameTime>,
+    //mut frame_time: ResMut<FrameTime>,
     mut button_state: ResMut<ButtonState>,
     map: Res<Map>,
     mut camera: ResMut<Camera>,

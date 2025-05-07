@@ -20,29 +20,29 @@ struct Game {
 impl Game {
     fn new(
         sprite_sheet: SpriteSheet,
-        player_texture: Texture2D,
-        wall_texture: Texture2D,
-        floor_texture: Texture2D,
-        enemy_texture: Texture2D,
+        //player_texture: Texture2D,
+        //wall_texture: Texture2D,
+        //floor_texture: Texture2D,
+        //enemy_texture: Texture2D,
     ) -> Self {
         let mut ecs = World::default();
 
         let mut rng = Rng::with_seed(macroquad::miniquad::date::now() as _);
-        let map_builder = MapBuilder::new(&mut rng, floor_texture, wall_texture);
+        let map_builder = MapBuilder::new(&mut rng);
 
         ecs.insert_resource(map_builder.map);
         ecs.insert_resource(Camera::new(map_builder.player_start));
-        ecs.insert_resource(TextureStore::new());
+        //ecs.insert_resource(TextureStore::new());
         ecs.insert_resource(sprite_sheet);
-        ecs.insert_resource(FrameTime(0.0));
+        //ecs.insert_resource(FrameTime(0.0));
 
-        spawn_player(&mut ecs, map_builder.player_start, player_texture);
+        spawn_player(&mut ecs, map_builder.player_start);
         map_builder
             .rooms
             .iter()
             .skip(1)
             .map(|r| r.centre())
-            .for_each(|pos| spawn_enemy(&mut ecs, pos, enemy_texture.clone(), &mut rng));
+            .for_each(|pos| spawn_enemy(&mut ecs, &mut rng, pos));
 
         Self {
             ecs,
@@ -64,18 +64,18 @@ impl Game {
 
 #[macroquad::main("Dungeon Crawl")]
 async fn main() {
-    let player_texture = load_texture("resources/Player.png")
-        .await
-        .expect("Player texture");
-    let floor_texture = load_texture("resources/Floor.png")
-        .await
-        .expect("Floor texture.");
-    let wall_texture = load_texture("resources/Wall.png")
-        .await
-        .expect("Wall texture.");
-    let goblin_texture = load_texture("resources/Goblin.png")
-        .await
-        .expect("Goblin Texture");
+    // let player_texture = load_texture("resources/Player.png")
+    //     .await
+    //     .expect("Player texture");
+    // let floor_texture = load_texture("resources/Floor.png")
+    //     .await
+    //     .expect("Floor texture.");
+    // let wall_texture = load_texture("resources/Wall.png")
+    //     .await
+    //     .expect("Wall texture.");
+    // let goblin_texture = load_texture("resources/Goblin.png")
+    //     .await
+    //     .expect("Goblin Texture");
 
     let sprites = load_texture("resources/sprites.png")
         .await
@@ -84,26 +84,17 @@ async fn main() {
 
     let mut game = Game::new(
         sprit_sheet,
-        player_texture,
-        wall_texture,
-        floor_texture,
-        goblin_texture,
+        //player_texture,
+        //wall_texture,
+        //floor_texture,
+        //goblin_texture,
     );
-    let mut frame_time = 0.0;
 
     loop {
         clear_background(SKYBLUE);
-        //draw_text("Hello", 100_f32, 200_f32, 12_f32, SKYBLUE);
-        //game.update();
-
-        /* if frame_time > 0.1 {
-            game.tick();
-            //draw_rectangle(20.0, 300.0, 300.0, 400.0, WHITE);
-        } else {
-            frame_time += get_frame_time();
-        } */
-
         game.tick();
+
+        draw_rectangle_lines(VIEWPORT_X, VIEWPORT_Y, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, 10.0, BLACK);
         next_frame().await;
     }
 }
