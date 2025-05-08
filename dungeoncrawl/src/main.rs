@@ -69,7 +69,7 @@ impl Game {
         match *self.ecs.get_resource::<TurnState>().unwrap() {
             TurnState::AwaitingInput => self.input_systems.run(&mut self.ecs),
             TurnState::PlayerTurn => self.player_systems.run(&mut self.ecs),
-            TurnState::MonsterTurn => self.monster_systems.run(&mut self.ecs)
+            TurnState::MonsterTurn => self.monster_systems.run(&mut self.ecs),
         }
 
         //draw_circle(200.0, 700.0, 90.0, VIOLET);
@@ -110,7 +110,14 @@ async fn main() {
         clear_background(SKYBLUE);
         game.tick();
 
-        draw_rectangle_lines(VIEWPORT_X, VIEWPORT_Y, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, 10.0, BLACK);
+        draw_rectangle_lines(
+            (screen_width() - VIEWPORT_WIDTH) / 2.0,
+            ((screen_height() - VIEWPORT_HEIGHT) / 2.0)*0.7,
+            VIEWPORT_WIDTH,
+            VIEWPORT_HEIGHT,
+            10.0,
+            BLACK,
+        );
         next_frame().await;
     }
 }

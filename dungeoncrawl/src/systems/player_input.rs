@@ -1,4 +1,4 @@
-use crate::{camera::Camera, prelude::*, TurnState};
+use crate::{TurnState, camera::Camera, prelude::*};
 
 pub fn player_input_system(
     //mut frame_time: ResMut<FrameTime>,

@@ -1,4 +1,4 @@
-use crate::{prelude::*, TurnState};
+use crate::{TurnState, prelude::*};
 
 pub fn end_turn_system(mut turn_state: ResMut<TurnState>) {
     let new_state = match *turn_state {

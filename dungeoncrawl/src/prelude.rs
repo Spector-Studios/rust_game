@@ -17,13 +17,13 @@ pub use crate::texture_store::*;
 
 //pub const FRAME_RATE: f32 = 30.0;
 
-pub const I_VIEWPORT_X: i32 = 15;
-pub const I_VIEWPORT_Y: i32 = 300;
+//pub const I_VIEWPORT_X: i32 = 15;
+//pub const I_VIEWPORT_Y: i32 = 300;
 pub const VIEWPORT_WIDTH_T: i32 = 17;
 pub const VIEWPORT_HEIGHT_T: i32 = 9;
 
-pub const VIEWPORT_X: f32 = I_VIEWPORT_X as f32;
-pub const VIEWPORT_Y: f32 = I_VIEWPORT_Y as f32;
+//pub static mut VIEWPORT_X: f32 = 0.0;
+//pub static mut VIEWPORT_Y: f32 = 0.0;
 pub const VIEWPORT_WIDTH: f32 = (VIEWPORT_WIDTH_T + 2) as f32 * TILE_SIZE;
 pub const VIEWPORT_HEIGHT: f32 = (VIEWPORT_HEIGHT_T + 2) as f32 * TILE_SIZE;
 

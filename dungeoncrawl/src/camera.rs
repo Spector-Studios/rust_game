@@ -19,11 +19,14 @@ impl Camera {
     }
 
     pub fn get_screen_x(&self, tile_x: i32) -> f32 {
-        (tile_x - self.view_area.x1) as f32 * TILE_SIZE + VIEWPORT_X
+        (tile_x - self.view_area.x1) as f32 * TILE_SIZE + (screen_width() - VIEWPORT_WIDTH) / 2.0
+        //                                                      ^----- TODO May be store this value somewhere?
     }
 
     pub fn get_screen_y(&self, tile_y: i32) -> f32 {
-        (tile_y - self.view_area.y1) as f32 * TILE_SIZE + VIEWPORT_Y
+        (tile_y - self.view_area.y1) as f32 * TILE_SIZE
+            + ((screen_height() - VIEWPORT_HEIGHT) / 2.0) * 0.7
+        //            ^----- TODO May be store this value somewhere?
     }
 
     pub fn on_player_move(&mut self, player_position: TilePoint) {
