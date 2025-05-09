@@ -1,31 +1,9 @@
-use strum::IntoEnumIterator;
-
 use crate::prelude::*;
 
 pub fn spawn_player(ecs: &mut World, pos: TilePoint) {
-    ecs.spawn(PlayerBundle {
-        player: Player,
-        pos,
-        render: Render {
-            texture: EntityType::Player,
-        },
-        timer: Timer { time: 0.0 },
-    });
+    ecs.spawn(PlayerBundle::new(pos));
 }
 
 pub fn spawn_enemy(ecs: &mut World, rng: &mut Rng, pos: TilePoint) {
-    ecs.spawn(EnemyBundle {
-        enemy: Enemy,
-        pos,
-        render: Render {
-            texture: rng
-                .choice(
-                    EntityType::iter()
-                        .filter(|t| *t != EntityType::Player)
-                        .collect::<Vec<EntityType>>(),
-                )
-                .expect("Rng"),
-        },
-        moves_randomly: MovesRandomly,
-    });
+    ecs.spawn(EnemyBundle::random_enemy(pos, rng));
 }
