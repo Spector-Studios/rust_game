@@ -102,6 +102,8 @@ async fn main() {
     let sprites = load_texture("resources/sprites.png")
         .await
         .expect("Sprite sheet");
+    build_textures_atlas();
+
     let sprit_sheet = SpriteSheet { sprites };
 
     let mut game = Game::new(
