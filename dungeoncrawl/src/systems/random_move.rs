@@ -1,6 +1,11 @@
-use crate::prelude::*;
+use crate::{events::WantsToMove, prelude::*};
 
-pub fn random_move_system(map: Res<Map>, mut query: Query<&mut TilePoint, With<MovesRandomly>>) {
+pub fn random_move_system(
+    //commands: Commands,
+    //map: Res<Map>,
+    mut writer: EventWriter<WantsToMove>,
+    mut query: Query<(Entity, &TilePoint), With<MovesRandomly>>,
+) {
     let mut rng = Rng::with_seed(macroquad::miniquad::date::now() as _);
 
     const DIRECTIONS: [TilePoint; 4] = [
@@ -9,11 +14,12 @@ pub fn random_move_system(map: Res<Map>, mut query: Query<&mut TilePoint, With<M
         TilePoint::new(1, 0),
         TilePoint::new(-1, 0),
     ];
-    for mut mover_pos in query.iter_mut() {
+    for (entity, mover_pos) in query.iter_mut() {
         let destination = rng.choice(DIRECTIONS).expect("Rng movement") + *mover_pos;
 
-        if map.can_enter_tile(destination) {
-            *mover_pos = destination;
-        }
+        writer.write(WantsToMove {
+            entity,
+            destination,
+        });
     }
 }

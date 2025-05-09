@@ -1,5 +1,6 @@
 mod camera;
 mod components;
+mod events;
 mod map;
 mod map_builder;
 mod player;
@@ -9,6 +10,7 @@ mod systems;
 mod texture_store;
 
 use crate::prelude::*;
+use events::WantsToMove;
 use input_lib::Controller;
 
 #[derive(Resource, Debug)]
@@ -23,6 +25,7 @@ struct Game {
     input_systems: Schedule,
     player_systems: Schedule,
     monster_systems: Schedule,
+    //events: Events<WantsToMove>,
     controller: Controller,
 }
 
@@ -45,6 +48,7 @@ impl Game {
         ecs.insert_resource(sprite_sheet);
         ecs.insert_resource(TurnState::AwaitingInput);
         //ecs.insert_resource(FrameTime(0.0));
+        ecs.insert_resource(Events::<WantsToMove>::default());
 
         spawn_player(&mut ecs, map_builder.player_start);
         map_builder
@@ -59,6 +63,7 @@ impl Game {
             input_systems: build_input_schedule(),
             player_systems: build_player_schedule(),
             monster_systems: build_monster_schedule(),
+            //events,
             controller: Controller::new(),
         }
     }
@@ -72,6 +77,7 @@ impl Game {
             TurnState::MonsterTurn => self.monster_systems.run(&mut self.ecs),
         }
 
+        self.ecs.resource_mut::<Events<WantsToMove>>().update();
         //draw_circle(200.0, 700.0, 90.0, VIOLET);
         //draw_texture(&self.resources.get::<TextureStore>().unwrap().map_render.texture, VIEWPORT_X, VIEWPORT_Y, WHITE);
         self.controller.draw(); // TODO Move to ecs
@@ -112,7 +118,7 @@ async fn main() {
 
         draw_rectangle_lines(
             (screen_width() - VIEWPORT_WIDTH) / 2.0,
-            ((screen_height() - VIEWPORT_HEIGHT) / 2.0)*0.7,
+            ((screen_height() - VIEWPORT_HEIGHT) / 2.0) * 0.7,
             VIEWPORT_WIDTH,
             VIEWPORT_HEIGHT,
             10.0,
