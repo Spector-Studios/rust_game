@@ -9,9 +9,40 @@ mod spawner;
 mod systems;
 mod texture_store;
 
+use crate::miniquad::conf::Platform;
+use crate::miniquad::conf::WebGLVersion;
 use crate::prelude::*;
 use events::WantsToMove;
 use input_lib::Controller;
+
+const FRAGMENT_SHADER: &str = "
+#version 100
+precision mediump float;
+
+uniform vec2 iResolution;
+
+void main(void) {
+    vec2 uv = gl_FragCoord.xy / iResolution.xy;
+    gl_FragColor = vec4(uv, 1.0, 1.0);
+}
+";
+
+const VERTEX_SHADER: &str = "
+#version 100
+attribute vec3 position;
+attribute vec2 texcoord;
+attribute vec4 color0;
+varying float iTime;
+
+uniform mat4 Model;
+uniform mat4 Projection;
+uniform vec4 _Time;
+
+void main() {
+    gl_Position = Projection * Model * vec4(position, 1);
+    iTime = _Time.x;
+}
+";
 
 #[derive(Resource, Debug)]
 enum TurnState {
@@ -84,7 +115,7 @@ impl Game {
     }
 }
 
-#[macroquad::main("Dungeon Crawl")]
+#[macroquad::main(window_conf)]
 async fn main() {
     // let player_texture = load_texture("resources/Player.png")
     //     .await
@@ -114,8 +145,51 @@ async fn main() {
         //goblin_texture,
     );
 
+    let render_target = render_target(380, 150);
+    render_target.texture.set_filter(FilterMode::Nearest);
+    let materialtest = load_material(
+        ShaderSource::Glsl {
+            vertex: VERTEX_SHADER,
+            fragment: FRAGMENT_SHADER,
+        },
+        MaterialParams {
+            uniforms: vec![UniformDesc::new("iResolution", UniformType::Float2)],
+            ..Default::default()
+        },
+    );
+
+    if materialtest.is_err() {
+        debug!("{}", materialtest.unwrap_err());
+    }
+    let material = load_material(
+        ShaderSource::Glsl {
+            vertex: VERTEX_SHADER,
+            fragment: FRAGMENT_SHADER,
+        },
+        MaterialParams {
+            uniforms: vec![UniformDesc::new("iResolution", UniformType::Float2)],
+            ..Default::default()
+        },
+    )
+    .unwrap();
+
     loop {
         clear_background(SKYBLUE);
+
+        material.set_uniform("iResolution", (screen_width(), screen_height()));
+        gl_use_material(&material);
+        draw_texture_ex(
+            &render_target.texture,
+            0.0,
+            0.0,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(screen_width(), screen_height())),
+                ..Default::default()
+            },
+        );
+        gl_use_default_material();
+
         game.tick();
 
         draw_rectangle_lines(
@@ -127,5 +201,17 @@ async fn main() {
             BLACK,
         );
         next_frame().await;
+    }
+}
+
+fn window_conf() -> Conf {
+    Conf {
+        window_title: "Test".to_owned(),
+        platform: Platform {
+            webgl_version: WebGLVersion::WebGL2,
+            ..Default::default()
+        },
+
+        ..Default::default()
     }
 }
