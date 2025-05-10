@@ -1,10 +1,10 @@
-use crate::{TurnState, camera::Camera, events::WantsToMove, prelude::*};
+use crate::{TurnState, events::WantsToMove, prelude::*};
 
 pub fn player_input_system(
     //mut frame_time: ResMut<FrameTime>,
     mut button_state: ResMut<ButtonState>,
-    map: Res<Map>,
-    mut camera: ResMut<Camera>,
+    //map: Res<Map>,
+    //mut camera: ResMut<Camera>,
     mut turn_state: ResMut<TurnState>,
     mut player_pos_query: Query<(Entity, &TilePoint, &mut Timer), With<Player>>,
     mut writer: EventWriter<WantsToMove>,
