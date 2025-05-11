@@ -174,9 +174,9 @@ async fn main() {
     .unwrap();
 
     loop {
-        clear_background(SKYBLUE);
+        clear_background(BLACK);
 
-        material.set_uniform("iResolution", (screen_width(), screen_height()));
+        /* material.set_uniform("iResolution", (screen_width(), screen_height()));
         gl_use_material(&material);
         draw_texture_ex(
             &render_target.texture,
@@ -188,7 +188,7 @@ async fn main() {
                 ..Default::default()
             },
         );
-        gl_use_default_material();
+        gl_use_default_material(); */
 
         game.tick();
 
@@ -198,7 +198,7 @@ async fn main() {
             VIEWPORT_WIDTH,
             VIEWPORT_HEIGHT,
             10.0,
-            BLACK,
+            WHITE,
         );
         next_frame().await;
     }
