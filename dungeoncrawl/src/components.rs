@@ -13,11 +13,6 @@ pub enum EntityType {
 }
 
 #[derive(Component, Debug)]
-pub struct Render {
-    pub texture: EntityType,
-}
-
-#[derive(Component, Debug)]
 pub struct Player;
 
 #[derive(Component, Debug)]
@@ -25,6 +20,14 @@ pub struct Enemy;
 
 #[derive(Component, Debug)]
 pub struct MovesRandomly;
+
+#[derive(Component, Debug)]
+pub struct Type(pub EntityType);
+
+#[derive(Component, Debug)]
+pub struct Render {
+    pub texture: EntityType,
+}
 
 #[derive(Component, Debug)]
 pub struct Timer {

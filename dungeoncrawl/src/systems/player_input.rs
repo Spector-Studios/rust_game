@@ -42,11 +42,12 @@ pub fn player_input_system(
 
     button_state.reset();
 
+    #[cfg(debug_assertions)]
     draw_text(
         format!("{}, {}", pos.x, pos.y).as_str(),
         20.0,
         20.0,
         50.0,
-        BLACK,
+        WHITE,
     );
 }
