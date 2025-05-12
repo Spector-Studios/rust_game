@@ -74,7 +74,7 @@ impl Game {
         let map_builder = MapBuilder::new(&mut rng);
 
         ecs.insert_resource(map_builder.map);
-        ecs.insert_resource(Camera::new(map_builder.player_start));
+        ecs.insert_resource(Viewport::new(map_builder.player_start));
         //ecs.insert_resource(TextureStore::new());
         ecs.insert_resource(sprite_sheet);
         ecs.insert_resource(TurnState::AwaitingInput);

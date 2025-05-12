@@ -1,8 +1,7 @@
-use crate::camera::Camera;
 use crate::prelude::*;
 
 pub fn entity_render_system(
-    camera: Res<Camera>,
+    viewport: Res<Viewport>,
     sprite_sheet: Res<SpriteSheet>,
     entity_query: Query<(&TilePoint, &Render)>,
 ) {
@@ -15,11 +14,11 @@ pub fn entity_render_system(
             EntityType::Warrior => Rect::new(96.0, 96.0, 32.0, 32.0),
         };
 
-        if camera.view_area.contains(*pos) {
+        if viewport.view_area.contains(*pos) {
             draw_texture_ex(
                 &sprite_sheet.sprites,
-                camera.get_screen_x(pos.x),
-                camera.get_screen_y(pos.y),
+                viewport.get_screen_x(pos.x),
+                viewport.get_screen_y(pos.y),
                 WHITE,
                 DrawTextureParams {
                     dest_size: Some(vec2(TILE_SIZE, TILE_SIZE)),

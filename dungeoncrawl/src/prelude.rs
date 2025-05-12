@@ -6,7 +6,7 @@ pub use input_lib::*;
 pub use bevy_ecs::prelude::*;
 pub use macroquad::prelude::*;
 
-pub use crate::camera::Camera;
+pub use crate::camera::Viewport;
 pub use crate::components::*;
 pub use crate::map::*;
 pub use crate::map_builder::*;
@@ -90,6 +90,7 @@ pub struct TileRect {
     pub y2: i32,
 }
 
+#[allow(dead_code)]
 impl TileRect {
     pub fn with_size(x: i32, y: i32, w: i32, h: i32) -> Self {
         Self {

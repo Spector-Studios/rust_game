@@ -1,11 +1,11 @@
 use crate::prelude::*;
 
 #[derive(Resource, Debug)]
-pub struct Camera {
+pub struct Viewport {
     pub view_area: TileRect,
 }
 
-impl Camera {
+impl Viewport {
     pub fn new(player_position: TilePoint) -> Self {
         let mut x = player_position.x - VIEWPORT_WIDTH_T / 2;
         let mut y = player_position.y - VIEWPORT_HEIGHT_T / 2;
