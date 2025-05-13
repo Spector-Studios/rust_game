@@ -22,8 +22,9 @@ pub struct Enemy;
 pub struct MovesRandomly;
 
 #[derive(Component, Debug)]
-pub struct Type(pub EntityType);
+pub struct Name(pub String);
 
+// TODO Make the texture a Rect or something
 #[derive(Component, Debug)]
 pub struct Render {
     pub texture: EntityType,
@@ -55,7 +56,7 @@ impl PlayerBundle {
             player: Player,
             pos,
             health: Health {
-                current: 20,
+                current: 13,
                 max: 20,
             },
             render: Render {
@@ -70,30 +71,8 @@ impl PlayerBundle {
 pub struct EnemyBundle {
     pub enemy: Enemy,
     pub pos: TilePoint,
+    pub name: Name,
     pub health: Health,
     pub render: Render,
     pub moves_randomly: MovesRandomly,
-}
-
-impl EnemyBundle {
-    pub fn random_enemy(pos: TilePoint, rng: &mut Rng) -> Self {
-        Self {
-            enemy: Enemy,
-            pos,
-            health: Health {
-                current: 10,
-                max: 10,
-            },
-            render: Render {
-                texture: rng
-                    .choice(
-                        EntityType::iter()
-                            .filter(|t| *t != EntityType::Player)
-                            .collect::<Vec<EntityType>>(),
-                    )
-                    .expect("Rng"),
-            },
-            moves_randomly: MovesRandomly,
-        }
-    }
 }
