@@ -2,7 +2,7 @@ use crate::{TurnState, events::WantsToMove, prelude::*};
 
 pub fn player_input_system(
     //mut frame_time: ResMut<FrameTime>,
-    mut button_state: ResMut<ButtonState>,
+    button_state: Res<ButtonState>,
     //map: Res<Map>,
     //mut camera: ResMut<Camera>,
     mut turn_state: ResMut<TurnState>,
@@ -15,7 +15,7 @@ pub fn player_input_system(
 
     if timer.time < 0.2 {
         timer.time += get_frame_time();
-    } else if *button_state != ButtonState::new() {
+    } else if *button_state != ButtonState::new() && !button_state.back {
         timer.time = 0.0;
 
         let delta = TilePoint::new(
@@ -40,7 +40,7 @@ pub fn player_input_system(
         *turn_state = TurnState::PlayerTurn;
     }
 
-    button_state.reset();
+    //button_state.reset();
 
     #[cfg(debug_assertions)]
     draw_text(

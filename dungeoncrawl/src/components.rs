@@ -22,7 +22,7 @@ pub struct Enemy;
 pub struct MovesRandomly;
 
 #[derive(Component, Debug)]
-pub struct Name(pub String);
+pub struct EnemyName(pub String);
 
 // TODO Make the texture a Rect or something
 #[derive(Component, Debug)]
@@ -71,7 +71,7 @@ impl PlayerBundle {
 pub struct EnemyBundle {
     pub enemy: Enemy,
     pub pos: TilePoint,
-    pub name: Name,
+    pub name: EnemyName,
     pub health: Health,
     pub render: Render,
     pub moves_randomly: MovesRandomly,
