@@ -30,17 +30,23 @@ pub fn hud_render_system(
             .iter()
             .filter(|(_, pos, _)| viewport.view_area.contains(**pos))
             .for_each(|(EntityName(name), pos, option_health)| {
+                let centre = get_text_center(name.as_str(), None, 30, 1.0, 0.0);
+
                 draw_text(
                     name.as_str(),
-                    viewport.get_screen_x(pos.x),
+                    viewport.get_screen_x(pos.x) + TILE_SIZE / 2.0 - centre.x,
                     viewport.get_screen_y(pos.y) + 50.0,
                     30.0,
                     WHITE,
                 );
+
                 if let Some(health) = option_health {
+                    let centre =
+                        get_text_center(health.current.to_string().as_str(), None, 30, 1.0, 0.0);
+
                     draw_text(
                         health.current.to_string().as_str(),
-                        viewport.get_screen_x(pos.x),
+                        viewport.get_screen_x(pos.x) + TILE_SIZE / 2.0 - centre.x,
                         viewport.get_screen_y(pos.y) + 70.0,
                         30.0,
                         WHITE,
