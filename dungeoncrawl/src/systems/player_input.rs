@@ -1,4 +1,4 @@
-use crate::{events::WantsToMove, prelude::*, TurnState};
+use crate::{TurnState, events::WantsToMove, prelude::*};
 
 pub fn player_input_system(
     //mut frame_time: ResMut<FrameTime>,
