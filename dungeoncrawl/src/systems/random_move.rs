@@ -20,6 +20,7 @@ pub fn random_move_system(
         writer.write(WantsToMove {
             entity,
             destination,
+            is_player: false,
         });
     }
 }

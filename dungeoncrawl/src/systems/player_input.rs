@@ -1,4 +1,4 @@
-use crate::{TurnState, events::WantsToMove, prelude::*};
+use crate::{events::WantsToMove, prelude::*, TurnState};
 
 pub fn player_input_system(
     //mut frame_time: ResMut<FrameTime>,
@@ -36,6 +36,7 @@ pub fn player_input_system(
         writer.write(WantsToMove {
             entity,
             destination,
+            is_player: true,
         });
         *turn_state = TurnState::PlayerTurn;
     }

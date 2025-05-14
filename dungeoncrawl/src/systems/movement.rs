@@ -6,13 +6,12 @@ pub fn movement_system(
     mut camera: ResMut<Viewport>,
     mut commands: Commands,
     mut reader: EventReader<WantsToMove>,
-    player: Query<Entity, With<Player>>,
 ) {
     for event in reader.read() {
         if map.can_enter_tile(event.destination) {
             commands.entity(event.entity).insert(event.destination);
 
-            if player.get(event.entity).is_ok() {
+            if event.is_player {
                 camera.on_player_move(event.destination)
             }
         }

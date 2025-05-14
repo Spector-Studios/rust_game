@@ -4,4 +4,5 @@ use crate::prelude::*;
 pub struct WantsToMove {
     pub entity: Entity,
     pub destination: TilePoint,
+    pub is_player: bool,
 }
