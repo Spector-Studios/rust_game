@@ -1,4 +1,3 @@
-mod camera;
 mod components;
 mod events;
 mod map;
@@ -8,6 +7,7 @@ mod prelude;
 mod spawner;
 mod systems;
 mod texture_store;
+mod viewport;
 
 use crate::miniquad::conf::Platform;
 use crate::miniquad::conf::WebGLVersion;
