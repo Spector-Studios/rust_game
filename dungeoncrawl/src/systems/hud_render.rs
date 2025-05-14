@@ -4,7 +4,7 @@ pub fn hud_render_system(
     button_state: Res<ButtonState>,
     viewport: Res<Viewport>,
     player_health_query: Query<&Health, With<Player>>,
-    enemy_query: Query<(&EnemyName, &TilePoint, &Health), With<Enemy>>,
+    enemy_query: Query<(&EntityName, &TilePoint, Option<&Health>), Without<Player>>,
 ) {
     let player_health = player_health_query
         .single()
@@ -29,14 +29,23 @@ pub fn hud_render_system(
         enemy_query
             .iter()
             .filter(|(_, pos, _)| viewport.view_area.contains(**pos))
-            .for_each(|(name, pos, health)| {
+            .for_each(|(EntityName(name), pos, option_health)| {
                 draw_text(
-                    format!("{}\n{}", name.0, health.current).as_str(),
+                    name.as_str(),
                     viewport.get_screen_x(pos.x),
-                    viewport.get_screen_y(pos.y),
+                    viewport.get_screen_y(pos.y) + 50.0,
                     30.0,
-                    BLACK,
+                    WHITE,
                 );
+                if let Some(health) = option_health {
+                    draw_text(
+                        health.current.to_string().as_str(),
+                        viewport.get_screen_x(pos.x),
+                        viewport.get_screen_y(pos.y) + 70.0,
+                        30.0,
+                        WHITE,
+                    );
+                }
             });
     }
 }

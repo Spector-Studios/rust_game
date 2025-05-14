@@ -1,5 +1,4 @@
 use crate::prelude::*;
-use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
 #[derive(EnumIter, Debug, PartialEq)]
@@ -22,7 +21,7 @@ pub struct Enemy;
 pub struct MovesRandomly;
 
 #[derive(Component, Debug)]
-pub struct EnemyName(pub String);
+pub struct EntityName(pub String);
 
 // TODO Make the texture a Rect or something
 #[derive(Component, Debug)]
@@ -71,7 +70,7 @@ impl PlayerBundle {
 pub struct EnemyBundle {
     pub enemy: Enemy,
     pub pos: TilePoint,
-    pub name: EnemyName,
+    pub name: EntityName,
     pub health: Health,
     pub render: Render,
     pub moves_randomly: MovesRandomly,

@@ -12,7 +12,7 @@ pub fn spawn_enemy(ecs: &mut World, rng: &mut Rng, pos: TilePoint) {
     ecs.spawn(EnemyBundle {
         enemy: Enemy,
         pos,
-        name: EnemyName(name),
+        name: EntityName(name),
         health: Health {
             current: hp,
             max: hp,
