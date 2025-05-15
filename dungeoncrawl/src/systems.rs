@@ -1,4 +1,4 @@
-mod collisions;
+mod combat;
 mod end_turn;
 mod entity_render;
 mod hud_render;
@@ -9,7 +9,8 @@ mod random_move;
 
 use crate::systems::hud_render::hud_render_system;
 use bevy_ecs::schedule::ScheduleLabel;
-use collisions::player_collision_system;
+
+use combat::combat_system;
 use end_turn::end_turn_system;
 use entity_render::entity_render_system;
 use map_render::map_render_system;
@@ -46,8 +47,8 @@ pub fn build_player_schedule() -> Schedule {
 
     schedule.add_systems(
         (
+            combat_system,
             movement_system,
-            player_collision_system,
             map_render_system,
             entity_render_system,
             hud_render_system,
@@ -68,8 +69,8 @@ pub fn build_monster_schedule() -> Schedule {
     schedule.add_systems(
         (
             random_move_system,
+            combat_system,
             movement_system,
-            player_collision_system,
             map_render_system,
             entity_render_system,
             hud_render_system,

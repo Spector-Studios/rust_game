@@ -12,6 +12,7 @@ mod viewport;
 use crate::miniquad::conf::Platform;
 use crate::miniquad::conf::WebGLVersion;
 use crate::prelude::*;
+use events::WantsToAttack;
 use events::WantsToMove;
 use input_lib::Controller;
 
@@ -80,6 +81,7 @@ impl Game {
         ecs.insert_resource(TurnState::AwaitingInput);
         //ecs.insert_resource(FrameTime(0.0));
         ecs.insert_resource(Events::<WantsToMove>::default());
+        ecs.insert_resource(Events::<WantsToAttack>::default());
 
         spawn_player(&mut ecs, map_builder.player_start);
         map_builder
@@ -109,6 +111,7 @@ impl Game {
         }
 
         self.ecs.resource_mut::<Events<WantsToMove>>().update();
+        self.ecs.resource_mut::<Events<WantsToAttack>>().update();
         //draw_circle(200.0, 700.0, 90.0, VIOLET);
         //draw_texture(&self.resources.get::<TextureStore>().unwrap().map_render.texture, VIEWPORT_X, VIEWPORT_Y, WHITE);
         self.controller.draw(); // TODO Move to ecs
