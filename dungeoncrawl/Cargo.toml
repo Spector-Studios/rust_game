@@ -11,3 +11,4 @@ getrandom = { version = "*", features = ["js"] }
 bevy_ecs = "0.16.0"
 strum = "0.27.1"
 strum_macros = "0.27.1"
+bracket-pathfinding = "0.8.7"
