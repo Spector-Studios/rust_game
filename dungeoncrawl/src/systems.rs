@@ -1,3 +1,4 @@
+mod chasing;
 mod combat;
 mod end_turn;
 mod entity_render;
@@ -10,6 +11,7 @@ mod random_move;
 use crate::systems::hud_render::hud_render_system;
 use bevy_ecs::schedule::ScheduleLabel;
 
+use chasing::chasing_system;
 use combat::combat_system;
 use end_turn::end_turn_system;
 use entity_render::entity_render_system;
@@ -69,6 +71,7 @@ pub fn build_monster_schedule() -> Schedule {
     schedule.add_systems(
         (
             random_move_system,
+            chasing_system,
             combat_system,
             movement_system,
             map_render_system,
