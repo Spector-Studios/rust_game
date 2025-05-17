@@ -8,7 +8,7 @@ pub fn map_render_system(map: Res<Map>, viewport: Res<Viewport>, sprite_sheet: R
             let pt = TilePoint::new(x, y);
 
             if map.in_bounds(pt) {
-                let idx = map_idx(pt.x, pt.y);
+                let idx = map_idx(pt);
                 //let screen_pos = camera.get_screen_pos(pt);
 
                 match map.tiles[idx] {

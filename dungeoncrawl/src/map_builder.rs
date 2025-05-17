@@ -52,9 +52,13 @@ impl MapBuilder {
             }
 
             if !overlaps {
-                room.for_each(|p| {
-                    if p.x > 0 && p.x < TILE_MAP_WIDTH && p.y > 0 && p.y < TILE_MAP_HEIGHT {
-                        let idx = map_idx(p.x, p.y);
+                room.for_each(|point| {
+                    if point.x > 0
+                        && point.x < TILE_MAP_WIDTH
+                        && point.y > 0
+                        && point.y < TILE_MAP_HEIGHT
+                    {
+                        let idx = map_idx(point);
                         self.map.tiles[idx] = TileType::Floor;
                     }
                 });

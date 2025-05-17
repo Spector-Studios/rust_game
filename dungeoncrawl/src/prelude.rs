@@ -34,10 +34,12 @@ pub const TILE_MAP_WIDTH: i32 = 80;
 pub const TILE_MAP_HEIGHT: i32 = 50;
 pub const NUM_TILES: usize = (TILE_MAP_WIDTH * TILE_MAP_HEIGHT) as usize;
 
-/* pub const D_UP: TilePoint = TilePoint { x: 0, y: 1 };
+pub const D_UP: TilePoint = TilePoint { x: 0, y: 1 };
 pub const D_DOWN: TilePoint = TilePoint { x: 0, y: -1 };
 pub const D_LEFT: TilePoint = TilePoint { x: -1, y: 0 };
-pub const D_RIGHT: TilePoint = TilePoint { x: 1, y: 0 }; */
+pub const D_RIGHT: TilePoint = TilePoint { x: 1, y: 0 };
+
+pub const DIRECTIONS: [TilePoint; 4] = [D_UP, D_DOWN, D_LEFT, D_RIGHT];
 
 #[derive(Component, Debug, Clone, Copy, PartialEq)]
 pub struct TilePoint {
@@ -88,6 +90,15 @@ impl std::convert::From<Point> for TilePoint {
         Self {
             x: value.x,
             y: value.y,
+        }
+    }
+}
+
+impl std::convert::Into<Point> for TilePoint {
+    fn into(self) -> Point {
+        Point {
+            x: self.x,
+            y: self.y,
         }
     }
 }
