@@ -20,7 +20,7 @@ pub fn spawn_enemy(ecs: &mut World, rng: &mut Rng, pos: TilePoint) {
         render: Render {
             texture: render_type,
         },
-        moves_randomly: MovesRandomly,
+        movement_behaviour: ChasePlayer,
     });
 }
 

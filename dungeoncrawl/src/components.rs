@@ -21,6 +21,9 @@ pub struct Enemy;
 pub struct MovesRandomly;
 
 #[derive(Component, Debug)]
+pub struct ChasePlayer;
+
+#[derive(Component, Debug)]
 pub struct EntityName(pub String);
 
 // TODO Make the texture a Rect or something
@@ -73,5 +76,5 @@ pub struct EnemyBundle {
     pub name: EntityName,
     pub health: Health,
     pub render: Render,
-    pub moves_randomly: MovesRandomly,
+    pub movement_behaviour: ChasePlayer,
 }
