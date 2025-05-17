@@ -1,3 +1,4 @@
+use bracket_pathfinding::prelude::Point;
 pub use fastrand::Rng;
 pub use input_lib::*;
 //pub use legion::systems::CommandBuffer;
@@ -79,6 +80,15 @@ impl TilePoint {
 
     pub const fn zero() -> Self {
         Self { x: 0, y: 0 }
+    }
+}
+
+impl std::convert::From<Point> for TilePoint {
+    fn from(value: Point) -> Self {
+        Self {
+            x: value.x,
+            y: value.y,
+        }
     }
 }
 
