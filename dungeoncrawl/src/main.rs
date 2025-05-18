@@ -57,6 +57,7 @@ struct Game {
     input_systems: Schedule,
     player_systems: Schedule,
     monster_systems: Schedule,
+    render_systems: Schedule,
     //events: Events<WantsToMove>,
     controller: Controller,
 }
@@ -96,6 +97,7 @@ impl Game {
             input_systems: build_input_schedule(),
             player_systems: build_player_schedule(),
             monster_systems: build_monster_schedule(),
+            render_systems: build_render_schedule(),
             //events,
             controller: Controller::new(),
         }
@@ -109,6 +111,7 @@ impl Game {
             TurnState::PlayerTurn => self.player_systems.run(&mut self.ecs),
             TurnState::MonsterTurn => self.monster_systems.run(&mut self.ecs),
         }
+        self.render_systems.run(&mut self.ecs);
 
         self.ecs.resource_mut::<Events<WantsToMove>>().update();
         self.ecs.resource_mut::<Events<WantsToAttack>>().update();
