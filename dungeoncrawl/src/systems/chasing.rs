@@ -40,7 +40,7 @@ pub fn chasing_system(
             let mut attacked = false;
             creatures_query
                 .iter()
-                .filter(|(_, target_pos, _, _)| **target_pos == destination)
+                .filter(|(_, target_pos, _, _)| **target_pos == destination) // TODO this still allows for overlap of enemies
                 .for_each(|(victim, _, _, option_player)| {
                     if option_player.is_some() {
                         attack_writer.write(WantsToAttack { attacker, victim });

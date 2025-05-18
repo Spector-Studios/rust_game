@@ -1,5 +1,6 @@
 use crate::{events::WantsToMove, prelude::*};
 
+// TODO Make this smooth transition
 pub fn movement_system(
     //ecs: World,
     map: Res<Map>,

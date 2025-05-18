@@ -69,6 +69,7 @@ impl PlayerBundle {
     }
 }
 
+// TODO Find a better way to store the behaviour
 #[derive(Bundle, Debug)]
 pub struct EnemyBundle {
     pub enemy: Enemy,

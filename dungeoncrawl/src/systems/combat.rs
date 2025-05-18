@@ -1,5 +1,6 @@
 use crate::{events::WantsToAttack, prelude::*};
 
+// TODO Add some visual indicator that entity attacked
 pub fn combat_system(
     mut attack_reader: EventReader<WantsToAttack>,
     mut commands: Commands,
