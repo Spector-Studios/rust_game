@@ -9,6 +9,8 @@ mod systems;
 mod texture_store;
 mod viewport;
 
+use std::collections::VecDeque;
+
 use crate::miniquad::conf::Platform;
 use crate::miniquad::conf::WebGLVersion;
 use crate::prelude::*;
@@ -49,7 +51,7 @@ void main() {
 enum TurnState {
     AwaitingInput,
     PlayerTurn,
-    MonsterTurn,
+    MonsterTurn { queue: VecDeque<Entity> },
 }
 
 struct Game {
@@ -109,7 +111,7 @@ impl Game {
         match *self.ecs.get_resource::<TurnState>().unwrap() {
             TurnState::AwaitingInput => self.input_systems.run(&mut self.ecs),
             TurnState::PlayerTurn => self.player_systems.run(&mut self.ecs),
-            TurnState::MonsterTurn => self.monster_systems.run(&mut self.ecs),
+            TurnState::MonsterTurn { queue: _ } => self.monster_systems.run(&mut self.ecs),
         }
         self.render_systems.run(&mut self.ecs);
 

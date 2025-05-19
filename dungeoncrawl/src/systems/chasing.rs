@@ -1,11 +1,13 @@
 use bracket_pathfinding::prelude::{Algorithm2D, DijkstraMap, DistanceAlg};
 
 use crate::{
+    TurnState,
     events::{WantsToAttack, WantsToMove},
     prelude::*,
 };
 
 pub fn chasing_system(
+    mut turn_state: ResMut<TurnState>,
     map: Res<Map>,
     chasers: Query<(Entity, &TilePoint), With<ChasePlayer>>,
     creatures_query: Query<(Entity, &TilePoint, &Health, Option<&Player>)>,
@@ -13,19 +15,28 @@ pub fn chasing_system(
     mut attack_writer: EventWriter<WantsToAttack>,
     mut move_writer: EventWriter<WantsToMove>,
 ) {
-    let player_pos = player.single().expect("More than one or no players");
-    let player_idx = map.point2d_to_index((*player_pos).into());
+    if let TurnState::MonsterTurn { queue } = &mut *turn_state {
+        let player_pos = player.single().expect("More than one or no players");
+        let player_idx = map.point2d_to_index((*player_pos).into());
 
-    let search_targets = vec![player_idx];
-    let dijkstra_map = DijkstraMap::new(
-        TILE_MAP_WIDTH,
-        TILE_MAP_HEIGHT,
-        &search_targets,
-        &*map,
-        1024.0,
-    );
+        // TODO Store this map in a resource that is
+        // TODO marked stale once player moves
+        let search_targets = vec![player_idx];
+        let dijkstra_map = DijkstraMap::new(
+            TILE_MAP_WIDTH,
+            TILE_MAP_HEIGHT,
+            &search_targets,
+            &*map,
+            1024.0,
+        );
 
-    chasers.iter().for_each(|(attacker, pos)| {
+        let (attacker, pos);
+        if let Some(entity) = queue.front() {
+            (attacker, pos) = chasers.get(*entity).unwrap();
+        } else {
+            return;
+        }
+
         let idx = map.point2d_to_index((*pos).into());
 
         if let Some(destination) = DijkstraMap::find_lowest_exit(&dijkstra_map, idx, &*map) {
@@ -56,5 +67,7 @@ pub fn chasing_system(
                 });
             }
         }
-    });
+
+        queue.pop_front();
+    }
 }
