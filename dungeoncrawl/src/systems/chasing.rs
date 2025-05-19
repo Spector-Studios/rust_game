@@ -1,17 +1,12 @@
 use bracket_pathfinding::prelude::{Algorithm2D, DijkstraMap, DistanceAlg};
 
-use crate::{
-    events::{WantsToAttack, WantsToMove},
-    prelude::*,
-};
+use crate::prelude::*;
 
 pub fn chasing_system(
+    mut commands: Commands,
     map: Res<Map>,
     chasers: Query<(Entity, &TilePoint), With<ChasePlayer>>,
-    creatures_query: Query<(Entity, &TilePoint, &Health, Option<&Player>)>,
     player: Query<&TilePoint, With<Player>>,
-    mut attack_writer: EventWriter<WantsToAttack>,
-    mut move_writer: EventWriter<WantsToMove>,
 ) {
     let player_pos = player.single().expect("More than one or no players");
     let player_idx = map.point2d_to_index((*player_pos).into());
@@ -37,24 +32,9 @@ pub fn chasing_system(
                 *player_pos
             };
 
-            let mut attacked = false;
-            creatures_query
-                .iter()
-                .filter(|(_, target_pos, _, _)| **target_pos == destination) // TODO this still allows for overlap of enemies
-                .for_each(|(victim, _, _, option_player)| {
-                    if option_player.is_some() {
-                        attack_writer.write(WantsToAttack { attacker, victim });
-                    }
-                    attacked = true;
-                });
-
-            if !attacked {
-                move_writer.write(WantsToMove {
-                    entity: attacker,
-                    destination,
-                    is_player: false,
-                });
-            }
+            commands
+                .entity(attacker)
+                .insert(Animation::new_movement(*pos, destination));
         }
     });
 }

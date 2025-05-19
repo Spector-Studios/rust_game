@@ -1,4 +1,8 @@
+use bevy_time::TimerMode;
+use std::time::Duration;
+
 use crate::prelude::*;
+use bevy_time::Timer;
 use strum_macros::EnumIter;
 
 #[derive(EnumIter, Debug, PartialEq)]
@@ -32,8 +36,29 @@ pub struct Render {
     pub texture: EntityType,
 }
 
+#[derive(Debug)]
+pub enum AnimationType {
+    Move { from: TilePoint, to: TilePoint },
+    Attack { from: TilePoint, to: TilePoint },
+}
+
 #[derive(Component, Debug)]
-pub struct Timer {
+pub struct Animation {
+    pub animation_type: AnimationType,
+    pub timer: Timer,
+}
+
+impl Animation {
+    pub fn new_movement(from: TilePoint, to: TilePoint) -> Self {
+        Self {
+            animation_type: AnimationType::Move { from, to },
+            timer: Timer::new(Duration::from_millis(500), TimerMode::Once),
+        }
+    }
+}
+
+#[derive(Component, Debug)]
+pub struct InputTimer {
     pub time: f32,
 }
 
@@ -49,7 +74,7 @@ pub struct PlayerBundle {
     pub pos: TilePoint,
     pub health: Health,
     pub render: Render,
-    pub timer: Timer,
+    pub timer: InputTimer,
 }
 
 impl PlayerBundle {
@@ -64,7 +89,7 @@ impl PlayerBundle {
             render: Render {
                 texture: EntityType::Player,
             },
-            timer: Timer { time: 0.0 },
+            timer: InputTimer { time: 0.0 },
         }
     }
 }

@@ -1,3 +1,4 @@
+mod animation;
 mod chasing;
 mod combat;
 mod end_turn;
@@ -8,13 +9,13 @@ mod movement;
 mod player_input;
 mod random_move;
 
-use crate::systems::hud_render::hud_render_system;
 use bevy_ecs::schedule::ScheduleLabel;
 
 use chasing::chasing_system;
 use combat::combat_system;
 use end_turn::end_turn_system;
 use entity_render::entity_render_system;
+use hud_render::hud_render_system;
 use map_render::map_render_system;
 use movement::movement_system;
 use player_input::player_input_system;
@@ -26,15 +27,7 @@ use crate::prelude::*;
 struct InputSchedule;
 pub fn build_input_schedule() -> Schedule {
     let mut schedule = Schedule::new(InputSchedule);
-    schedule.add_systems(
-        (
-            player_input_system,
-            //map_render_system,
-            //entity_render_system,
-            //hud_render_system,
-        )
-            .chain(),
-    );
+    schedule.add_systems(player_input_system);
 
     schedule
 }
@@ -43,17 +36,7 @@ pub fn build_input_schedule() -> Schedule {
 struct PlayerSchedule;
 pub fn build_player_schedule() -> Schedule {
     let mut schedule = Schedule::new(PlayerSchedule);
-    schedule.add_systems(
-        (
-            combat_system,
-            movement_system,
-            //map_render_system,
-            //entity_render_system,
-            //hud_render_system,
-            end_turn_system,
-        )
-            .chain(),
-    );
+    schedule.add_systems((end_turn_system).chain());
 
     schedule
 }
@@ -66,15 +49,20 @@ pub fn build_monster_schedule() -> Schedule {
         (
             random_move_system,
             chasing_system,
-            combat_system,
-            movement_system,
-            //map_render_system,
-            //entity_render_system,
-            //hud_render_system,
+            //combat_system,
+            //movement_system,
             end_turn_system,
         )
             .chain(),
     );
+
+    schedule
+}
+
+#[derive(ScheduleLabel, Debug, Clone, PartialEq, Eq, Hash)]
+struct AnimationSchedule;
+pub fn build_animation_schedule() -> Schedule {
+    let schedule = Schedule::new(AnimationSchedule);
 
     schedule
 }

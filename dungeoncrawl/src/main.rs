@@ -1,7 +1,7 @@
 mod components;
 mod events;
 mod map;
-mod map_builder;
+mod map_builder;mod resources;
 mod player;
 mod prelude;
 mod spawner;
@@ -9,12 +9,15 @@ mod systems;
 mod texture_store;
 mod viewport;
 
+use std::collections::VecDeque;
+
 use crate::miniquad::conf::Platform;
 use crate::miniquad::conf::WebGLVersion;
 use crate::prelude::*;
 use events::WantsToAttack;
 use events::WantsToMove;
 use input_lib::Controller;
+use resources::AnimationQueue;
 
 const FRAGMENT_SHADER: &str = "
 #version 100
@@ -45,11 +48,29 @@ void main() {
 }
 ";
 
-#[derive(Resource, Debug)]
+#[derive(Resource,Debug, Clone)]
 enum TurnState {
     AwaitingInput,
-    PlayerTurn,
-    MonsterTurn,
+    PlayerTurn {queue: VecDeque<Entity>},
+    MonsterTurn { queue: VecDeque<Entity>},
+}
+
+impl TurnState {
+    pub fn get_mut_queue(&mut self) -> &mut VecDeque<Entity> {
+        match self {
+            TurnState::AwaitingInput => {error!("Requested queue on AwaitingInput"); panic!()},
+            TurnState::PlayerTurn { queue } => queue,
+            TurnState::MonsterTurn { queue } => queue,
+        }
+    }
+
+    pub fn get_queue(&self) -> &VecDeque<Entity> {
+        match self {
+            TurnState::AwaitingInput => {error!("Requested queue on AwaitingInput"); panic!()},
+            TurnState::PlayerTurn { queue } => queue,
+            TurnState::MonsterTurn { queue } => queue,
+        }
+    }
 }
 
 struct Game {
@@ -57,6 +78,7 @@ struct Game {
     input_systems: Schedule,
     player_systems: Schedule,
     monster_systems: Schedule,
+    animation_systems: Schedule,
     render_systems: Schedule,
     //events: Events<WantsToMove>,
     controller: Controller,
@@ -80,6 +102,7 @@ impl Game {
         //ecs.insert_resource(TextureStore::new());
         ecs.insert_resource(sprite_sheet);
         ecs.insert_resource(TurnState::AwaitingInput);
+        ecs.insert_resource(AnimationQueue {queue: VecDeque::new()});
         //ecs.insert_resource(FrameTime(0.0));
         ecs.insert_resource(Events::<WantsToMove>::default());
         ecs.insert_resource(Events::<WantsToAttack>::default());
@@ -97,6 +120,7 @@ impl Game {
             input_systems: build_input_schedule(),
             player_systems: build_player_schedule(),
             monster_systems: build_monster_schedule(),
+            animation_systems: build_animation_schedule(),
             render_systems: build_render_schedule(),
             //events,
             controller: Controller::new(),
@@ -106,10 +130,10 @@ impl Game {
         self.controller.update(); // TODO Move to ecs
         self.ecs.insert_resource(self.controller.button_state);
         //self.ecs.insert_resource(FrameTime(self.ecs.get_resource::<FrameTime>().unwrap().0 + get_frame_time()));
-        match *self.ecs.get_resource::<TurnState>().unwrap() {
+        match self.ecs.get_resource::<TurnState>().unwrap() {
             TurnState::AwaitingInput => self.input_systems.run(&mut self.ecs),
-            TurnState::PlayerTurn => self.player_systems.run(&mut self.ecs),
-            TurnState::MonsterTurn => self.monster_systems.run(&mut self.ecs),
+            TurnState::PlayerTurn { queue: _ } => self.player_systems.run(&mut self.ecs),
+            TurnState::MonsterTurn { queue:_ } => self.monster_systems.run(&mut self.ecs),
         }
         self.render_systems.run(&mut self.ecs);
 
