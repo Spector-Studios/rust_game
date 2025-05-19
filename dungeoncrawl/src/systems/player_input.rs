@@ -1,7 +1,7 @@
 use crate::{
+    TurnState,
     events::{WantsToAttack, WantsToMove},
     prelude::*,
-    TurnState,
 };
 
 pub fn player_input_system(
@@ -10,7 +10,7 @@ pub fn player_input_system(
     //map: Res<Map>,
     //mut camera: ResMut<Camera>,
     mut turn_state: ResMut<TurnState>,
-    mut player_query: Query<(Entity, &TilePoint, &mut Health, &mut InputTimer), With<Player>>,
+    mut player_query: Query<(Entity, &TilePoint, &mut Health, &mut Timer), With<Player>>,
     enemy_pos_query: Query<(Entity, &TilePoint), With<Enemy>>,
     mut move_writer: EventWriter<WantsToMove>,
     mut attack_writer: EventWriter<WantsToAttack>,
