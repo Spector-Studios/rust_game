@@ -1,32 +1,32 @@
 use bracket_pathfinding::prelude::{Algorithm2D, DijkstraMap, DistanceAlg};
 
 use crate::{
-    TurnState,
     events::{WantsToAttack, WantsToMove},
     prelude::*,
     resources::PathfindingMap,
+    TurnState,
 };
 
 pub fn chasing_system(
     mut turn_state: ResMut<TurnState>,
     map: Res<Map>,
-    mut pathfinding_map: ResMut<PathfindingMap>,
+    pathfinding_map: Res<PathfindingMap>,
     chasers: Query<(Entity, &TilePoint), With<ChasePlayer>>,
     creatures_query: Query<(Entity, &TilePoint, &Health, Option<&Player>)>,
-    player: Query<&TilePoint, With<Player>>,
+    //player: Query<&TilePoint, With<Player>>,
     mut attack_writer: EventWriter<WantsToAttack>,
     mut move_writer: EventWriter<WantsToMove>,
 ) {
+    if pathfinding_map.is_stale {
+        return;
+    }
+
     if let TurnState::MonsterTurn { queue } = &mut *turn_state {
-        let player_pos = player.single().expect("More than one or no players");
-        let player_idx = map.point2d_to_index((*player_pos).into());
-
-        let search_targets = vec![player_idx];
-        if pathfinding_map.is_stale {
-            *pathfinding_map = PathfindingMap::new(&search_targets, &map);
-        }
-
         let dijkstra_map = &pathfinding_map.dijsktra_map;
+        let (_, player_pos, _, _) = creatures_query
+            .iter()
+            .find(|(_, _, _, option_player)| option_player.is_some())
+            .unwrap();
 
         let (attacker, pos);
         if let Some(entity) = queue.front() {
@@ -49,7 +49,7 @@ pub fn chasing_system(
             let mut attacked = false;
             creatures_query
                 .iter()
-                .filter(|(_, target_pos, _, _)| **target_pos == destination) // TODO this still allows for overlap of enemies
+                .filter(|(_, target_pos, _, _)| **target_pos == destination)
                 .for_each(|(victim, _, _, option_player)| {
                     if option_player.is_some() {
                         attack_writer.write(WantsToAttack { attacker, victim });
