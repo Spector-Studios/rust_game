@@ -94,12 +94,9 @@ impl std::convert::From<Point> for TilePoint {
     }
 }
 
-impl std::convert::Into<Point> for TilePoint {
-    fn into(self) -> Point {
-        Point {
-            x: self.x,
-            y: self.y,
-        }
+impl std::convert::From<TilePoint> for Point {
+    fn from(val: TilePoint) -> Self {
+        Point { x: val.x, y: val.y }
     }
 }
 
