@@ -4,6 +4,7 @@ mod map;
 mod map_builder;
 mod player;
 mod prelude;
+mod resources;
 mod spawner;
 mod systems;
 mod texture_store;
@@ -14,9 +15,11 @@ use std::collections::VecDeque;
 use crate::miniquad::conf::Platform;
 use crate::miniquad::conf::WebGLVersion;
 use crate::prelude::*;
+use bracket_pathfinding::prelude::Algorithm2D;
 use events::WantsToAttack;
 use events::WantsToMove;
 use input_lib::Controller;
+use resources::PathfindingMap;
 
 const FRAGMENT_SHADER: &str = "
 #version 100
@@ -77,7 +80,6 @@ impl Game {
         let mut rng = Rng::with_seed(macroquad::miniquad::date::now() as _);
         let map_builder = MapBuilder::new(&mut rng);
 
-        ecs.insert_resource(map_builder.map);
         ecs.insert_resource(Viewport::new(map_builder.player_start));
         //ecs.insert_resource(TextureStore::new());
         ecs.insert_resource(sprite_sheet);
@@ -85,6 +87,12 @@ impl Game {
         //ecs.insert_resource(FrameTime(0.0));
         ecs.insert_resource(Events::<WantsToMove>::default());
         ecs.insert_resource(Events::<WantsToAttack>::default());
+
+        let player_idx = map_builder
+            .map
+            .point2d_to_index(map_builder.player_start.into());
+        ecs.insert_resource(PathfindingMap::new(&[player_idx], &map_builder.map));
+        ecs.insert_resource(map_builder.map);
 
         spawn_player(&mut ecs, map_builder.player_start);
         map_builder

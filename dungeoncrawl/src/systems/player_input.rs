@@ -2,11 +2,13 @@ use crate::{
     TurnState,
     events::{WantsToAttack, WantsToMove},
     prelude::*,
+    resources::PathfindingMap,
 };
 
 pub fn player_input_system(
     //mut frame_time: ResMut<FrameTime>,
     button_state: Res<ButtonState>,
+    mut pathfinding_map: ResMut<PathfindingMap>,
     //map: Res<Map>,
     //mut camera: ResMut<Camera>,
     mut turn_state: ResMut<TurnState>,
@@ -51,6 +53,7 @@ pub fn player_input_system(
                 destination,
                 is_player: true,
             });
+            pathfinding_map.is_stale = true;
         }
 
         if !did_something {
