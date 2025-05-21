@@ -11,13 +11,14 @@ mod viewport;
 
 use std::collections::VecDeque;
 
-use crate::miniquad::conf::Platform;
-use crate::miniquad::conf::WebGLVersion;
 use crate::prelude::*;
+use crate::viewport::Viewport;
 use bracket_pathfinding::prelude::Algorithm2D;
 use events::WantsToAttack;
 use events::WantsToMove;
 use input_lib::Controller;
+use macroquad::miniquad::conf::Platform;
+use macroquad::miniquad::conf::WebGLVersion;
 use resources::PathfindingMap;
 
 const FRAGMENT_SHADER: &str = "
@@ -49,11 +50,12 @@ void main() {
 }
 ";
 
-#[derive(Resource, Debug)]
+#[derive(Resource, Debug, Clone)]
 enum TurnState {
     AwaitingInput,
     PlayerTurn,
     MonsterTurn { queue: VecDeque<Entity> },
+    GameOver,
 }
 
 struct Game {
@@ -101,16 +103,65 @@ impl Game {
             controller: Controller::new(),
         }
     }
+
+    fn game_over(&mut self, buttons: ButtonState) {
+        let msg = "Game Over";
+        let text_centre = get_text_center(msg, None, 200, 1.0, 0.0);
+        draw_text(
+            msg,
+            Viewport::viewport_centre().x - text_centre.x,
+            Viewport::viewport_centre().y - text_centre.y,
+            200.0,
+            RED,
+        );
+
+        if buttons.action {
+            self.ecs.clear_entities();
+            let mut rng = Rng::with_seed(macroquad::miniquad::date::now() as _);
+            let map_builder = MapBuilder::new(&mut rng);
+
+            self.ecs
+                .insert_resource(Viewport::new(map_builder.player_start));
+            self.ecs.insert_resource(TurnState::AwaitingInput);
+            self.ecs.insert_resource(Events::<WantsToMove>::default());
+            self.ecs.insert_resource(Events::<WantsToAttack>::default());
+
+            let player_idx = map_builder
+                .map
+                .point2d_to_index(map_builder.player_start.into());
+            self.ecs
+                .insert_resource(PathfindingMap::new(&[player_idx], &map_builder.map));
+            self.ecs.insert_resource(map_builder.map);
+
+            spawn_player(&mut self.ecs, map_builder.player_start);
+            map_builder
+                .rooms
+                .iter()
+                .skip(1)
+                .map(|r| r.centre())
+                .for_each(|pos| spawn_enemy(&mut self.ecs, &mut rng, pos));
+        }
+    }
+
     fn tick(&mut self) {
         self.controller.update(); // TODO Move to ecs
         self.ecs.insert_resource(self.controller.button_state);
 
-        match *self.ecs.get_resource::<TurnState>().unwrap() {
+        let mut game_over = false;
+        match self.ecs.get_resource::<TurnState>().unwrap() {
             TurnState::AwaitingInput => self.input_systems.run(&mut self.ecs),
             TurnState::PlayerTurn => self.player_systems.run(&mut self.ecs),
             TurnState::MonsterTurn { queue: _ } => self.monster_systems.run(&mut self.ecs),
+            TurnState::GameOver => {
+                let buttons = *self.ecs.get_resource::<ButtonState>().unwrap();
+                self.game_over(buttons);
+                game_over = true;
+            }
         }
-        self.render_systems.run(&mut self.ecs);
+
+        if !game_over {
+            self.render_systems.run(&mut self.ecs);
+        }
 
         self.ecs.resource_mut::<Events<WantsToMove>>().update();
         self.ecs.resource_mut::<Events<WantsToAttack>>().update();

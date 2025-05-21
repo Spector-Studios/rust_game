@@ -18,11 +18,18 @@ impl Viewport {
         }
     }
 
-    fn x_offset() -> f32 {
+    pub fn viewport_centre() -> Vec2 {
+        vec2(
+            Self::x_offset() + VIEWPORT_WIDTH / 2.0,
+            Self::y_offset() + VIEWPORT_HEIGHT / 2.0,
+        )
+    }
+
+    pub fn x_offset() -> f32 {
         (screen_width() - VIEWPORT_WIDTH) / 2.0
     }
 
-    fn y_offset() -> f32 {
+    pub fn y_offset() -> f32 {
         ((screen_height() - VIEWPORT_HEIGHT) / 2.0) * 0.7
     }
 
