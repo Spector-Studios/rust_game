@@ -6,11 +6,8 @@ use crate::{
 };
 
 pub fn player_input_system(
-    //mut frame_time: ResMut<FrameTime>,
     button_state: Res<ButtonState>,
     mut pathfinding_map: ResMut<PathfindingMap>,
-    //map: Res<Map>,
-    //mut camera: ResMut<Camera>,
     mut turn_state: ResMut<TurnState>,
     mut player_query: Query<(Entity, &TilePoint, &mut Health, &mut Timer), With<Player>>,
     enemy_pos_query: Query<(Entity, &TilePoint), With<Enemy>>,

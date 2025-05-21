@@ -9,7 +9,6 @@ pub fn map_render_system(map: Res<Map>, viewport: Res<Viewport>, sprite_sheet: R
 
             if map.in_bounds(pt) {
                 let idx = map_idx(pt);
-                //let screen_pos = camera.get_screen_pos(pt);
 
                 match map.tiles[idx] {
                     TileType::Wall => {
@@ -24,8 +23,8 @@ pub fn map_render_system(map: Res<Map>, viewport: Res<Viewport>, sprite_sheet: R
                                 ..Default::default()
                             },
                         );
-                        //draw_rectangle(screen_x, screen_y, TILE_SIZE, TILE_SIZE, RED);
                     }
+
                     TileType::Floor => draw_texture_ex(
                         &sprite_sheet.sprites,
                         screen_x,

@@ -2,7 +2,6 @@ mod components;
 mod events;
 mod map;
 mod map_builder;
-mod player;
 mod prelude;
 mod resources;
 mod spawner;
@@ -63,28 +62,19 @@ struct Game {
     player_systems: Schedule,
     monster_systems: Schedule,
     render_systems: Schedule,
-    //events: Events<WantsToMove>,
     controller: Controller,
 }
 
 impl Game {
-    fn new(
-        sprite_sheet: SpriteSheet,
-        //player_texture: Texture2D,
-        //wall_texture: Texture2D,
-        //floor_texture: Texture2D,
-        //enemy_texture: Texture2D,
-    ) -> Self {
+    fn new(sprite_sheet: SpriteSheet) -> Self {
         let mut ecs = World::default();
 
         let mut rng = Rng::with_seed(macroquad::miniquad::date::now() as _);
         let map_builder = MapBuilder::new(&mut rng);
 
         ecs.insert_resource(Viewport::new(map_builder.player_start));
-        //ecs.insert_resource(TextureStore::new());
         ecs.insert_resource(sprite_sheet);
         ecs.insert_resource(TurnState::AwaitingInput);
-        //ecs.insert_resource(FrameTime(0.0));
         ecs.insert_resource(Events::<WantsToMove>::default());
         ecs.insert_resource(Events::<WantsToAttack>::default());
 
@@ -108,14 +98,13 @@ impl Game {
             player_systems: build_player_schedule(),
             monster_systems: build_monster_schedule(),
             render_systems: build_render_schedule(),
-            //events,
             controller: Controller::new(),
         }
     }
     fn tick(&mut self) {
         self.controller.update(); // TODO Move to ecs
         self.ecs.insert_resource(self.controller.button_state);
-        //self.ecs.insert_resource(FrameTime(self.ecs.get_resource::<FrameTime>().unwrap().0 + get_frame_time()));
+
         match *self.ecs.get_resource::<TurnState>().unwrap() {
             TurnState::AwaitingInput => self.input_systems.run(&mut self.ecs),
             TurnState::PlayerTurn => self.player_systems.run(&mut self.ecs),
@@ -125,27 +114,13 @@ impl Game {
 
         self.ecs.resource_mut::<Events<WantsToMove>>().update();
         self.ecs.resource_mut::<Events<WantsToAttack>>().update();
-        //draw_circle(200.0, 700.0, 90.0, VIOLET);
-        //draw_texture(&self.resources.get::<TextureStore>().unwrap().map_render.texture, VIEWPORT_X, VIEWPORT_Y, WHITE);
+
         self.controller.draw(); // TODO Move to ecs
     }
 }
 
 #[macroquad::main(window_conf)]
 async fn main() {
-    // let player_texture = load_texture("resources/Player.png")
-    //     .await
-    //     .expect("Player texture");
-    // let floor_texture = load_texture("resources/Floor.png")
-    //     .await
-    //     .expect("Floor texture.");
-    // let wall_texture = load_texture("resources/Wall.png")
-    //     .await
-    //     .expect("Wall texture.");
-    // let goblin_texture = load_texture("resources/Goblin.png")
-    //     .await
-    //     .expect("Goblin Texture");
-
     let sprites = load_texture("resources/sprites.png")
         .await
         .expect("Sprite sheet");
@@ -153,13 +128,7 @@ async fn main() {
 
     let sprit_sheet = SpriteSheet { sprites };
 
-    let mut game = Game::new(
-        sprit_sheet,
-        //player_texture,
-        //wall_texture,
-        //floor_texture,
-        //goblin_texture,
-    );
+    let mut game = Game::new(sprit_sheet);
 
     let render_target = render_target(380, 150);
     render_target.texture.set_filter(FilterMode::Nearest);

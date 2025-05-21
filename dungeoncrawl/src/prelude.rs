@@ -1,20 +1,16 @@
+pub use bevy_ecs::prelude::*;
 use bracket_pathfinding::prelude::Point;
 pub use fastrand::Rng;
 pub use input_lib::*;
-//pub use legion::systems::CommandBuffer;
-//pub use legion::world::SubWorld;
-//pub use legion::*;
-pub use bevy_ecs::prelude::*;
 pub use macroquad::prelude::*;
 
 pub use crate::components::*;
 pub use crate::map::*;
 pub use crate::map_builder::*;
-pub use crate::viewport::Viewport;
-//pub use crate::player::*;
 pub use crate::spawner::*;
 pub use crate::systems::*;
 pub use crate::texture_store::*;
+pub use crate::viewport::Viewport;
 
 //pub const FRAME_RATE: f32 = 30.0;
 

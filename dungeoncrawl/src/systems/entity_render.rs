@@ -26,15 +26,6 @@ pub fn entity_render_system(
                     ..Default::default()
                 },
             );
-            /* draw_rectangle(
-                camera.get_screen_x(pos.x),
-                camera.get_screen_y(pos.y),
-                TILE_SIZE,
-                TILE_SIZE,
-                PINK,
-            ); */
         }
     }
-
-    //draw_rectangle(400.0, 1300.0, 100.0, 200.0, MAGENTA);
 }

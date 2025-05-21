@@ -1,10 +1,10 @@
 use bracket_pathfinding::prelude::{Algorithm2D, DijkstraMap, DistanceAlg};
 
 use crate::{
+    TurnState,
     events::{WantsToAttack, WantsToMove},
     prelude::*,
     resources::PathfindingMap,
-    TurnState,
 };
 
 pub fn chasing_system(
@@ -13,7 +13,6 @@ pub fn chasing_system(
     pathfinding_map: Res<PathfindingMap>,
     chasers: Query<(Entity, &TilePoint), With<ChasePlayer>>,
     creatures_query: Query<(Entity, &TilePoint, &Health, Option<&Player>)>,
-    //player: Query<&TilePoint, With<Player>>,
     mut attack_writer: EventWriter<WantsToAttack>,
     mut move_writer: EventWriter<WantsToMove>,
 ) {

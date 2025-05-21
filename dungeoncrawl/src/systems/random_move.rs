@@ -4,8 +4,6 @@ use crate::{
 };
 
 pub fn random_move_system(
-    //commands: Commands,
-    //map: Res<Map>,
     mut move_writer: EventWriter<WantsToMove>,
     mut attack_writer: EventWriter<WantsToAttack>,
     mut random_move_query: Query<(Entity, &TilePoint), With<MovesRandomly>>,
@@ -13,7 +11,6 @@ pub fn random_move_system(
 ) {
     // TODO Make Rng a resource
     let mut rng = Rng::with_seed(macroquad::miniquad::date::now() as _);
-    //let (player_entity, player_pos) = player_query.single().expect("No or more than one player");
 
     const DIRECTIONS: [TilePoint; 4] = [
         TilePoint::new(0, 1),

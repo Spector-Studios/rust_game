@@ -28,12 +28,7 @@ use crate::prelude::*;
 struct InputSchedule;
 pub fn build_input_schedule() -> Schedule {
     let mut schedule = Schedule::new(InputSchedule);
-    schedule.add_systems((
-        player_input_system,
-        //map_render_system,
-        //entity_render_system,
-        //hud_render_system,
-    ));
+    schedule.add_systems((player_input_system,));
 
     schedule
 }
@@ -44,9 +39,6 @@ pub fn build_player_schedule() -> Schedule {
     let mut schedule = Schedule::new(PlayerSchedule);
     schedule.add_systems((
         (combat_system, movement_system).before(end_turn_system),
-        //map_render_system,
-        //entity_render_system,
-        //hud_render_system,
         end_turn_system,
     ));
 
@@ -66,9 +58,6 @@ pub fn build_monster_schedule() -> Schedule {
             movement_system,
         )
             .before(end_turn_system),
-        //map_render_system,
-        //entity_render_system,
-        //hud_render_system,
         end_turn_system,
     ));
 
