@@ -9,6 +9,8 @@ pub enum EntityType {
     Giant,
     Twoheads,
     Warrior,
+
+    Amulet,
 }
 
 #[derive(Component, Debug)]
@@ -16,6 +18,12 @@ pub struct Player;
 
 #[derive(Component, Debug)]
 pub struct Enemy;
+
+#[derive(Component, Debug)]
+pub struct Item;
+
+#[derive(Component, Debug)]
+pub struct AmuletOfYala;
 
 #[derive(Component, Debug)]
 pub struct MovesRandomly;
@@ -78,4 +86,13 @@ pub struct EnemyBundle {
     pub health: Health,
     pub render: Render,
     pub movement_behaviour: ChasePlayer,
+}
+
+#[derive(Bundle, Debug)]
+pub struct AmuletBundle {
+    pub item: Item,
+    pub amulet_of_yala: AmuletOfYala,
+    pub pos: TilePoint,
+    pub name: EntityName,
+    pub render: Render,
 }

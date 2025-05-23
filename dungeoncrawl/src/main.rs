@@ -10,6 +10,7 @@ mod texture_store;
 mod viewport;
 
 use std::collections::VecDeque;
+use std::panic;
 
 use crate::prelude::*;
 use crate::viewport::Viewport;
@@ -56,6 +57,7 @@ enum TurnState {
     PlayerTurn,
     MonsterTurn { queue: VecDeque<Entity> },
     GameOver,
+    Victory,
 }
 
 struct Game {
@@ -87,6 +89,7 @@ impl Game {
         ecs.insert_resource(map_builder.map);
 
         spawn_player(&mut ecs, map_builder.player_start);
+        spawn_amulet(&mut ecs, map_builder.amulet_start);
         map_builder
             .rooms
             .iter()
@@ -116,38 +119,59 @@ impl Game {
         );
 
         if buttons.action {
-            self.ecs.clear_entities();
-            let mut rng = Rng::with_seed(macroquad::miniquad::date::now() as _);
-            let map_builder = MapBuilder::new(&mut rng);
-
-            self.ecs
-                .insert_resource(Viewport::new(map_builder.player_start));
-            self.ecs.insert_resource(TurnState::AwaitingInput);
-            self.ecs.insert_resource(Events::<WantsToMove>::default());
-            self.ecs.insert_resource(Events::<WantsToAttack>::default());
-
-            let player_idx = map_builder
-                .map
-                .point2d_to_index(map_builder.player_start.into());
-            self.ecs
-                .insert_resource(PathfindingMap::new(&[player_idx], &map_builder.map));
-            self.ecs.insert_resource(map_builder.map);
-
-            spawn_player(&mut self.ecs, map_builder.player_start);
-            map_builder
-                .rooms
-                .iter()
-                .skip(1)
-                .map(|r| r.centre())
-                .for_each(|pos| spawn_enemy(&mut self.ecs, &mut rng, pos));
+            self.reset_game_state();
         }
+    }
+
+    fn victory(&mut self, buttons: ButtonState) {
+        let msg = "VICTORY";
+        let text_centre = get_text_center(msg, None, 200, 1.0, 0.0);
+        draw_text(
+            msg,
+            Viewport::viewport_centre().x - text_centre.x,
+            Viewport::viewport_centre().y - text_centre.y,
+            200.0,
+            GREEN,
+        );
+
+        if buttons.action {
+            self.reset_game_state();
+        }
+    }
+
+    fn reset_game_state(&mut self) {
+        self.ecs.clear_entities();
+        let mut rng = Rng::with_seed(macroquad::miniquad::date::now() as _);
+        let map_builder = MapBuilder::new(&mut rng);
+
+        self.ecs
+            .insert_resource(Viewport::new(map_builder.player_start));
+        self.ecs.insert_resource(TurnState::AwaitingInput);
+        self.ecs.insert_resource(Events::<WantsToMove>::default());
+        self.ecs.insert_resource(Events::<WantsToAttack>::default());
+
+        let player_idx = map_builder
+            .map
+            .point2d_to_index(map_builder.player_start.into());
+        self.ecs
+            .insert_resource(PathfindingMap::new(&[player_idx], &map_builder.map));
+        self.ecs.insert_resource(map_builder.map);
+
+        spawn_player(&mut self.ecs, map_builder.player_start);
+        spawn_amulet(&mut self.ecs, map_builder.amulet_start);
+        map_builder
+            .rooms
+            .iter()
+            .skip(1)
+            .map(|r| r.centre())
+            .for_each(|pos| spawn_enemy(&mut self.ecs, &mut rng, pos));
     }
 
     fn tick(&mut self) {
         self.controller.update(); // TODO Move to ecs
         self.ecs.insert_resource(self.controller.button_state);
 
-        let mut game_over = false;
+        let mut render_game = true;
         match self.ecs.get_resource::<TurnState>().unwrap() {
             TurnState::AwaitingInput => self.input_systems.run(&mut self.ecs),
             TurnState::PlayerTurn => self.player_systems.run(&mut self.ecs),
@@ -155,11 +179,16 @@ impl Game {
             TurnState::GameOver => {
                 let buttons = *self.ecs.get_resource::<ButtonState>().unwrap();
                 self.game_over(buttons);
-                game_over = true;
+                render_game = false;
+            }
+            TurnState::Victory => {
+                let buttons = *self.ecs.get_resource::<ButtonState>().unwrap();
+                self.victory(buttons);
+                render_game = false;
             }
         }
 
-        if !game_over {
+        if render_game {
             self.render_systems.run(&mut self.ecs);
         }
 
@@ -172,6 +201,8 @@ impl Game {
 
 #[macroquad::main(window_conf)]
 async fn main() {
+    panic::set_hook(Box::new(|info| error!("{}", info)));
+    
     let sprites = load_texture("resources/sprites.png")
         .await
         .expect("Sprite sheet");

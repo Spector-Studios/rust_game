@@ -24,6 +24,18 @@ pub fn spawn_enemy(ecs: &mut World, rng: &mut Rng, pos: TilePoint) {
     });
 }
 
+pub fn spawn_amulet(ecs: &mut World, pos: TilePoint) {
+    ecs.spawn(AmuletBundle {
+        item: Item,
+        amulet_of_yala: AmuletOfYala,
+        pos,
+        name: EntityName("Amulet".to_string()),
+        render: Render {
+            texture: EntityType::Amulet,
+        },
+    });
+}
+
 fn goblin() -> (i32, String, EntityType) {
     (1, "Goblin".to_string(), EntityType::Goblin)
 }

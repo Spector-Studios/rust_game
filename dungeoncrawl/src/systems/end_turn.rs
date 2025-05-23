@@ -1,9 +1,10 @@
-use crate::{TurnState, prelude::*};
+use crate::{prelude::*, TurnState};
 
 pub fn end_turn_system(
     mut turn_state: ResMut<TurnState>,
     enemy_query: Query<Entity, With<Enemy>>,
-    player_health: Query<&Health, With<Player>>,
+    player_query: Query<(&Health, &TilePoint), With<Player>>,
+    amulet_query: Query<&TilePoint, With<AmuletOfYala>>,
 ) {
     let current_state = turn_state.clone();
     let mut new_state = match current_state {
@@ -18,8 +19,14 @@ pub fn end_turn_system(
         _ => current_state,
     };
 
-    if player_health.single().unwrap().current < 1 {
+    let (player_health, player_pos) = player_query.single().unwrap();
+    let amulet_pos = amulet_query.single().unwrap();
+    if player_health.current < 1 {
         new_state = TurnState::GameOver;
+    }
+
+    if player_pos == amulet_pos {
+        new_state = TurnState::Victory;
     }
 
     *turn_state = new_state;

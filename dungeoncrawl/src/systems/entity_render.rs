@@ -12,6 +12,7 @@ pub fn entity_render_system(
             EntityType::Giant => Rect::new(0.0, 32.0, 32.0, 32.0),
             EntityType::Twoheads => Rect::new(32.0, 96.0, 32.0, 32.0),
             EntityType::Warrior => Rect::new(96.0, 96.0, 32.0, 32.0),
+            EntityType::Amulet => Rect::new(0.0, 0.0, 32.0, 32.0),
         };
 
         if viewport.view_area.contains(*pos) {
