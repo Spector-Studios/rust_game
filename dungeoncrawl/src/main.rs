@@ -274,6 +274,7 @@ async fn main() {
 fn window_conf() -> Conf {
     Conf {
         window_title: "Test".to_owned(),
+        // high_dpi: true,
         platform: Platform {
             webgl_version: WebGLVersion::WebGL2,
             ..Default::default()
