@@ -1,11 +1,10 @@
 # Simple workflow for deploying static content to GitHub Pages
-name: Build and Deploy WASM to Github Pages
+name: Build and Deploy
 
 on:
   # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
-
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -40,7 +39,7 @@ jobs:
       - name: Add rust target
         run: rustup target add wasm32-unknown-unknown
       - name: Build
-        run: ./build.sh --release
+        run: ./wasm_build.sh --release
         
       - name: Setup Pages
         uses: actions/configure-pages@v5

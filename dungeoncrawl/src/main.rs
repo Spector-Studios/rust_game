@@ -202,8 +202,9 @@ impl Game {
 #[macroquad::main(window_conf)]
 async fn main() {
     panic::set_hook(Box::new(|info| error!("{}", info)));
+    set_pc_assets_folder("assets");
 
-    let sprites = load_texture("resources/sprites.png")
+    let sprites = load_texture("sprites.png")
         .await
         .expect("Sprite sheet");
     build_textures_atlas();
