@@ -1,8 +1,9 @@
-use crate::prelude::*;
+use crate::{TurnState, prelude::*};
 
 pub fn hud_render_system(
     button_state: Res<ButtonState>,
     viewport: Res<Viewport>,
+    turn_state: Res<TurnState>,
     player_health_query: Query<&Health, With<Player>>,
     enemy_query: Query<(&EntityName, &TilePoint, Option<&Health>), Without<Player>>,
 ) {
@@ -24,6 +25,18 @@ pub fn hud_render_system(
         30.0,
         RED,
     );
+
+    if *turn_state == TurnState::PlayerTurn || matches!(*turn_state, TurnState::MonsterTurn { .. })
+    {
+        let centre = get_text_center("Processing", None, 30, 1.0, 0.0);
+        draw_text(
+            "Processing",
+            VIEWPORT_WIDTH / 2.0 + Viewport::x_offset() - centre.x,
+            VIEWPORT_HEIGHT / 2.0 + Viewport::y_offset() - centre.y,
+            30.0,
+            WHITE,
+        );
+    }
 
     if button_state.back {
         enemy_query

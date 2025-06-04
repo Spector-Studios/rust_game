@@ -51,6 +51,7 @@ pub struct Health {
     pub max: i32,
 }
 
+// TODO Timer is no longer needed because of turn based gameplay
 #[derive(Bundle, Debug)]
 pub struct PlayerBundle {
     pub player: Player,

@@ -51,7 +51,7 @@ void main() {
 }
 ";
 
-#[derive(Resource, Debug, Clone)]
+#[derive(Resource, Debug, Clone, PartialEq)]
 enum TurnState {
     AwaitingInput,
     PlayerTurn,
@@ -175,7 +175,7 @@ impl Game {
         match self.ecs.get_resource::<TurnState>().unwrap() {
             TurnState::AwaitingInput => self.input_systems.run(&mut self.ecs),
             TurnState::PlayerTurn => self.player_systems.run(&mut self.ecs),
-            TurnState::MonsterTurn { queue: _ } => self.monster_systems.run(&mut self.ecs),
+            TurnState::MonsterTurn { .. } => self.monster_systems.run(&mut self.ecs),
             TurnState::GameOver => {
                 let buttons = *self.ecs.get_resource::<ButtonState>().unwrap();
                 self.game_over(buttons);
@@ -202,7 +202,7 @@ impl Game {
 #[macroquad::main(window_conf)]
 async fn main() {
     panic::set_hook(Box::new(|info| error!("{}", info)));
-    
+
     let sprites = load_texture("resources/sprites.png")
         .await
         .expect("Sprite sheet");
