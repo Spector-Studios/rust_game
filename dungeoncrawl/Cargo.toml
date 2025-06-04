@@ -13,3 +13,12 @@ strum = "0.27.1"
 strum_macros = "0.27.1"
 bracket-pathfinding = "0.8.7"
 bevy_time = "0.16.0"
+
+[package.metadata.android]
+package_name = "dev.spectorstudios.dungeoncrawl"
+label = "Dungeon Crawl"
+assets = "assets/"
+
+[package.metadata.android.activity_attributes]
+"android:screenOrientation" = "userPortrait"
+"android:exported" = "true"

@@ -1,11 +1,7 @@
-# Simple workflow for deploying static content to GitHub Pages
 name: Build and Deploy
 
 on:
-  # Runs on pushes targeting the default branch
-  push:
-    branches: ["main"]
-  # Allows you to run this workflow manually from the Actions tab
+  push: { branches: ["main"] }
   workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
@@ -22,20 +18,91 @@ concurrency:
 
 defaults:
   run:
-    shell: sh
+    shell: bash
+
+env:
+  CARGO_TERM_COLOR: always
 
 jobs:
   build:
-  
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-      
     runs-on: ubuntu-latest
-    
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Cache cargo crates
+        env:
+          cache-name: cargo-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/.crates.toml
+            ~/.cargo/.crates2.toml
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-cargo-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock', '**/Cargo.toml') }}
+
+      - name: Install Rust toolchains
+        run: |
+          rustup target add wasm32-unknown-unknown
+          rustup target add armv7-linux-androideabi
+          rustup target add aarch64-linux-android
+          rustup target add i686-linux-android
+          rustup target add x86_64-linux-android
+
+        # Done here for cacheing
+      - name: Install cargo-quad-apk
+        run: cargo install --git "https://github.com/not-fl3/cargo-quad-apk.git"
+
+      - name: Build for all targets
+        run: |
+          cargo build --release
+          cargo build --release --target wasm32-unknown-unknown
+          # TODO Setup cross compile
+          # cargo build --release --target armv7-linux-androideabi
+          # cargo build --release --target aarch64-linux-android
+          # cargo build --release --target i686-linux-android
+          # cargo build --release --target x86_64-linux-android
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: cargo-target-dir
+          path: ./target
+          retention-days: 2
+          compression-level: 3
+
+  wasm:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download built artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: cargo-target-dir
+
+      - name: Cache cargo crates
+        env:
+          cache-name: cargo-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/.crates.toml
+            ~/.cargo/.crates2.toml
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-cargo-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock', '**/Cargo.toml') }}
+
       - name: Add rust target
         run: rustup target add wasm32-unknown-unknown
       - name: Build
@@ -51,3 +118,74 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+
+  android:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download built artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: cargo-target-dir
+
+      - name: Cache cargo crates
+        env:
+          cache-name: cargo-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/.crates.toml
+            ~/.cargo/.crates2.toml
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-cargo-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock', '**/Cargo.toml') }}
+
+      - name: NDK cache
+        id: cache-ndk
+        env:
+          cache-name: ndk-r25b-cache
+        uses: actions/cache@v4
+        with:
+          path: ./android
+          key: build-${{ env.cache-name }}
+
+      - name: Download NDK
+        if: ${{ steps.cache-ndk.outputs.cache-hit != 'true' }}
+        run: |
+          mkdir ./android
+          cd ./android
+          wget -q https://dl.google.com/android/repository/android-ndk-r25b-linux.zip
+          unzip -q android-ndk-r25b-linux.zip
+          ls -la
+          ls -la android-ndk-r25b
+          rm android-ndk-r25b-linux.zip
+
+      - name: Install Rust toolchains
+        run: |
+          rustup target add armv7-linux-androideabi
+          rustup target add aarch64-linux-android
+          rustup target add i686-linux-android
+          rustup target add x86_64-linux-android
+
+      - name: Install cargo-quad-apk
+        run: cargo install --git "https://github.com/not-fl3/cargo-quad-apk.git"
+
+      - name: Build Android APK
+        env:
+          NDK_HOME: ./android/android-ndk-r25b
+        run: |
+          echo $NDK_HOME
+          ls $NDK_HOME
+          cargo quad-apk build --package dungeoncrawl --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Built-APK
+          path: target/android-artifacts/release/apk
