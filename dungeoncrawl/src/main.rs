@@ -204,9 +204,7 @@ async fn main() {
     panic::set_hook(Box::new(|info| error!("{}", info)));
     set_pc_assets_folder("assets");
 
-    let sprites = load_texture("sprites.png")
-        .await
-        .expect("Sprite sheet");
+    let sprites = load_texture("sprites.png").await.expect("Sprite sheet");
     build_textures_atlas();
 
     let sprit_sheet = SpriteSheet { sprites };
@@ -275,6 +273,9 @@ async fn main() {
 fn window_conf() -> Conf {
     Conf {
         window_title: "Test".to_owned(),
+
+        //#[cfg(not(target_family = "wasm"))]
+        high_dpi: true,
         // high_dpi: true,
         platform: Platform {
             webgl_version: WebGLVersion::WebGL2,
