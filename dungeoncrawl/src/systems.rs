@@ -1,8 +1,4 @@
-use std::collections::VecDeque;
-
-use crate::PathfindingMap;
-use crate::resources::EnemyQueue;
-use bracket_pathfinding::prelude::Algorithm2D;
+// TODO Do better organisation of these
 pub mod chasing;
 pub mod combat;
 pub mod end_turn;
@@ -14,68 +10,11 @@ pub mod player_input;
 pub mod random_move;
 pub mod update_pathfinding;
 
-use crate::systems::hud_render::hud_render_system;
-use bevy_ecs::schedule::ScheduleLabel;
-
-use chasing::chasing_system;
-use combat::combat_system;
-use end_turn::end_turn_system;
-use entity_render::entity_render_system;
-use map_render::map_render_system;
-use movement::movement_system;
-use player_input::player_input_system;
-use random_move::random_move_system;
-use update_pathfinding::update_pathfinding;
-
+use crate::PathfindingMap;
 use crate::prelude::*;
-
-#[derive(ScheduleLabel, Debug, Clone, PartialEq, Eq, Hash)]
-struct InputSchedule;
-pub fn build_input_schedule() -> Schedule {
-    let mut schedule = Schedule::new(InputSchedule);
-    schedule.add_systems((player_input_system,));
-
-    schedule
-}
-
-#[derive(ScheduleLabel, Debug, Clone, PartialEq, Eq, Hash)]
-struct PlayerSchedule;
-pub fn build_player_schedule() -> Schedule {
-    let mut schedule = Schedule::new(PlayerSchedule);
-    schedule.add_systems((
-        (combat_system, movement_system).before(end_turn_system),
-        end_turn_system,
-    ));
-
-    schedule
-}
-
-#[derive(ScheduleLabel, Debug, Clone, PartialEq, Eq, Hash)]
-struct MonsterSchedule;
-pub fn build_monster_schedule() -> Schedule {
-    let mut schedule = Schedule::new(MonsterSchedule);
-    schedule.add_systems((
-        (
-            update_pathfinding,
-            random_move_system,
-            chasing_system,
-            combat_system,
-            movement_system,
-        )
-            .before(end_turn_system),
-        end_turn_system,
-    ));
-
-    schedule
-}
-
-#[derive(ScheduleLabel, Debug, Clone, PartialEq, Eq, Hash)]
-struct RenderSchedule;
-pub fn build_render_schedule() -> Schedule {
-    let mut schedule = Schedule::new(RenderSchedule);
-    schedule.add_systems((map_render_system, entity_render_system, hud_render_system).chain());
-    schedule
-}
+use crate::resources::EnemyQueue;
+use bracket_pathfinding::prelude::Algorithm2D;
+use std::collections::VecDeque;
 
 pub fn setup_system(mut commands: Commands) {
     info!("setup start");
