@@ -1,22 +1,35 @@
+use crate::resources::EnemyQueue;
 use crate::{TurnState, prelude::*};
+use bevy_state::{prelude::State, state::NextState};
+use std::collections::VecDeque;
 
 pub fn end_turn_system(
-    mut turn_state: ResMut<TurnState>,
-    enemy_query: Query<Entity, With<Enemy>>,
+    mut commands: Commands,
+    turn_state: Res<State<TurnState>>,
+    mut next_turn_state: ResMut<NextState<TurnState>>,
+    enemy_queue: Res<EnemyQueue>,
+    enemy_query: Query<Entity, With<ChasePlayer>>,
     player_query: Query<(&Health, &TilePoint), With<Player>>,
     amulet_query: Query<&TilePoint, With<AmuletOfYala>>,
 ) {
+    info!("turn change start");
     let current_state = turn_state.clone();
     let mut new_state = match current_state {
         TurnState::AwaitingInput => return,
-        TurnState::PlayerTurn => TurnState::MonsterTurn {
-            queue: enemy_query.iter().collect(),
-        },
+        TurnState::PlayerTurn => {
+            commands.insert_resource(EnemyQueue(enemy_query.iter().collect::<VecDeque<Entity>>()));
+            TurnState::MonsterTurn
+        }
 
-        TurnState::MonsterTurn { queue } if queue.is_empty() => TurnState::AwaitingInput,
-        TurnState::MonsterTurn { queue: _ } => return,
+        TurnState::MonsterTurn => {
+            if enemy_queue.0.is_empty() {
+                TurnState::AwaitingInput
+            } else {
+                return;
+            }
+        }
 
-        _ => current_state,
+        _ => return,
     };
 
     let (player_health, player_pos) = player_query.single().unwrap();
@@ -29,5 +42,6 @@ pub fn end_turn_system(
         new_state = TurnState::Victory;
     }
 
-    *turn_state = new_state;
+    next_turn_state.set(new_state);
+    info!("turn change end");
 }

@@ -1,10 +1,10 @@
 use crate::prelude::*;
 
-pub fn spawn_player(ecs: &mut World, pos: TilePoint) {
+pub fn spawn_player(ecs: &mut Commands, pos: TilePoint) {
     ecs.spawn(PlayerBundle::new(pos));
 }
 
-pub fn spawn_enemy(ecs: &mut World, rng: &mut Rng, pos: TilePoint) {
+pub fn spawn_enemy(ecs: &mut Commands, rng: &mut Rng, pos: TilePoint) {
     let (hp, name, render_type) = match rng.i8(0..=10) {
         1..=7 => goblin(),
         _ => giant(),
@@ -24,7 +24,7 @@ pub fn spawn_enemy(ecs: &mut World, rng: &mut Rng, pos: TilePoint) {
     });
 }
 
-pub fn spawn_amulet(ecs: &mut World, pos: TilePoint) {
+pub fn spawn_amulet(ecs: &mut Commands, pos: TilePoint) {
     ecs.spawn(AmuletBundle {
         item: Item,
         amulet_of_yala: AmuletOfYala,

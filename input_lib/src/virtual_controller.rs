@@ -62,6 +62,7 @@ impl Default for ButtonState {
     }
 }
 
+#[derive(Resource, Debug)]
 pub struct Controller {
     buttons: Vec<(XButton, Buttons)>,
     pub button_state: ButtonState,

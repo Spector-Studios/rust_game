@@ -9,18 +9,35 @@ mod systems;
 mod texture_store;
 mod viewport;
 
-use std::collections::VecDeque;
-use std::panic;
-
+use crate::movement::movement_system;
 use crate::prelude::*;
-use crate::viewport::Viewport;
-use bracket_pathfinding::prelude::Algorithm2D;
+use bevy_app::App;
+use bevy_app::AppExit;
+use bevy_app::Plugin;
+use bevy_app::PreUpdate;
+use bevy_app::Startup;
+use bevy_app::Update;
+use bevy_ecs::error::GLOBAL_ERROR_HANDLER;
+use bevy_state::app::AppExtStates;
+use bevy_state::app::StatesPlugin;
+use bevy_state::prelude::in_state;
+use bevy_state::state::States;
 use events::WantsToAttack;
 use events::WantsToMove;
-use input_lib::Controller;
 use macroquad::miniquad::conf::Platform;
 use macroquad::miniquad::conf::WebGLVersion;
+use prelude::chasing::chasing_system;
+use prelude::combat::combat_system;
+use prelude::end_turn::end_turn_system;
+use prelude::entity_render::entity_render_system;
+use prelude::hud_render::hud_render_system;
+use prelude::map_render::map_render_system;
+use prelude::random_move::random_move_system;
+use prelude::update_pathfinding::update_pathfinding;
 use resources::PathfindingMap;
+use std::f32::consts::PI;
+use std::panic;
+use systems::player_input::player_input_system;
 
 const FRAGMENT_SHADER: &str = "
 #version 100
@@ -51,16 +68,17 @@ void main() {
 }
 ";
 
-#[derive(Resource, Debug, Clone, PartialEq)]
+#[derive(Resource, Debug, Clone, PartialEq, Eq, Hash, Default, States)]
 enum TurnState {
+    #[default]
     AwaitingInput,
     PlayerTurn,
-    MonsterTurn { queue: VecDeque<Entity> },
+    MonsterTurn,
     GameOver,
     Victory,
 }
 
-struct Game {
+/* struct Game {
     ecs: World,
     input_systems: Schedule,
     player_systems: Schedule,
@@ -197,9 +215,9 @@ impl Game {
 
         self.controller.draw(); // TODO Move to ecs
     }
-}
+} */
 
-#[macroquad::main(window_conf)]
+/* #[macroquad::main(window_conf)]
 async fn main() {
     panic::set_hook(Box::new(|info| error!("{}", info)));
     set_pc_assets_folder("assets");
@@ -268,6 +286,67 @@ async fn main() {
         );
         next_frame().await;
     }
+} */
+
+fn main() {
+    panic::set_hook(Box::new(|panic_info| {
+        if let Some(s) = panic_info.payload().downcast_ref::<&str>() {
+            error!("panic occurred: {s:?}");
+        } else if let Some(s) = panic_info.payload().downcast_ref::<String>() {
+            error!("panic occurred: {s:?}");
+        } else {
+            error!("panic occurred");
+        }
+
+        error!("{}", panic_info);
+    }));
+
+    GLOBAL_ERROR_HANDLER
+        .set(|error, context| {
+            error!("{}", error);
+            error!("{}", context);
+            panic!("{}\n{}", error, context);
+        })
+        .expect("Error");
+
+    let mut app = App::new();
+    app.add_plugins(StatesPlugin)
+        .add_plugins(MacroquadRunner("Hello"))
+        //.init_state::<TurnState>()
+        .insert_state(TurnState::AwaitingInput)
+        .add_event::<WantsToAttack>()
+        .add_event::<WantsToMove>()
+        .add_systems(Startup, setup_system)
+        .add_systems(PreUpdate, controller_update)
+        .add_systems(
+            Update,
+            player_input_system.run_if(in_state(TurnState::AwaitingInput)),
+        )
+        .add_systems(
+            Update,
+            (combat_system, movement_system, end_turn_system)
+                .chain()
+                .run_if(in_state(TurnState::PlayerTurn)),
+        )
+        .add_systems(
+            Update,
+            (
+                update_pathfinding,
+                //random_move_system,
+                chasing_system,
+                combat_system,
+                movement_system,
+                end_turn_system,
+            )
+                .chain()
+                .run_if(in_state(TurnState::MonsterTurn)),
+        )
+        //.add_systems(Update, (combat_system, movement_system, end_turn_system))
+        .add_systems(
+            Update,
+            (map_render_system, entity_render_system, hud_render_system).chain(),
+        )
+        .run();
 }
 
 fn window_conf() -> Conf {
@@ -284,4 +363,38 @@ fn window_conf() -> Conf {
 
         ..Default::default()
     }
+}
+
+pub struct MacroquadRunner(pub &'static str);
+impl Plugin for MacroquadRunner {
+    fn build(&self, app: &mut App) {
+        app.set_runner(macroquad_runner);
+    }
+}
+
+fn macroquad_runner(mut app: App) -> AppExit {
+    app.finish();
+    app.cleanup();
+
+    macroquad::Window::from_config(window_conf(), async move {
+        let mut x: f32 = 0.1;
+        loop {
+            clear_background(BLUE);
+            x = (x + 0.01).fract();
+            draw_rectangle_ex(
+                400.0,
+                400.0,
+                300.0,
+                300.0,
+                DrawRectangleParams {
+                    rotation: x * PI * 2.0,
+                    color: RED,
+                    ..Default::default()
+                },
+            );
+            app.update();
+            next_frame().await;
+        }
+    });
+    bevy_app::AppExit::Success
 }
