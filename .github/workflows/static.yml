@@ -1,7 +1,7 @@
 name: Build and Deploy
 
 on:
-  push: { branches: ["bevy_main"] }
+  push: { branches: ["main"] }
   workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
@@ -73,6 +73,51 @@ jobs:
           path: ./target
           retention-days: 2
           compression-level: 3
+
+  wasm:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download built artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: cargo-target-dir
+
+      - name: Cache cargo crates
+        env:
+          cache-name: cargo-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/.crates.toml
+            ~/.cargo/.crates2.toml
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-cargo-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock', '**/Cargo.toml') }}
+
+      - name: Add rust target
+        run: rustup target add wasm32-unknown-unknown
+      - name: Build
+        run: ./wasm_build.sh --release
+        
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Upload dist folder
+          path: 'dist'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
 
 
   android:
