@@ -274,7 +274,7 @@ fn window_conf() -> Conf {
     Conf {
         window_title: "Test".to_owned(),
 
-        //#[cfg(not(target_family = "wasm"))]
+        #[cfg(not(target_family = "wasm"))]
         high_dpi: true,
         // high_dpi: true,
         platform: Platform {
