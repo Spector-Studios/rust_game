@@ -1,9 +1,10 @@
 use crate::{TurnState, prelude::*};
+use bevy_state::prelude::State;
 
 pub fn hud_render_system(
     button_state: Res<ButtonState>,
     viewport: Res<Viewport>,
-    turn_state: Res<TurnState>,
+    turn_state: Res<State<TurnState>>,
     player_health_query: Query<&Health, With<Player>>,
     enemy_query: Query<(&EntityName, &TilePoint, Option<&Health>), Without<Player>>,
 ) {
@@ -26,8 +27,7 @@ pub fn hud_render_system(
         RED,
     );
 
-    if *turn_state == TurnState::PlayerTurn || matches!(*turn_state, TurnState::MonsterTurn { .. })
-    {
+    if *turn_state == TurnState::PlayerTurn || *turn_state == TurnState::MonsterTurn {
         let centre = get_text_center("Processing", None, 30, 1.0, 0.0);
         draw_text(
             "Processing",

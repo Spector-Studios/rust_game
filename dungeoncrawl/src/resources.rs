@@ -1,3 +1,5 @@
+use std::collections::VecDeque;
+
 use bracket_pathfinding::prelude::DijkstraMap;
 
 use crate::prelude::*;
@@ -22,3 +24,6 @@ impl PathfindingMap {
         }
     }
 }
+
+#[derive(Resource, Debug)]
+pub struct EnemyQueue(pub VecDeque<Entity>);

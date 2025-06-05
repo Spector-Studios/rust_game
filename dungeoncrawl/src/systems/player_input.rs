@@ -1,3 +1,5 @@
+use bevy_state::state::NextState;
+
 use crate::{
     TurnState,
     events::{WantsToAttack, WantsToMove},
@@ -8,12 +10,14 @@ use crate::{
 pub fn player_input_system(
     button_state: Res<ButtonState>,
     mut pathfinding_map: ResMut<PathfindingMap>,
-    mut turn_state: ResMut<TurnState>,
+    mut next_turn_state: ResMut<NextState<TurnState>>,
     mut player_query: Query<(Entity, &TilePoint, &mut Health, &mut Timer), With<Player>>,
     enemy_pos_query: Query<(Entity, &TilePoint), With<Enemy>>,
     mut move_writer: EventWriter<WantsToMove>,
     mut attack_writer: EventWriter<WantsToAttack>,
 ) {
+    info!("player input start");
+
     let (player_entity, pos, mut health, mut timer) = player_query
         .single_mut()
         .expect("More than one or no players");
@@ -56,7 +60,8 @@ pub fn player_input_system(
         if !did_something {
             health.current = i32::min(health.max, health.current + 1);
         }
-        *turn_state = TurnState::PlayerTurn;
+
+        next_turn_state.set(TurnState::PlayerTurn);
     }
 
     #[cfg(debug_assertions)]
@@ -67,4 +72,6 @@ pub fn player_input_system(
         50.0,
         WHITE,
     );
+
+    info!("player input end");
 }
