@@ -43,6 +43,7 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
           key: ${{ runner.os }}-cargo-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock', '**/Cargo.toml') }}
+          restore-keys: ${{ runner.os }}-cargo-${{ env.cache-name }}-
 
       - name: Cache target dir
         env:
@@ -51,6 +52,7 @@ jobs:
         with:
           path: target/
           key: ${{ runner.os }}-cargo-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock', '**/Cargo.toml') }}
+          restore-keys: ${{ runner.os }}-cargo-${{ env.cache-name }}-
 
       - name: Install Rust toolchains
         run: |
@@ -68,107 +70,15 @@ jobs:
         run: |
           cargo build --release
           cargo build --release --target wasm32-unknown-unknown
-          # TODO Setup cross compile
-          # cargo build --release --target armv7-linux-androideabi
-          # cargo build --release --target aarch64-linux-android
-          # cargo build --release --target i686-linux-android
-          # cargo build --release --target x86_64-linux-android
 
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: cargo-target-dir
-          path: ./target
-          retention-days: 2
-          compression-level: 3
-
-  wasm:
-    needs: build
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Download built artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: cargo-target-dir
-
-      - name: Cache cargo crates
-        env:
-          cache-name: cargo-cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/.crates.toml
-            ~/.cargo/.crates2.toml
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-          key: ${{ runner.os }}-cargo-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock', '**/Cargo.toml') }}
-
-      - name: Cache target dir
-        env:
-          cache-name: cargo-build-cache
-        uses: actions/cache@v4
-        with:
-          path: target/
-          key: ${{ runner.os }}-cargo-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock', '**/Cargo.toml') }}
-
-      - name: Add rust target
-        run: rustup target add wasm32-unknown-unknown
-      - name: Build
+      - name: Build WASM
         run: ./wasm_build.sh --release
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
+      - name: Upload WASM Artifacts
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload dist folder
           path: 'dist'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-
-
-  android:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Download built artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: cargo-target-dir
-
-      - name: Cache cargo crates
-        env:
-          cache-name: cargo-cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/.crates.toml
-            ~/.cargo/.crates2.toml
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-          key: ${{ runner.os }}-cargo-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock', '**/Cargo.toml') }}
-
-      - name: Cache target dir
-        env:
-          cache-name: cargo-build-cache
-        uses: actions/cache@v4
-        with:
-          path: target/
-          key: ${{ runner.os }}-cargo-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock', '**/Cargo.toml') }}
 
       - name: NDK cache
         id: cache-ndk
@@ -190,16 +100,6 @@ jobs:
           ls -la android-ndk-r25b
           rm android-ndk-r25b-linux.zip
 
-      - name: Install Rust toolchains
-        run: |
-          rustup target add armv7-linux-androideabi
-          rustup target add aarch64-linux-android
-          rustup target add i686-linux-android
-          rustup target add x86_64-linux-android
-
-      - name: Install cargo-quad-apk
-        run: cargo install --git "https://github.com/not-fl3/cargo-quad-apk.git"
-
       - name: Build Android APK
         env:
           NDK_HOME: ./android/android-ndk-r25b
@@ -213,3 +113,14 @@ jobs:
         with:
           name: Built-APK
           path: target/android-artifacts/release/apk
+
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
