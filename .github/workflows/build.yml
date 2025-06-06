@@ -44,6 +44,14 @@ jobs:
             ~/.cargo/git/db/
           key: ${{ runner.os }}-cargo-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock', '**/Cargo.toml') }}
 
+      - name: Cache target dir
+        env:
+          cache-name: cargo-build-cache
+        uses: actions/cache@v4
+        with:
+          path: target/
+          key: ${{ runner.os }}-cargo-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock', '**/Cargo.toml') }}
+
       - name: Install Rust toolchains
         run: |
           rustup target add wasm32-unknown-unknown
@@ -103,11 +111,19 @@ jobs:
             ~/.cargo/git/db/
           key: ${{ runner.os }}-cargo-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock', '**/Cargo.toml') }}
 
+      - name: Cache target dir
+        env:
+          cache-name: cargo-build-cache
+        uses: actions/cache@v4
+        with:
+          path: target/
+          key: ${{ runner.os }}-cargo-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock', '**/Cargo.toml') }}
+
       - name: Add rust target
         run: rustup target add wasm32-unknown-unknown
       - name: Build
         run: ./wasm_build.sh --release
-        
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
@@ -144,6 +160,14 @@ jobs:
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
+          key: ${{ runner.os }}-cargo-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock', '**/Cargo.toml') }}
+
+      - name: Cache target dir
+        env:
+          cache-name: cargo-build-cache
+        uses: actions/cache@v4
+        with:
+          path: target/
           key: ${{ runner.os }}-cargo-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock', '**/Cargo.toml') }}
 
       - name: NDK cache
