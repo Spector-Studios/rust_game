@@ -17,10 +17,18 @@ bevy_app = "0.16.1"
 bevy_state = "0.16.1"
 
 [package.metadata.android]
+build_targets = [ "aarch64-linux-android" ]
 package_name = "dev.spectorstudios.dungeoncrawl"
 label = "Dungeon Crawl"
-assets = "assets/"
+assets = "assets"
+res = "android_res"
+icon = "@mipmap/ic_launcher"
+version_code = 2
+version_name = "0.0.2"
+
+[package.metadata.android.application_attributes]
+"android:hardwareAccelerated" = "true"
+"android:appCategory" = "game"
 
 [package.metadata.android.activity_attributes]
-"android:screenOrientation" = "userPortrait"
 "android:exported" = "true"
