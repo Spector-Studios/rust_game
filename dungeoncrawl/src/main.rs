@@ -13,10 +13,6 @@ use crate::movement::movement_system;
 use crate::prelude::*;
 use bevy_app::prelude::*;
 use bevy_ecs::error::GLOBAL_ERROR_HANDLER;
-use bevy_input::InputPlugin;
-use bevy_input::keyboard::KeyboardInput;
-use bevy_input::keyboard::keyboard_input_system;
-use bevy_input::InputSystem;
 use bevy_state::app::AppExtStates;
 use bevy_state::app::StatesPlugin;
 use bevy_state::prelude::in_state;
@@ -101,7 +97,6 @@ fn main() {
 
     let mut app = App::new();
     app.add_plugins(StatesPlugin)
-        .add_plugins(InputPlugin)
         .add_plugins(MacroquadRunner("Hello"))
         //.init_state::<TurnState>()
         .insert_state(TurnState::AwaitingInput)
@@ -139,7 +134,6 @@ fn main() {
             (map_render_system, entity_render_system, hud_render_system).chain(),
         )
         // DEBUG
-        .add_systems(Update, print_key)
         .run();
 }
 

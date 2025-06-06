@@ -15,7 +15,6 @@ bracket-pathfinding = "0.8.7"
 bevy_time = "0.16.0"
 bevy_app = "0.16.1"
 bevy_state = "0.16.1"
-bevy_input = "0.16.1"
 
 [package.metadata.android]
 package_name = "dev.spectorstudios.dungeoncrawl"
