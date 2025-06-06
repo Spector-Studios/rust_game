@@ -13,6 +13,10 @@ use crate::movement::movement_system;
 use crate::prelude::*;
 use bevy_app::prelude::*;
 use bevy_ecs::error::GLOBAL_ERROR_HANDLER;
+use bevy_input::InputPlugin;
+use bevy_input::keyboard::KeyboardInput;
+use bevy_input::keyboard::keyboard_input_system;
+use bevy_input::InputSystem;
 use bevy_state::app::AppExtStates;
 use bevy_state::app::StatesPlugin;
 use bevy_state::prelude::in_state;
@@ -21,6 +25,7 @@ use events::WantsToAttack;
 use events::WantsToMove;
 use macroquad::miniquad::conf::Platform;
 use macroquad::miniquad::conf::WebGLVersion;
+use macroquad::ui;
 use prelude::chasing::chasing_system;
 use prelude::combat::combat_system;
 use prelude::end_turn::end_turn_system;
@@ -96,6 +101,7 @@ fn main() {
 
     let mut app = App::new();
     app.add_plugins(StatesPlugin)
+        .add_plugins(InputPlugin)
         .add_plugins(MacroquadRunner("Hello"))
         //.init_state::<TurnState>()
         .insert_state(TurnState::AwaitingInput)
@@ -132,6 +138,8 @@ fn main() {
             Update,
             (map_render_system, entity_render_system, hud_render_system).chain(),
         )
+        // DEBUG
+        .add_systems(Update, print_key)
         .run();
 }
 
@@ -162,6 +170,17 @@ fn macroquad_runner(mut app: App) -> AppExit {
     app.cleanup();
 
     macroquad::Window::from_config(window_conf(), async move {
+        set_panic_handler(|msg, backtrace| async move {
+            loop {
+                clear_background(RED);
+                ui::root_ui().label(None, &msg);
+                for line in backtrace.split('\n') {
+                    ui::root_ui().label(None, line);
+                }
+                next_frame().await;
+            }
+        });
+
         let mut x: f32 = 0.1;
         loop {
             clear_background(BLUE);

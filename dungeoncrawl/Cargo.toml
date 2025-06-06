@@ -6,7 +6,7 @@ edition = "2024"
 [dependencies]
 fastrand = "2.3.0"
 input_lib = { version = "0.1.0", path = "../input_lib" }
-macroquad = "=0.4.13"
+macroquad = { version = "=0.4.13", features = ["backtrace"] }
 getrandom = { version = "*", features = ["js"] }
 bevy_ecs = { version = "0.16.0", features = ["configurable_error_handler"] }
 strum = "0.27.1"
@@ -15,6 +15,7 @@ bracket-pathfinding = "0.8.7"
 bevy_time = "0.16.0"
 bevy_app = "0.16.1"
 bevy_state = "0.16.1"
+bevy_input = "0.16.1"
 
 [package.metadata.android]
 package_name = "dev.spectorstudios.dungeoncrawl"

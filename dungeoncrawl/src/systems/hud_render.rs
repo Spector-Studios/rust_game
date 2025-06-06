@@ -1,4 +1,4 @@
-use crate::{TurnState, prelude::*};
+use crate::{prelude::*, TurnState};
 use bevy_state::prelude::State;
 
 pub fn hud_render_system(
@@ -33,7 +33,7 @@ pub fn hud_render_system(
             "Processing",
             VIEWPORT_WIDTH / 2.0 + Viewport::x_offset() - centre.x,
             VIEWPORT_HEIGHT / 2.0 + Viewport::y_offset() - centre.y,
-            30.0,
+            100.0,
             WHITE,
         );
     }
