@@ -15,6 +15,7 @@ bracket-pathfinding = "0.8.7"
 bevy_time = "0.16.0"
 bevy_app = "0.16.1"
 bevy_state = "0.16.1"
+fnv = "1.0.7"
 
 [package.metadata.android]
 build_targets = [ "aarch64-linux-android" ]

@@ -1,7 +1,6 @@
 use crate::prelude::*;
-use strum_macros::EnumIter;
 
-#[derive(EnumIter, Debug, PartialEq)]
+/* #[derive(Debug, PartialEq)]
 pub enum EntityType {
     Player,
 
@@ -11,7 +10,7 @@ pub enum EntityType {
     Warrior,
 
     Amulet,
-}
+} */
 
 #[derive(Component, Debug)]
 pub struct Player;
@@ -37,7 +36,7 @@ pub struct EntityName(pub String);
 // TODO Make the texture a Rect or something
 #[derive(Component, Debug)]
 pub struct Render {
-    pub texture: EntityType,
+    pub texture: SpriteKey,
 }
 
 #[derive(Component, Debug)]
@@ -71,7 +70,7 @@ impl PlayerBundle {
                 max: 20,
             },
             render: Render {
-                texture: EntityType::Player,
+                texture: SpriteKey::Player,
             },
             timer: Timer { time: 0.0 },
         }

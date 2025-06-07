@@ -13,26 +13,25 @@ pub fn map_render_system(map: Res<Map>, viewport: Res<Viewport>, sprite_sheet: R
                 match map.tiles[idx] {
                     TileType::Wall => {
                         draw_texture_ex(
-                            &sprite_sheet.sprites,
+                            sprite_sheet.sprites.get(&SpriteKey::Wall).unwrap(),
                             screen_x,
                             screen_y,
                             WHITE,
                             DrawTextureParams {
                                 dest_size: Some(vec2(TILE_SIZE, TILE_SIZE)),
-                                source: Some(Rect::new(64.0, 96.0, 32.0, 32.0)),
                                 ..Default::default()
                             },
                         );
                     }
 
                     TileType::Floor => draw_texture_ex(
-                        &sprite_sheet.sprites,
+                        sprite_sheet.sprites.get(&SpriteKey::Floor).unwrap(),
                         screen_x,
                         screen_y,
                         WHITE,
+                        // TODO store this somewhere (a CONST), It is used is all the rendering
                         DrawTextureParams {
                             dest_size: Some(vec2(TILE_SIZE, TILE_SIZE)),
-                            source: Some(Rect::new(96.0, 0.0, 32.0, 32.0)),
                             ..Default::default()
                         },
                     ),

@@ -6,7 +6,7 @@ pub fn spawn_player(ecs: &mut Commands, pos: TilePoint) {
 
 pub fn spawn_enemy(ecs: &mut Commands, rng: &mut Rng, pos: TilePoint) {
     let (hp, name, render_type) = match rng.i8(0..=10) {
-        1..=7 => goblin(),
+        1..=7 => bat(),
         _ => giant(),
     };
     ecs.spawn(EnemyBundle {
@@ -31,15 +31,15 @@ pub fn spawn_amulet(ecs: &mut Commands, pos: TilePoint) {
         pos,
         name: EntityName("Amulet".to_string()),
         render: Render {
-            texture: EntityType::Amulet,
+            texture: SpriteKey::Amulet,
         },
     });
 }
 
-fn goblin() -> (i32, String, EntityType) {
-    (1, "Goblin".to_string(), EntityType::Goblin)
+fn bat() -> (i32, String, SpriteKey) {
+    (1, "Goblin".to_string(), SpriteKey::Bat)
 }
 
-fn giant() -> (i32, String, EntityType) {
-    (2, "Giant".to_string(), EntityType::Giant)
+fn giant() -> (i32, String, SpriteKey) {
+    (2, "Giant".to_string(), SpriteKey::Cyclops)
 }
