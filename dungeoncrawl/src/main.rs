@@ -133,7 +133,10 @@ fn main() {
             Update,
             (map_render_system, entity_render_system, hud_render_system).chain(),
         )
-        // DEBUG
+        .add_systems(
+            Update,
+            restart_system.run_if(in_state(TurnState::GameOver).or(in_state(TurnState::Victory))),
+        )
         .run();
 }
 
@@ -181,7 +184,7 @@ fn macroquad_runner(mut app: App) -> AppExit {
         // XXX WARNING Finish loading all the textures before this
         build_textures_atlas();
         // XXX WARNING -------------------------------------------
-        
+
         app.insert_resource(sprite_sheet);
 
         let mut x: f32 = 0.1;

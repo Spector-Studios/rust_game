@@ -27,16 +27,22 @@ pub fn hud_render_system(
         RED,
     );
 
-    if *turn_state == TurnState::PlayerTurn || *turn_state == TurnState::MonsterTurn {
-        let centre = get_text_center("Processing", None, 30, 1.0, 0.0);
-        draw_text(
-            "Processing",
-            VIEWPORT_WIDTH / 2.0 + Viewport::x_offset() - centre.x,
-            VIEWPORT_HEIGHT / 2.0 + Viewport::y_offset() - centre.y,
-            100.0,
-            WHITE,
-        );
-    }
+    let msg = match **turn_state {
+        TurnState::AwaitingInput => "",
+        TurnState::PlayerTurn => "Processing",
+        TurnState::MonsterTurn => "Processing",
+        TurnState::GameOver => "Game Over",
+        TurnState::Victory => "Victory",
+    };
+
+    let centre = get_text_center(msg, None, 100, 1.0, 0.0);
+    draw_text(
+        msg,
+        VIEWPORT_WIDTH / 2.0 + Viewport::x_offset() - centre.x,
+        VIEWPORT_HEIGHT / 2.0 + Viewport::y_offset() - centre.y,
+        100.0,
+        WHITE,
+    );
 
     if button_state.back {
         enemy_query

@@ -16,15 +16,13 @@ pub fn player_input_system(
     mut move_writer: EventWriter<WantsToMove>,
     mut attack_writer: EventWriter<WantsToAttack>,
 ) {
-    info!("player input start");
-
     let (player_entity, pos, mut health, mut timer) = player_query
         .single_mut()
         .expect("More than one or no players");
 
     if timer.time < 0.2 {
         timer.time += get_frame_time();
-    } else if *button_state != ButtonState::new() && !button_state.back {
+    } else if *button_state != ButtonState::new() {
         timer.time = 0.0;
         let mut did_something = false;
         let mut hit_something = false;
@@ -72,6 +70,4 @@ pub fn player_input_system(
         50.0,
         WHITE,
     );
-
-    info!("player input end");
 }
