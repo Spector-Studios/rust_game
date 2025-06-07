@@ -1,10 +1,10 @@
 use bevy_state::state::NextState;
 
 use crate::{
-    TurnState,
     events::{WantsToAttack, WantsToMove},
     prelude::*,
     resources::PathfindingMap,
+    TurnState,
 };
 
 pub fn player_input_system(
@@ -22,7 +22,7 @@ pub fn player_input_system(
 
     if timer.time < 0.2 {
         timer.time += get_frame_time();
-    } else if *button_state != ButtonState::new() {
+    } else if *button_state != ButtonState::new() && !button_state.back {
         timer.time = 0.0;
         let mut did_something = false;
         let mut hit_something = false;
