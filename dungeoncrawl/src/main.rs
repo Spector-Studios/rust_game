@@ -175,6 +175,15 @@ fn macroquad_runner(mut app: App) -> AppExit {
             }
         });
 
+        set_pc_assets_folder("assets");
+        let sprite_sheet = SpriteSheet::default().await.unwrap();
+
+        // XXX WARNING Finish loading all the textures before this
+        build_textures_atlas();
+        // XXX WARNING -------------------------------------------
+        
+        app.insert_resource(sprite_sheet);
+
         let mut x: f32 = 0.1;
         loop {
             clear_background(BLUE);

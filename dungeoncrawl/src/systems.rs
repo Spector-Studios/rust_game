@@ -20,7 +20,7 @@ pub fn setup_system(mut commands: Commands) {
     info!("setup start");
     commands.insert_resource(EnemyQueue(VecDeque::new()));
 
-    let sprite_sheet = SpriteSheet {
+    /* let sprite_sheet = SpriteSheet {
         // TODO Use Bevy Asset Server
         sprites: Texture2D::from_image(
             &Image::from_file_with_format(
@@ -31,7 +31,7 @@ pub fn setup_system(mut commands: Commands) {
         ),
     };
 
-    commands.insert_resource(sprite_sheet);
+    commands.insert_resource(sprite_sheet); */
 
     commands.insert_resource(Controller::new());
     commands.insert_resource(input_lib::ButtonState::new());
