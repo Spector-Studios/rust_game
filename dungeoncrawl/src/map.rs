@@ -16,12 +16,14 @@ pub fn map_idx<T: Into<TilePoint>>(pos: T) -> usize {
 #[derive(Resource, Debug)]
 pub struct Map {
     pub tiles: Vec<TileType>,
+    pub revealed_tiles: Vec<bool>,
 }
 
 impl Map {
     pub fn new() -> Self {
         Self {
             tiles: vec![TileType::Floor; NUM_TILES],
+            revealed_tiles: vec![false; NUM_TILES],
         }
     }
 

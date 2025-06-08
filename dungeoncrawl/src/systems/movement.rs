@@ -2,7 +2,7 @@ use crate::{events::WantsToMove, prelude::*};
 
 // TODO Make this smooth transition
 pub fn movement_system(
-    map: Res<Map>,
+    mut map: ResMut<Map>,
     mut camera: ResMut<Viewport>,
     mut commands: Commands,
     mut reader: EventReader<WantsToMove>,
@@ -16,7 +16,14 @@ pub fn movement_system(
             }
 
             if event.is_player {
-                camera.on_player_move(event.destination)
+                camera.on_player_move(event.destination);
+                fov.get(event.entity)
+                    .unwrap()
+                    .visible_tiles
+                    .iter()
+                    .for_each(|pos| {
+                        map.revealed_tiles[map_idx(*pos)] = true;
+                    });
             }
         }
     }
