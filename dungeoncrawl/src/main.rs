@@ -26,6 +26,7 @@ use prelude::chasing::chasing_system;
 use prelude::combat::combat_system;
 use prelude::end_turn::end_turn_system;
 use prelude::entity_render::entity_render_system;
+use prelude::fov::fov;
 use prelude::hud_render::hud_render_system;
 use prelude::map_render::map_render_system;
 use prelude::random_move::random_move_system;
@@ -137,6 +138,8 @@ fn main() {
             Update,
             restart_system.run_if(in_state(TurnState::GameOver).or(in_state(TurnState::Victory))),
         )
+        // TODO Add computed state for this
+        .add_systems(Update, fov.run_if(not(in_state(TurnState::GameOver).or(in_state(TurnState::Victory)))))
         .run();
 }
 

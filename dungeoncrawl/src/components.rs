@@ -1,3 +1,7 @@
+use std::collections::HashSet;
+
+use bracket_pathfinding::prelude::Point;
+
 use crate::prelude::*;
 
 /* #[derive(Debug, PartialEq)]
@@ -50,6 +54,31 @@ pub struct Health {
     pub max: i32,
 }
 
+#[derive(Component, Clone, Debug, PartialEq)]
+pub struct FieldOfView {
+    pub visible_tiles: HashSet<Point>,
+    pub radius: i32,
+    pub is_stale: bool,
+}
+
+impl FieldOfView {
+    pub fn new(radius: i32) -> Self {
+        Self {
+            visible_tiles: HashSet::new(),
+            radius,
+            is_stale: true,
+        }
+    }
+
+    pub fn clone_stale(&self) -> Self {
+        Self {
+            visible_tiles: HashSet::new(),
+            radius: self.radius,
+            is_stale: true,
+        }
+    }
+}
+
 // TODO Timer is no longer needed because of turn based gameplay
 #[derive(Bundle, Debug)]
 pub struct PlayerBundle {
@@ -57,6 +86,7 @@ pub struct PlayerBundle {
     pub pos: TilePoint,
     pub health: Health,
     pub render: Render,
+    pub field_of_view: FieldOfView,
     pub timer: Timer,
 }
 
@@ -72,6 +102,7 @@ impl PlayerBundle {
             render: Render {
                 texture: SpriteKey::Player,
             },
+            field_of_view: FieldOfView::new(8),
             timer: Timer { time: 0.0 },
         }
     }
@@ -85,6 +116,7 @@ pub struct EnemyBundle {
     pub name: EntityName,
     pub health: Health,
     pub render: Render,
+    pub field_of_view: FieldOfView,
     pub movement_behaviour: ChasePlayer,
 }
 

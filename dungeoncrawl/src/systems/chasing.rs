@@ -10,7 +10,7 @@ pub fn chasing_system(
     mut enemy_queue: ResMut<EnemyQueue>,
     map: Res<Map>,
     pathfinding_map: Res<PathfindingMap>,
-    chasers: Query<(Entity, &TilePoint), With<ChasePlayer>>,
+    chasers: Query<(Entity, &TilePoint, &FieldOfView), With<ChasePlayer>>,
     creatures_query: Query<(Entity, &TilePoint, &Health, Option<&Player>)>,
     mut attack_writer: EventWriter<WantsToAttack>,
     mut move_writer: EventWriter<WantsToMove>,
@@ -25,10 +25,15 @@ pub fn chasing_system(
         .find(|(_, _, _, option_player)| option_player.is_some())
         .unwrap();
 
-    let (attacker, pos);
+    let (attacker, pos, fov);
     if let Some(entity) = enemy_queue.0.front() {
-        (attacker, pos) = chasers.get(*entity).unwrap();
+        (attacker, pos, fov) = chasers.get(*entity).unwrap();
     } else {
+        return;
+    }
+
+    if !fov.visible_tiles.contains(&(*player_pos).into()) {
+        enemy_queue.0.pop_front();
         return;
     }
 

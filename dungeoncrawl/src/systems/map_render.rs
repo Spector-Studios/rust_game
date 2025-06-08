@@ -1,13 +1,20 @@
 use crate::prelude::*;
 
-pub fn map_render_system(map: Res<Map>, viewport: Res<Viewport>, sprite_sheet: Res<SpriteSheet>) {
+pub fn map_render_system(
+    map: Res<Map>,
+    viewport: Res<Viewport>,
+    sprite_sheet: Res<SpriteSheet>,
+    fov: Query<&FieldOfView, With<Player>>,
+) {
+    let player_fov = fov.single().unwrap();
+
     for y in viewport.view_area.y1..=viewport.view_area.y2 {
         let screen_y = viewport.get_screen_y(y);
         for x in viewport.view_area.x1..=viewport.view_area.x2 {
             let screen_x = viewport.get_screen_x(x);
             let pt = TilePoint::new(x, y);
 
-            if map.in_bounds(pt) {
+            if map.in_bounds(pt) && player_fov.visible_tiles.contains(&pt.into()) {
                 let idx = map_idx(pt);
 
                 match map.tiles[idx] {

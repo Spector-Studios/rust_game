@@ -1,16 +1,14 @@
-use crate::{TurnState, prelude::*};
+use crate::{prelude::*, TurnState};
 use bevy_state::prelude::State;
 
 pub fn hud_render_system(
     button_state: Res<ButtonState>,
     viewport: Res<Viewport>,
     turn_state: Res<State<TurnState>>,
-    player_health_query: Query<&Health, With<Player>>,
+    player_query: Query<(&Health, &FieldOfView), With<Player>>,
     enemy_query: Query<(&EntityName, &TilePoint, Option<&Health>), Without<Player>>,
 ) {
-    let player_health = player_health_query
-        .single()
-        .expect("No player health component.");
+    let (player_health, player_fov) = player_query.single().expect("No player health component.");
 
     draw_rectangle(
         viewport.get_hud_screen_x(0),
@@ -47,7 +45,10 @@ pub fn hud_render_system(
     if button_state.back {
         enemy_query
             .iter()
-            .filter(|(_, pos, _)| viewport.view_area.contains(**pos))
+            .filter(|(_, pos, _)| {
+                viewport.view_area.contains(**pos)
+                    && player_fov.visible_tiles.contains(&(**pos).into())
+            })
             .for_each(|(EntityName(name), pos, option_health)| {
                 let centre = get_text_center(name.as_str(), None, 30, 1.0, 0.0);
 

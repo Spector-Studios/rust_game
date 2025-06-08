@@ -16,24 +16,24 @@ pub use crate::viewport::Viewport;
 
 //pub const I_VIEWPORT_X: i32 = 15;
 //pub const I_VIEWPORT_Y: i32 = 300;
-pub const VIEWPORT_WIDTH_T: i32 = 17;
-pub const VIEWPORT_HEIGHT_T: i32 = 9;
+pub const VIEWPORT_WIDTH_T: i32 = 21;
+pub const VIEWPORT_HEIGHT_T: i32 = 11;
 
 //pub static mut VIEWPORT_X: f32 = 0.0;
 //pub static mut VIEWPORT_Y: f32 = 0.0;
 pub const VIEWPORT_WIDTH: f32 = (VIEWPORT_WIDTH_T + 2) as f32 * TILE_SIZE;
 pub const VIEWPORT_HEIGHT: f32 = (VIEWPORT_HEIGHT_T + 2) as f32 * TILE_SIZE;
 
-pub const TILE_SIZE: f32 = 50.0;
+pub const TILE_SIZE: f32 = 40.0;
 
 pub const TILE_MAP_WIDTH: i32 = 80;
 pub const TILE_MAP_HEIGHT: i32 = 50;
 pub const NUM_TILES: usize = (TILE_MAP_WIDTH * TILE_MAP_HEIGHT) as usize;
 
-pub const D_UP: TilePoint = TilePoint { x: 0, y: 1 };
-pub const D_DOWN: TilePoint = TilePoint { x: 0, y: -1 };
-pub const D_LEFT: TilePoint = TilePoint { x: -1, y: 0 };
-pub const D_RIGHT: TilePoint = TilePoint { x: 1, y: 0 };
+pub const D_UP: TilePoint = TilePoint::new(0, 1);
+pub const D_DOWN: TilePoint = TilePoint::new(0, -1);
+pub const D_LEFT: TilePoint = TilePoint::new(-1, 0);
+pub const D_RIGHT: TilePoint = TilePoint::new(1, 0);
 
 pub const DIRECTIONS: [TilePoint; 4] = [D_UP, D_DOWN, D_LEFT, D_RIGHT];
 
