@@ -3,11 +3,10 @@ use bracket_pathfinding::prelude::{Algorithm2D, DijkstraMap, DistanceAlg};
 use crate::{
     events::{WantsToAttack, WantsToMove},
     prelude::*,
-    resources::{EnemyQueue, PathfindingMap},
+    resources::PathfindingMap,
 };
 
 pub fn chasing_system(
-    mut enemy_queue: ResMut<EnemyQueue>,
     map: Res<Map>,
     pathfinding_map: Res<PathfindingMap>,
     chasers: Query<(Entity, &TilePoint, &FieldOfView), With<ChasePlayer>>,
@@ -25,48 +24,40 @@ pub fn chasing_system(
         .find(|(_, _, _, option_player)| option_player.is_some())
         .unwrap();
 
-    let (attacker, pos, fov);
-    if let Some(entity) = enemy_queue.0.front() {
-        (attacker, pos, fov) = chasers.get(*entity).unwrap();
-    } else {
-        return;
-    }
+    chasers
+        .iter()
+        .filter(|(_, _, fov)| fov.visible_tiles.contains(&(*player_pos).into()))
+        .for_each(|(attacker, pos, _)| {
+            let idx = map.point2d_to_index((*pos).into());
 
-    if !fov.visible_tiles.contains(&(*player_pos).into()) {
-        enemy_queue.0.pop_front();
-        return;
-    }
+            if let Some(destination) = DijkstraMap::find_lowest_exit(dijkstra_map, idx, &*map) {
+                let distance =
+                    DistanceAlg::Pythagoras.distance2d((*pos).into(), (*player_pos).into());
 
-    let idx = map.point2d_to_index((*pos).into());
+                let destination = if distance > 1.2 {
+                    map.index_to_point2d(destination).into()
+                } else {
+                    *player_pos
+                };
 
-    if let Some(destination) = DijkstraMap::find_lowest_exit(dijkstra_map, idx, &*map) {
-        let distance = DistanceAlg::Pythagoras.distance2d((*pos).into(), (*player_pos).into());
+                let mut attacked = false;
+                creatures_query
+                    .iter()
+                    .filter(|(_, target_pos, _, _)| **target_pos == destination)
+                    .for_each(|(victim, _, _, option_player)| {
+                        if option_player.is_some() {
+                            attack_writer.write(WantsToAttack { attacker, victim });
+                        }
+                        attacked = true;
+                    });
 
-        let destination = if distance > 1.2 {
-            map.index_to_point2d(destination).into()
-        } else {
-            *player_pos
-        };
-
-        let mut attacked = false;
-        creatures_query
-            .iter()
-            .filter(|(_, target_pos, _, _)| **target_pos == destination)
-            .for_each(|(victim, _, _, option_player)| {
-                if option_player.is_some() {
-                    attack_writer.write(WantsToAttack { attacker, victim });
+                if !attacked {
+                    move_writer.write(WantsToMove {
+                        entity: attacker,
+                        destination,
+                        is_player: false,
+                    });
                 }
-                attacked = true;
-            });
-
-        if !attacked {
-            move_writer.write(WantsToMove {
-                entity: attacker,
-                destination,
-                is_player: false,
-            });
-        }
-    }
-
-    enemy_queue.0.pop_front();
+            }
+        });
 }

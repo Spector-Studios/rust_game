@@ -11,14 +11,12 @@ pub mod player_input;
 pub mod random_move;
 pub mod update_pathfinding;
 
-use crate::resources::EnemyQueue;
 use crate::PathfindingMap;
 use crate::{prelude::*, TurnState};
 use bevy_app::Startup;
 use bevy_ecs::system::SystemState;
 use bevy_state::commands::CommandsStatesExt;
 use bracket_pathfinding::prelude::Algorithm2D;
-use std::collections::VecDeque;
 
 // TODO Make a better way to restart
 pub fn setup_system(world: &mut World, p_commands: &mut SystemState<Commands>) {
@@ -28,7 +26,6 @@ pub fn setup_system(world: &mut World, p_commands: &mut SystemState<Commands>) {
 
     {
         let mut commands = p_commands.get_mut(world);
-        commands.insert_resource(EnemyQueue(VecDeque::new()));
 
         /* let sprite_sheet = SpriteSheet {
             // TODO Use Bevy Asset Server

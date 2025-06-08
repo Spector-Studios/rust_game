@@ -1,34 +1,17 @@
-use crate::resources::EnemyQueue;
-use crate::{TurnState, prelude::*};
+use crate::{prelude::*, TurnState};
 use bevy_state::{prelude::State, state::NextState};
-use std::collections::VecDeque;
 
 pub fn end_turn_system(
-    mut commands: Commands,
     turn_state: Res<State<TurnState>>,
     mut next_turn_state: ResMut<NextState<TurnState>>,
-    enemy_queue: Res<EnemyQueue>,
-    enemy_query: Query<Entity, With<ChasePlayer>>,
     player_query: Query<(&Health, &TilePoint), With<Player>>,
     amulet_query: Query<&TilePoint, With<AmuletOfYala>>,
 ) {
-    info!("turn change start");
     let current_state = turn_state.clone();
     let mut new_state = match current_state {
         TurnState::AwaitingInput => return,
-        TurnState::PlayerTurn => {
-            commands.insert_resource(EnemyQueue(enemy_query.iter().collect::<VecDeque<Entity>>()));
-            TurnState::MonsterTurn
-        }
-
-        TurnState::MonsterTurn => {
-            if enemy_queue.0.is_empty() {
-                TurnState::AwaitingInput
-            } else {
-                return;
-            }
-        }
-
+        TurnState::PlayerTurn => TurnState::MonsterTurn,
+        TurnState::MonsterTurn => TurnState::AwaitingInput,
         _ => return,
     };
 
@@ -43,5 +26,4 @@ pub fn end_turn_system(
     }
 
     next_turn_state.set(new_state);
-    info!("turn change end");
 }

@@ -25,5 +25,5 @@ impl PathfindingMap {
     }
 }
 
-#[derive(Resource, Debug)]
-pub struct EnemyQueue(pub VecDeque<Entity>);
+// #[derive(Resource, Debug)]
+// pub struct EnemyQueue(pub VecDeque<Entity>);
