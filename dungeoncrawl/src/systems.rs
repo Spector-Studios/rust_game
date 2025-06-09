@@ -54,11 +54,9 @@ pub fn setup_system(world: &mut World, p_commands: &mut SystemState<Commands>) {
         spawn_amulet(&mut commands, map_builder.amulet_start);
 
         map_builder
-            .rooms
+            .monster_spawns
             .iter()
-            .skip(1)
-            .map(|r| r.centre())
-            .for_each(|pos| spawn_enemy(&mut commands, &mut rng, pos));
+            .for_each(|pos| spawn_enemy(&mut commands, &mut rng, *pos));
 
         commands.insert_resource(Viewport::new(map_builder.player_start));
         commands.insert_resource(PathfindingMap::new(&[player_idx], &map_builder.map));

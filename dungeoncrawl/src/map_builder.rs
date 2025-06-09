@@ -1,6 +1,16 @@
-use bracket_pathfinding::prelude::{Algorithm2D, DijkstraMap};
+mod automata;
+mod empty;
+mod rooms;
 
 use crate::prelude::*;
+use automata::CellularAutomataArchitect;
+use bracket_pathfinding::prelude::{Algorithm2D, DijkstraMap, DistanceAlg};
+use empty::EmptyArchitect;
+use rooms::RoomsArchitect;
+
+trait MapArchitect {
+    fn build(&mut self, rng: &mut Rng) -> MapBuilder;
+}
 
 const NUM_ROOMS: usize = 20;
 const PADDING: i32 = 4;
@@ -10,51 +20,75 @@ pub struct MapBuilder {
     pub rooms: Vec<TileRect>,
     pub player_start: TilePoint,
     pub amulet_start: TilePoint,
+    pub monster_spawns: Vec<TilePoint>,
 }
 
 impl MapBuilder {
-    pub fn new(rng: &mut Rng) -> Self {
-        let mut mb = MapBuilder {
+    pub fn empty() -> Self {
+        Self {
             map: Map::new(),
             rooms: Vec::new(),
             player_start: TilePoint::zero(),
             amulet_start: TilePoint::zero(),
-        };
-
-        mb.fill(TileType::Wall);
-        mb.build_random_rooms(rng);
-        mb.build_corridor();
-        mb.player_start = mb.rooms[0].centre();
-
-        let dijkstra_map = DijkstraMap::new(
-            TILE_MAP_WIDTH,
-            TILE_MAP_HEIGHT,
-            &[mb.map.point2d_to_index(mb.player_start.into())],
-            &mb.map,
-            1024.0,
-        );
-
-        const UNREACHABLE: &f32 = &f32::MAX;
-
-        mb.amulet_start = mb
-            .map
-            .index_to_point2d(
-                dijkstra_map
-                    .map
-                    .iter()
-                    .enumerate()
-                    .filter(|(_, dist)| *dist < UNREACHABLE)
-                    .max_by(|a, b| a.1.partial_cmp(b.1).unwrap())
-                    .unwrap()
-                    .0,
-            )
-            .into();
-
-        mb
+            monster_spawns: Vec::new(),
+        }
+    }
+    pub fn new(rng: &mut Rng) -> Self {
+        let mut architect = CellularAutomataArchitect {};
+        architect.build(rng)
     }
 
     fn fill(&mut self, tile: TileType) {
         self.map.tiles.iter_mut().for_each(|t| *t = tile);
+    }
+
+    fn find_most_distant(&self) -> impl Into<TilePoint> {
+        let dijkstra_map = DijkstraMap::new(
+            TILE_MAP_WIDTH,
+            TILE_MAP_HEIGHT,
+            &[self.map.point2d_to_index(self.player_start.into())],
+            &self.map,
+            1024.0,
+        );
+
+        const UNREACHABLE: &f32 = &f32::MAX;
+        self.map.index_to_point2d(
+            dijkstra_map
+                .map
+                .iter()
+                .enumerate()
+                .filter(|(_, dist)| *dist < UNREACHABLE)
+                .max_by(|a, b| a.1.partial_cmp(b.1).unwrap())
+                .unwrap()
+                .0,
+        )
+    }
+
+    fn spawn_monsters(&self, start: TilePoint, rng: &mut Rng) -> Vec<TilePoint> {
+        const NUM_MONSTERS: usize = 50;
+
+        let mut spawnable_tiles: Vec<TilePoint> = self
+            .map
+            .tiles
+            .iter()
+            .enumerate()
+            .filter(|(idx, t)| {
+                **t == TileType::Floor
+                    && DistanceAlg::Pythagoras
+                        .distance2d(start.into(), self.map.index_to_point2d(*idx))
+                        > 10.0
+            })
+            .map(|(idx, _)| self.map.index_to_point2d(idx).into())
+            .collect();
+
+        let mut spawns = Vec::new();
+        for _ in 0..NUM_MONSTERS {
+            let target_idx = rng.usize(0..spawnable_tiles.len());
+            spawns.push(spawnable_tiles[target_idx]);
+            spawnable_tiles.remove(target_idx);
+        }
+
+        spawns
     }
 
     fn build_random_rooms(&mut self, rng: &mut Rng) {

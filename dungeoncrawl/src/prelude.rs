@@ -26,8 +26,8 @@ pub const VIEWPORT_HEIGHT: f32 = (VIEWPORT_HEIGHT_T + 2) as f32 * TILE_SIZE;
 
 pub const TILE_SIZE: f32 = 40.0;
 
-pub const TILE_MAP_WIDTH: i32 = 80;
-pub const TILE_MAP_HEIGHT: i32 = 50;
+pub const TILE_MAP_WIDTH: i32 = 100;
+pub const TILE_MAP_HEIGHT: i32 = 70;
 pub const NUM_TILES: usize = (TILE_MAP_WIDTH * TILE_MAP_HEIGHT) as usize;
 
 pub const D_UP: TilePoint = TilePoint::new(0, 1);
