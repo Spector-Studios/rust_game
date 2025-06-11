@@ -17,7 +17,6 @@ codegen-units = 8
 
 [profile.release]
 opt-level = 3
-inherits = "release"
 strip = "debuginfo"
 lto = "thin"
 panic = 'unwind'
