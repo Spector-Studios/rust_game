@@ -11,7 +11,7 @@ mkdir dist -p
 is_release_build=false
   
 for arg in "$@"; do
-  if [ "$arg" = "--release" ]
+  if [ "$arg" = "web-release" ]
   then
     is_release_build=true
   fi
@@ -27,7 +27,7 @@ do
     
   if [ "$is_release_build" = true ]
   then
-    cp target/wasm32-unknown-unknown/release/${name}.wasm "${WASM_OUTPUT_DIR}"/${name}/game.wasm
+    cp target/wasm32-unknown-unknown/web-release/${name}.wasm "${WASM_OUTPUT_DIR}"/${name}/game.wasm
   else
     cp target/wasm32-unknown-unknown/debug/${name}.wasm "${WASM_OUTPUT_DIR}"/${name}/game.wasm
   fi

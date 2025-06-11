@@ -7,3 +7,17 @@ miniquad = { git = 'https://github.com/Spector-Studios/miniquad.git', branch = "
 
 [profile.dev]
 opt-level = "z"
+
+[profile.web-release]
+inherits = "release"
+strip = "debuginfo"
+lto = "thin"
+panic = 'unwind'
+codegen-units = 8
+
+[profile.android-release]
+inherits = "release"
+strip = "debuginfo"
+lto = "thin"
+panic = 'unwind'
+codegen-units = 8

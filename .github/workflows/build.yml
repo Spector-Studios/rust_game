@@ -69,10 +69,10 @@ jobs:
       - name: Build for all targets
         run: |
           cargo build --release
-          cargo build --release --target wasm32-unknown-unknown
+          cargo build --profile web-release --target wasm32-unknown-unknown
 
       - name: Build WASM
-        run: ./wasm_build.sh --release
+        run: ./wasm_build.sh --profile web-release
 
       - name: Upload WASM Artifacts
         uses: actions/upload-pages-artifact@v3
@@ -106,13 +106,13 @@ jobs:
         run: |
           echo $NDK_HOME
           ls $NDK_HOME
-          cargo quad-apk build --package dungeoncrawl --release
+          cargo quad-apk build --package dungeoncrawl --profile android-release
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Built-APK
-          path: target/android-artifacts/release/apk
+          path: target/android-artifacts/android-release/apk
 
   deploy:
     needs: build
