@@ -106,13 +106,13 @@ jobs:
         run: |
           echo $NDK_HOME
           ls $NDK_HOME
-          cargo quad-apk build --package dungeoncrawl --profile android-release
+          cargo quad-apk build --package dungeoncrawl --release
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Built-APK
-          path: target/android-artifacts/android-release/apk
+          path: target/android-artifacts/release/apk
 
   deploy:
     needs: build

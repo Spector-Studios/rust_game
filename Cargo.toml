@@ -15,7 +15,8 @@ lto = "thin"
 panic = 'unwind'
 codegen-units = 8
 
-[profile.android-release]
+[profile.release]
+opt-level = 3
 inherits = "release"
 strip = "debuginfo"
 lto = "thin"
