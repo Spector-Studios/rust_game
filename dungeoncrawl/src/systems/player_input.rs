@@ -1,10 +1,10 @@
 use bevy_state::state::NextState;
 
 use crate::{
+    TurnState,
     events::{WantsToAttack, WantsToMove},
     prelude::*,
     resources::PathfindingMap,
-    TurnState,
 };
 
 pub fn player_input_system(

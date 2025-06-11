@@ -1,4 +1,4 @@
-use crate::{prelude::*, TurnState};
+use crate::{TurnState, prelude::*};
 use bevy_state::prelude::State;
 
 pub fn hud_render_system(

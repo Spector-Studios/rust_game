@@ -1,8 +1,9 @@
 mod automata;
+mod drunkard;
 mod empty;
 mod rooms;
 
-use crate::prelude::*;
+use crate::{map_builder::drunkard::DrunkardsWalkArchitect, prelude::*};
 use automata::CellularAutomataArchitect;
 use bracket_pathfinding::prelude::{Algorithm2D, DijkstraMap, DistanceAlg};
 use empty::EmptyArchitect;
@@ -34,7 +35,7 @@ impl MapBuilder {
         }
     }
     pub fn new(rng: &mut Rng) -> Self {
-        let mut architect = CellularAutomataArchitect {};
+        let mut architect = DrunkardsWalkArchitect {};
         architect.build(rng)
     }
 

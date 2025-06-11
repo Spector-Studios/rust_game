@@ -4,7 +4,7 @@ use strum_macros::{AsRefStr, EnumIter};
 
 use crate::prelude::*;
 
-#[derive(EnumIter, AsRefStr,Debug, Hash, PartialEq, Eq)]
+#[derive(EnumIter, AsRefStr, Debug, Hash, PartialEq, Eq)]
 // #[strum(suffix = ".png")] INFO Waiting for #440 on strum
 pub enum SpriteKey {
     // Map

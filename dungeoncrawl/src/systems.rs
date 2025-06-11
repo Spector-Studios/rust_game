@@ -12,7 +12,7 @@ pub mod random_move;
 pub mod update_pathfinding;
 
 use crate::PathfindingMap;
-use crate::{prelude::*, TurnState};
+use crate::{TurnState, prelude::*};
 use bevy_app::Startup;
 use bevy_ecs::system::SystemState;
 use bevy_state::commands::CommandsStatesExt;

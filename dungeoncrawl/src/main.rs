@@ -139,7 +139,12 @@ fn main() {
             restart_system.run_if(in_state(TurnState::GameOver).or(in_state(TurnState::Victory))),
         )
         // TODO Add computed state for this
-        .add_systems(Update, fov.run_if(not(in_state(TurnState::GameOver).or(in_state(TurnState::Victory)))))
+        .add_systems(
+            Update,
+            fov.run_if(not(
+                in_state(TurnState::GameOver).or(in_state(TurnState::Victory))
+            )),
+        )
         .run();
 }
 
@@ -184,7 +189,7 @@ fn macroquad_runner(mut app: App) -> AppExit {
         // DEFAULTS
         set_pc_assets_folder("assets");
         set_default_filter_mode(FilterMode::Nearest);
-        
+
         let sprite_sheet = SpriteSheet::default().await.unwrap();
 
         // XXX WARNING Finish loading all the textures before this

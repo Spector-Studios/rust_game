@@ -1,4 +1,4 @@
-use crate::{prelude::*, TurnState};
+use crate::{TurnState, prelude::*};
 use bevy_state::{prelude::State, state::NextState};
 
 pub fn end_turn_system(
