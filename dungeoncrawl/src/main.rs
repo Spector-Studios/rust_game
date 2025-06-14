@@ -110,9 +110,11 @@ fn main() {
             Update,
             player_input_system.run_if(in_state(TurnState::AwaitingInput)),
         )
+        // TODO Use System Configs to better determine order irrespective of state
+        // E.g. fov system needs to run after movement system to avoid flickering of map
         .add_systems(
             Update,
-            (combat_system, movement_system, end_turn_system)
+            (combat_system, movement_system, fov, end_turn_system)
                 .chain()
                 .run_if(in_state(TurnState::PlayerTurn)),
         )
@@ -131,7 +133,7 @@ fn main() {
         )
         //.add_systems(Update, (combat_system, movement_system, end_turn_system))
         .add_systems(
-            Update,
+            PostUpdate,
             (map_render_system, entity_render_system, hud_render_system).chain(),
         )
         .add_systems(
