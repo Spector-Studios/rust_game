@@ -1,9 +1,13 @@
 mod automata;
 mod drunkard;
 mod empty;
+mod prefab;
 mod rooms;
 
-use crate::{map_builder::drunkard::DrunkardsWalkArchitect, prelude::*};
+use crate::{
+    map_builder::{drunkard::DrunkardsWalkArchitect, prefab::apply_prefab},
+    prelude::*,
+};
 use automata::CellularAutomataArchitect;
 use bracket_pathfinding::prelude::{Algorithm2D, DijkstraMap, DistanceAlg};
 use empty::EmptyArchitect;
@@ -40,7 +44,10 @@ impl MapBuilder {
             1 => Box::new(RoomsArchitect {}),
             _ => Box::new(CellularAutomataArchitect {}),
         };
-        architect.build(rng)
+        let mut mb = architect.build(rng);
+        apply_prefab(&mut mb, rng);
+
+        mb
     }
 
     fn fill(&mut self, tile: TileType) {

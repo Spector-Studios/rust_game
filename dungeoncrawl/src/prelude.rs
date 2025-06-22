@@ -3,6 +3,7 @@ use bracket_pathfinding::prelude::Point;
 pub use fastrand::Rng;
 pub use input_lib::*;
 pub use macroquad::prelude::*;
+use std::collections::HashSet;
 
 pub use crate::components::*;
 pub use crate::map::*;
@@ -37,7 +38,7 @@ pub const D_RIGHT: TilePoint = TilePoint::new(1, 0);
 
 pub const DIRECTIONS: [TilePoint; 4] = [D_UP, D_DOWN, D_LEFT, D_RIGHT];
 
-#[derive(Component, Debug, Clone, Copy, PartialEq)]
+#[derive(Component, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct TilePoint {
     pub x: i32,
     pub y: i32,
@@ -140,6 +141,17 @@ impl TileRect {
                 f(TilePoint::new(x, y));
             }
         }
+    }
+
+    pub fn point_set(&self) -> HashSet<TilePoint> {
+        let mut result = HashSet::new();
+        for y in self.y1..self.y2 {
+            for x in self.x1..self.x2 {
+                result.insert(TilePoint::new(x, y));
+            }
+        }
+
+        result
     }
 
     pub fn contains(&self, point: TilePoint) -> bool {

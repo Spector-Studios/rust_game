@@ -105,7 +105,6 @@ fn main() {
         .add_event::<WantsToMove>()
         .add_systems(Startup, setup_system)
         .add_systems(PreUpdate, controller_update)
-        // TODO Add systems for GameOver and Victory states
         .add_systems(
             Update,
             player_input_system.run_if(in_state(TurnState::AwaitingInput)),
