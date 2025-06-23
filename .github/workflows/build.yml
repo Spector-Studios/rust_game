@@ -105,7 +105,6 @@ jobs:
           NDK_HOME: ./android/android-ndk-r25b
         run: |
           echo $NDK_HOME
-          ls $NDK_HOME
           cargo quad-apk build --package dungeoncrawl --release --nosign
 
       - name: Sign APK
@@ -114,9 +113,10 @@ jobs:
           KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASSWORD }}
         run: |
           mkdir apk
-          base64 -d "$KEYSTORE_BASE64" > apk/apk.keystore
           cp "target/android-artifacts/release/apk/dungeoncrawl.apk" "apk/unsigned.apk"
           cd apk
+          echo "$KEYSTORE_BASE64" > apk.keystore.base64
+          base64 -d apk.keystore.base64 > apk.keystore
           apksigner sign --ks apk.keystore --ks-key-alias dungeoncrawl --ks-pass pass:"$KEYSTORE_PASS" --out "dungeoncrawl_signed.apk" unsigned.apk
 
       - name: Upload APK
