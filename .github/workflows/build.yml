@@ -117,7 +117,7 @@ jobs:
           cd apk
           echo "$KEYSTORE_BASE64" > apk.keystore.base64
           base64 -d apk.keystore.base64 > apk.keystore
-          apksigner sign --ks apk.keystore --ks-key-alias dungeoncrawl --ks-pass pass:"$KEYSTORE_PASS" --out "dungeoncrawl_signed.apk" unsigned.apk
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" sign --ks apk.keystore --ks-key-alias dungeoncrawl --ks-pass pass:"$KEYSTORE_PASS" --out "dungeoncrawl_signed.apk" unsigned.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
