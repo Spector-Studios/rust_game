@@ -106,13 +106,24 @@ jobs:
         run: |
           echo $NDK_HOME
           ls $NDK_HOME
-          cargo quad-apk build --package dungeoncrawl --release
+          cargo quad-apk build --package dungeoncrawl --release --nosign
+
+      - name: Sign APK
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASSWORD }}
+        run: |
+          mkdir apk
+          base64 -d "$KEYSTORE_BASE64" > apk/apk.keystore
+          cp "target/android-artifacts/release/apk/dungeoncrawl.apk" "apk/unsigned.apk"
+          cd apk
+          apksigner sign --ks apk.keystore --ks-key-alias dungeoncrawl --ks-pass pass:"$KEYSTORE_PASS" --out "dungeoncrawl_signed.apk" unsigned.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Built-APK
-          path: target/android-artifacts/release/apk
+          path: apk/
 
   deploy:
     needs: build
