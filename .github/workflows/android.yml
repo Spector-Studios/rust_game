@@ -15,4 +15,4 @@ jobs:
     steps:
     - run: |
         echo $ANDROID_HOME
-        ls $ANDROID_HOME/build-tools
+        ls "$ANDROID_HOME/build-tools/36.0.0"
