@@ -24,6 +24,7 @@ do
   
   cp ${name}/assets/* "${WASM_OUTPUT_DIR}"/${name}/assets/ -r
   cp wasm_helper/index.html "${WASM_OUTPUT_DIR}"/index.html
+  cp wasm_helper/favicon.ico "${WASM_OUTPUT_DIR}"/favicon.ico
     
   if [ "$is_release_build" = true ]
   then
