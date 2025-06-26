@@ -37,6 +37,38 @@ pub fn spawn_amulet(ecs: &mut Commands, pos: TilePoint) {
     });
 }
 
+pub fn spawn_healing_potion(ecs: &mut Commands, pos: TilePoint) {
+    ecs.spawn((
+        Item,
+        pos,
+        EntityName("Health Potion".to_string()),
+        ProvidesHealing { amount: 6 },
+        Render {
+            texture: EntityType::HealthPotion,
+        },
+    ));
+}
+
+pub fn spawn_magic_mapper(ecs: &mut Commands, pos: TilePoint) {
+    ecs.spawn((
+        Item,
+        pos,
+        EntityName("Mapper".to_string()),
+        ProvidesDungeonMap,
+        Render {
+            texture: EntityType::Map,
+        },
+    ));
+}
+
+pub fn spawn_entity(ecs: &mut Commands, pos: TilePoint, rng: &mut Rng) {
+    match rng.u8(0..6) {
+        1 => spawn_healing_potion(ecs, pos),
+        2 => spawn_magic_mapper(ecs, pos),
+        _ => spawn_enemy(ecs, rng, pos),
+    }
+}
+
 fn bat() -> (i32, String, EntityType) {
     (1, "Goblin".to_string(), EntityType::Bat)
 }

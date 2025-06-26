@@ -16,6 +16,8 @@ pub enum EntityType {
 
     // Items
     Amulet,
+    HealthPotion,
+    Map,
 }
 
 impl EntityType {
@@ -27,6 +29,8 @@ impl EntityType {
             EntityType::Ghost => (16.0, 16.0),
             EntityType::Mage => (0.0, 32.0),
             EntityType::Amulet => (0.0, 0.0),
+            EntityType::HealthPotion => (32.0, 0.0),
+            EntityType::Map => (32.0, 16.0),
         };
 
         Rect::new(x, y, 16.0, 16.0)

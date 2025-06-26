@@ -35,6 +35,9 @@ pub struct MovesRandomly;
 pub struct ChasePlayer;
 
 #[derive(Component, Debug)]
+pub struct ProvidesDungeonMap;
+
+#[derive(Component, Debug)]
 pub struct EntityName(pub String);
 
 // TODO Make the texture a Rect or something
@@ -46,6 +49,11 @@ pub struct Render {
 #[derive(Component, Debug)]
 pub struct Timer {
     pub time: f32,
+}
+
+#[derive(Component, Debug)]
+pub struct ProvidesHealing {
+    pub amount: i32,
 }
 
 #[derive(Component, Debug)]

@@ -56,7 +56,7 @@ pub fn setup_system(world: &mut World, p_commands: &mut SystemState<Commands>) {
         map_builder
             .monster_spawns
             .iter()
-            .for_each(|pos| spawn_enemy(&mut commands, &mut rng, *pos));
+            .for_each(|pos| spawn_entity(&mut commands, *pos, &mut rng));
 
         commands.insert_resource(Viewport::new(map_builder.player_start));
         commands.insert_resource(PathfindingMap::new(&[player_idx], &map_builder.map));
