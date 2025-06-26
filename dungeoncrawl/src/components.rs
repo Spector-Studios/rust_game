@@ -40,7 +40,7 @@ pub struct EntityName(pub String);
 // TODO Make the texture a Rect or something
 #[derive(Component, Debug)]
 pub struct Render {
-    pub texture: SpriteKey,
+    pub texture: EntityType,
 }
 
 #[derive(Component, Debug)]
@@ -100,7 +100,7 @@ impl PlayerBundle {
                 max: 20,
             },
             render: Render {
-                texture: SpriteKey::Player,
+                texture: EntityType::Player,
             },
             field_of_view: FieldOfView::new(8),
             timer: Timer { time: 0.0 },

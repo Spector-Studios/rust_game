@@ -1,5 +1,7 @@
 use super::MapArchitect;
+use crate::map_builder::themes::FortressTheme;
 use crate::prelude::*;
+use crate::resources::Theme;
 use bracket_pathfinding::prelude::Algorithm2D;
 use bracket_pathfinding::prelude::DijkstraMap;
 
@@ -13,6 +15,9 @@ impl MapArchitect for RoomsArchitect {
             player_start: TilePoint::zero(),
             amulet_start: TilePoint::zero(),
             monster_spawns: Vec::new(),
+            theme: Theme {
+                theme: FortressTheme::boxed_new(),
+            },
         };
 
         mb.fill(TileType::Wall);

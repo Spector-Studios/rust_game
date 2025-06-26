@@ -10,15 +10,18 @@ pub fn entity_render_system(
 
     for (pos, render) in entity_query.iter() {
         if viewport.view_area.contains(*pos) && player_fov.visible_tiles.contains(&(*pos).into()) {
+            let draw_params = DrawTextureParams {
+                dest_size: DEST_SIZE,
+                source: Some(render.texture.get_texture_source()),
+                ..Default::default()
+            };
+
             draw_texture_ex(
-                sprite_sheet.sprites.get(&render.texture).unwrap(),
+                &sprite_sheet.entities,
                 viewport.get_screen_x(pos.x),
                 viewport.get_screen_y(pos.y),
                 WHITE,
-                DrawTextureParams {
-                    dest_size: Some(vec2(TILE_SIZE, TILE_SIZE)),
-                    ..Default::default()
-                },
+                draw_params,
             );
         }
     }

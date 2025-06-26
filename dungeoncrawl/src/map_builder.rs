@@ -3,10 +3,12 @@ mod drunkard;
 mod empty;
 mod prefab;
 mod rooms;
+mod themes;
 
 use crate::{
     map_builder::{drunkard::DrunkardsWalkArchitect, prefab::apply_prefab},
     prelude::*,
+    resources::Theme,
 };
 use automata::CellularAutomataArchitect;
 use bracket_pathfinding::prelude::{Algorithm2D, DijkstraMap, DistanceAlg};
@@ -15,6 +17,13 @@ use rooms::RoomsArchitect;
 
 trait MapArchitect {
     fn build(&mut self, rng: &mut Rng) -> MapBuilder;
+}
+
+pub trait MapTheme: Send + Sync {
+    fn tile_to_render(&self, tile_type: TileType, rng: &mut Rng) -> Rect;
+    fn map_sheet_path(&self) -> String;
+    fn clone(&self) -> Box<dyn MapTheme>;
+    fn texture<'a>(&self, sprite_sheet: &'a SpriteSheet) -> &'a Texture2D;
 }
 
 const NUM_ROOMS: usize = 20;
@@ -26,6 +35,7 @@ pub struct MapBuilder {
     pub player_start: TilePoint,
     pub amulet_start: TilePoint,
     pub monster_spawns: Vec<TilePoint>,
+    pub theme: Theme,
 }
 
 impl MapBuilder {
@@ -36,6 +46,9 @@ impl MapBuilder {
             player_start: TilePoint::zero(),
             amulet_start: TilePoint::zero(),
             monster_spawns: Vec::new(),
+            theme: Theme {
+                theme: themes::FortressTheme::boxed_new(),
+            },
         }
     }
     pub fn new(rng: &mut Rng) -> Self {
@@ -46,6 +59,17 @@ impl MapBuilder {
         };
         let mut mb = architect.build(rng);
         apply_prefab(&mut mb, rng);
+
+        mb.theme.theme = match rng.i8(0..2) {
+            0 => {
+                info!("Fortress Theme");
+                themes::FortressTheme::boxed_new()
+            }
+            _ => {
+                info!("Forest theme");
+                themes::ForestTheme::boxed_new()
+            }
+        };
 
         mb
     }

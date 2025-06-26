@@ -9,7 +9,7 @@ pub struct DrunkardsWalkArchitect {}
 
 impl DrunkardsWalkArchitect {
     fn drunkard(&self, start: TilePoint, rng: &mut Rng, map: &mut Map) {
-        let mut drunkard_pos = start.clone();
+        let mut drunkard_pos = start;
         let mut distance_staggered = 0;
 
         loop {

@@ -32,15 +32,15 @@ pub fn spawn_amulet(ecs: &mut Commands, pos: TilePoint) {
         pos,
         name: EntityName("Amulet".to_string()),
         render: Render {
-            texture: SpriteKey::Amulet,
+            texture: EntityType::Amulet,
         },
     });
 }
 
-fn bat() -> (i32, String, SpriteKey) {
-    (1, "Goblin".to_string(), SpriteKey::Bat)
+fn bat() -> (i32, String, EntityType) {
+    (1, "Goblin".to_string(), EntityType::Bat)
 }
 
-fn giant() -> (i32, String, SpriteKey) {
-    (2, "Giant".to_string(), SpriteKey::Cyclops)
+fn giant() -> (i32, String, EntityType) {
+    (2, "Giant".to_string(), EntityType::Cyclops)
 }

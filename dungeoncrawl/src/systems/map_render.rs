@@ -1,9 +1,10 @@
-use crate::prelude::*;
+use crate::{prelude::*, resources::Theme};
 
 pub fn map_render_system(
     map: Res<Map>,
     viewport: Res<Viewport>,
     sprite_sheet: Res<SpriteSheet>,
+    theme: Res<Theme>,
     fov: Query<&FieldOfView, With<Player>>,
 ) {
     let player_fov = fov.single().unwrap();
@@ -24,30 +25,20 @@ pub fn map_render_system(
                     GRAY
                 };
 
-                match map.tiles[idx] {
-                    TileType::Wall => draw_texture_ex(
-                        sprite_sheet.sprites.get(&SpriteKey::Wall).unwrap(),
-                        screen_x,
-                        screen_y,
-                        tint,
-                        DrawTextureParams {
-                            dest_size: Some(vec2(TILE_SIZE, TILE_SIZE)),
-                            ..Default::default()
-                        },
-                    ),
-
-                    TileType::Floor => draw_texture_ex(
-                        sprite_sheet.sprites.get(&SpriteKey::Floor).unwrap(),
-                        screen_x,
-                        screen_y,
-                        tint,
-                        // TODO store this somewhere (a CONST), It is used is all the rendering
-                        DrawTextureParams {
-                            dest_size: Some(vec2(TILE_SIZE, TILE_SIZE)),
-                            ..Default::default()
-                        },
-                    ),
-                }
+                // TODO Make Rng a resource
+                let mut rng = Rng::with_seed(macroquad::miniquad::date::now() as _);
+                let source = Some(theme.tile_to_render(map.tiles[idx], &mut rng));
+                draw_texture_ex(
+                    theme.texture(&sprite_sheet),
+                    screen_x,
+                    screen_y,
+                    tint,
+                    DrawTextureParams {
+                        dest_size: DEST_SIZE,
+                        source,
+                        ..Default::default()
+                    },
+                );
             }
         }
     }

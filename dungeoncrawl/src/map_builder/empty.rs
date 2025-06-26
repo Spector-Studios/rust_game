@@ -1,5 +1,5 @@
 use super::MapArchitect;
-use crate::prelude::*;
+use crate::{map_builder::themes::FortressTheme, prelude::*, resources::Theme};
 
 pub struct EmptyArchitect {}
 
@@ -11,6 +11,9 @@ impl MapArchitect for EmptyArchitect {
             player_start: TilePoint::zero(),
             amulet_start: TilePoint::zero(),
             monster_spawns: Vec::new(),
+            theme: Theme {
+                theme: FortressTheme::boxed_new(),
+            },
         };
 
         mb.fill(TileType::Floor);

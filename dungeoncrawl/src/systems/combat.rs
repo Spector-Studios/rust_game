@@ -11,11 +11,7 @@ pub fn combat_system(
         let is_player = player_query.get(*victim).is_ok();
 
         if let Ok(mut health) = health_query.get_mut(*victim) {
-            debug!("Health before attack: {}", health.current);
-
             health.current -= 1;
-
-            debug!("Health after: {}", health.current);
 
             if health.current < 1 && !is_player {
                 commands.entity(*victim).despawn();

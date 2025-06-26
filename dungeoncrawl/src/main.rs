@@ -191,7 +191,7 @@ fn macroquad_runner(mut app: App) -> AppExit {
         set_pc_assets_folder("assets");
         set_default_filter_mode(FilterMode::Nearest);
 
-        let sprite_sheet = SpriteSheet::default().await.unwrap();
+        let sprite_sheet = SpriteSheet::new().await;
 
         // XXX WARNING Finish loading all the textures before this
         build_textures_atlas();

@@ -60,6 +60,7 @@ pub fn setup_system(world: &mut World, p_commands: &mut SystemState<Commands>) {
 
         commands.insert_resource(Viewport::new(map_builder.player_start));
         commands.insert_resource(PathfindingMap::new(&[player_idx], &map_builder.map));
+        commands.insert_resource(map_builder.theme);
         commands.insert_resource(map_builder.map);
 
         commands.set_state(TurnState::AwaitingInput);

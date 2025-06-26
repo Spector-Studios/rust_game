@@ -1,5 +1,3 @@
-use std::collections::VecDeque;
-
 use bracket_pathfinding::prelude::DijkstraMap;
 
 use crate::prelude::*;
@@ -22,6 +20,25 @@ impl PathfindingMap {
             ),
             is_stale: false,
         }
+    }
+}
+
+#[derive(Resource)]
+pub struct Theme {
+    pub theme: Box<dyn MapTheme>,
+}
+
+impl Theme {
+    pub fn tile_to_render(&self, tile_type: TileType, rng: &mut Rng) -> Rect {
+        self.theme.tile_to_render(tile_type, rng)
+    }
+
+    pub fn map_sheet_path(&self) -> String {
+        self.theme.map_sheet_path()
+    }
+
+    pub fn texture<'a>(&self, sprite_sheet: &'a SpriteSheet) -> &'a Texture2D {
+        self.theme.texture(sprite_sheet)
     }
 }
 

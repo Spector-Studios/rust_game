@@ -38,6 +38,8 @@ pub const D_RIGHT: TilePoint = TilePoint::new(1, 0);
 
 pub const DIRECTIONS: [TilePoint; 4] = [D_UP, D_DOWN, D_LEFT, D_RIGHT];
 
+pub const DEST_SIZE: Option<Vec2> = Some(vec2(TILE_SIZE, TILE_SIZE));
+
 #[derive(Component, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct TilePoint {
     pub x: i32,
