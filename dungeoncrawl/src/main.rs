@@ -32,7 +32,6 @@ use prelude::map_render::map_render_system;
 use prelude::random_move::random_move_system;
 use prelude::update_pathfinding::update_pathfinding;
 use resources::PathfindingMap;
-use std::f32::consts::PI;
 use std::panic;
 use systems::player_input::player_input_system;
 
@@ -178,7 +177,7 @@ fn macroquad_runner(mut app: App) -> AppExit {
     macroquad::Window::from_config(window_conf(), async move {
         set_panic_handler(|msg, backtrace| async move {
             loop {
-                clear_background(RED);
+                clear_background(BLACK);
                 ui::root_ui().label(None, &msg);
                 for line in backtrace.split('\n') {
                     ui::root_ui().label(None, line);
@@ -199,22 +198,12 @@ fn macroquad_runner(mut app: App) -> AppExit {
 
         app.insert_resource(sprite_sheet);
 
-        let mut x: f32 = 0.1;
         loop {
-            clear_background(BLUE);
-            x = (x + 0.001).fract();
-            draw_rectangle_ex(
-                400.0,
-                400.0,
-                300.0,
-                300.0,
-                DrawRectangleParams {
-                    rotation: x * PI * 2.0,
-                    color: RED,
-                    ..Default::default()
-                },
-            );
+            clear_background(BLACK);
             app.update();
+
+            draw_rectangle_lines(Viewport::x_offset(), Viewport::y_offset(), VIEWPORT_WIDTH, VIEWPORT_HEIGHT, 10.0, WHITE);
+
             next_frame().await;
         }
     });
