@@ -11,6 +11,7 @@ mod viewport;
 
 use crate::movement::movement_system;
 use crate::prelude::*;
+use crate::resources::FontResource;
 use bevy_app::prelude::*;
 use bevy_ecs::error::GLOBAL_ERROR_HANDLER;
 use bevy_state::app::AppExtStates;
@@ -191,18 +192,27 @@ fn macroquad_runner(mut app: App) -> AppExit {
         set_default_filter_mode(FilterMode::Nearest);
 
         let sprite_sheet = SpriteSheet::new().await;
+        let font = load_ttf_font("font.ttf").await.unwrap();
 
         // XXX WARNING Finish loading all the textures before this
         build_textures_atlas();
         // XXX WARNING -------------------------------------------
 
         app.insert_resource(sprite_sheet);
+        app.insert_resource(FontResource(font));
 
         loop {
             clear_background(BLACK);
             app.update();
 
-            draw_rectangle_lines(Viewport::x_offset(), Viewport::y_offset(), VIEWPORT_WIDTH, VIEWPORT_HEIGHT, 10.0, WHITE);
+            draw_rectangle_lines(
+                Viewport::x_offset(),
+                Viewport::y_offset(),
+                VIEWPORT_WIDTH,
+                VIEWPORT_HEIGHT,
+                10.0,
+                WHITE,
+            );
 
             next_frame().await;
         }

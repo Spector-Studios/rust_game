@@ -36,11 +36,7 @@ impl ButtonState {
     }
 
     pub fn reset(&mut self) {
-        self.dpad_x = 0;
-        self.dpad_y = 0;
-        self.action = false;
-        self.back = false;
-        self.start = false;
+        *self = Self::new();
     }
 
     fn set(&mut self, button: Buttons) {
@@ -64,7 +60,7 @@ impl Default for ButtonState {
 
 #[derive(Resource, Debug)]
 pub struct Controller {
-    buttons: Vec<(XButton, Buttons)>,
+    buttons: [(XButton, Buttons); 7],
     pub button_state: ButtonState,
 }
 
@@ -72,7 +68,7 @@ impl Controller {
     #[must_use]
     pub fn new() -> Self {
         Self {
-            buttons: vec![
+            buttons: [
                 (
                     XButton::new(
                         Rect::new(200.0, screen_height() - 400.0, 100.0, 100.0),
@@ -159,9 +155,9 @@ impl Controller {
         }
     }
 
-    pub fn draw(&self) {
+    pub fn draw(&self, font: Option<&Font>) {
         for (btn, _) in &self.buttons {
-            btn.draw();
+            btn.draw(font);
         }
     }
 }

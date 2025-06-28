@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 use bracket_pathfinding::prelude::DijkstraMap;
 
 use crate::prelude::*;
@@ -42,5 +44,12 @@ impl Theme {
     }
 }
 
-// #[derive(Resource, Debug)]
-// pub struct EnemyQueue(pub VecDeque<Entity>);
+#[derive(Resource)]
+pub struct FontResource(pub Font);
+impl Deref for FontResource {
+    type Target = Font;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}

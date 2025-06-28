@@ -25,7 +25,7 @@ impl XButton {
             .any(|touch| self.rect.contains(touch.position));
     }
 
-    pub fn draw(&self) {
+    pub fn draw(&self, font: Option<&Font>) {
         draw_rectangle(
             self.rect.x,
             self.rect.y,
@@ -34,6 +34,17 @@ impl XButton {
             self.color,
         );
 
-        draw_text(self.label.as_str(), self.rect.x, self.rect.y, 30.0, BLUE);
+        let text_center = get_text_center(&self.label, None, 50, 1.0, 0.0);
+        draw_text_ex(
+            &self.label,
+            self.rect.center().x - text_center.x,
+            self.rect.center().y - text_center.y,
+            TextParams {
+                font,
+                font_size: 50,
+                color: BLACK,
+                ..Default::default()
+            },
+        );
     }
 }

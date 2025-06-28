@@ -12,6 +12,7 @@ pub mod random_move;
 pub mod update_pathfinding;
 
 use crate::PathfindingMap;
+use crate::resources::FontResource;
 use crate::{TurnState, prelude::*};
 use bevy_app::Startup;
 use bevy_ecs::system::SystemState;
@@ -70,9 +71,13 @@ pub fn setup_system(world: &mut World, p_commands: &mut SystemState<Commands>) {
     info!("setup end");
 }
 
-pub fn controller_update(mut controller: ResMut<Controller>, mut commands: Commands) {
+pub fn controller_update(
+    mut controller: ResMut<Controller>,
+    mut commands: Commands,
+    font: Res<FontResource>,
+) {
     controller.update();
-    controller.draw();
+    controller.draw(Some(&font));
     commands.insert_resource(controller.button_state);
 }
 
