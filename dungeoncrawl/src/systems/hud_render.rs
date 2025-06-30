@@ -42,7 +42,7 @@ pub fn hud_render_system(
         WHITE,
     );
 
-    if button_state.back {
+    if button_state.buttons.contains(Buttons::B) {
         enemy_query
             .iter()
             .filter(|(_, pos, _)| {

@@ -1,26 +1,38 @@
 use bevy_ecs::prelude::*;
+use enumset::EnumSet;
+use enumset::EnumSetType;
 use macroquad::prelude::*;
 use macroquad_ex_ui::XButton;
 
-#[repr(u8)]
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(EnumSetType, Debug)]
 pub enum Buttons {
-    DPadUp = 0b0000_0001,
-    DPadDown = 0b0000_0010,
-    DPadLeft = 0b0000_0100,
-    DPadRight = 0b0000_1000,
-    Action = 0b0001_0000,
-    Back = 0b0010_0000,
-    Start = 0b0100_0000,
-} // Add to Controller if adding new Buttons
+    A,
+    B,
+    X,
+    Y,
+    Start,
+    Select,
+}
+
+#[derive(Clone, Copy, Debug)]
+pub enum DPadButtons {
+    Left,
+    Right,
+    Up,
+    Down,
+}
+
+#[derive(Clone, Copy, Debug)]
+pub enum ButtonKind {
+    DPad(DPadButtons),
+    Action(Buttons),
+}
 
 #[derive(Resource, Debug, Clone, Copy, PartialEq)]
 pub struct ButtonState {
     pub dpad_x: i32,
     pub dpad_y: i32,
-    pub action: bool,
-    pub back: bool,
-    pub start: bool,
+    pub buttons: EnumSet<Buttons>,
 }
 
 impl ButtonState {
@@ -29,25 +41,27 @@ impl ButtonState {
         Self {
             dpad_x: 0,
             dpad_y: 0,
-            action: false,
-            back: false,
-            start: false,
+            buttons: EnumSet::empty(),
         }
     }
 
     pub fn reset(&mut self) {
-        *self = Self::new();
+        self.dpad_x = 0;
+        self.dpad_y = 0;
+        self.buttons.clear();
     }
 
-    fn set(&mut self, button: Buttons) {
+    fn set(&mut self, button: ButtonKind) {
         match button {
-            Buttons::DPadUp => self.dpad_y = 1,
-            Buttons::DPadDown => self.dpad_y = -1,
-            Buttons::DPadLeft => self.dpad_x = -1,
-            Buttons::DPadRight => self.dpad_x = 1,
-            Buttons::Action => self.action = true,
-            Buttons::Back => self.back = true,
-            Buttons::Start => self.start = true,
+            ButtonKind::DPad(dpad_buttons) => match dpad_buttons {
+                DPadButtons::Left => self.dpad_x -= 1,
+                DPadButtons::Right => self.dpad_x += 1,
+                DPadButtons::Up => self.dpad_y += 1,
+                DPadButtons::Down => self.dpad_y -= 1,
+            },
+            ButtonKind::Action(buttons) => {
+                self.buttons.insert(buttons);
+            }
         }
     }
 }
@@ -58,9 +72,9 @@ impl Default for ButtonState {
     }
 }
 
-#[derive(Resource, Debug)]
+#[derive(Resource)]
 pub struct Controller {
-    buttons: [(XButton, Buttons); 7],
+    buttons: [(XButton, ButtonKind); 10],
     pub button_state: ButtonState,
 }
 
@@ -75,7 +89,7 @@ impl Controller {
                         "↑",
                         RED,
                     ),
-                    Buttons::DPadUp,
+                    ButtonKind::DPad(DPadButtons::Up),
                 ),
                 (
                     XButton::new(
@@ -83,7 +97,7 @@ impl Controller {
                         "↓",
                         RED,
                     ),
-                    Buttons::DPadDown,
+                    ButtonKind::DPad(DPadButtons::Down),
                 ),
                 (
                     XButton::new(
@@ -91,7 +105,7 @@ impl Controller {
                         "←",
                         RED,
                     ),
-                    Buttons::DPadLeft,
+                    ButtonKind::DPad(DPadButtons::Left),
                 ),
                 (
                     XButton::new(
@@ -99,46 +113,85 @@ impl Controller {
                         "→",
                         RED,
                     ),
-                    Buttons::DPadRight,
+                    ButtonKind::DPad(DPadButtons::Right),
                 ),
                 (
                     XButton::new(
                         Rect::new(
-                            screen_width() - 150.0,
-                            screen_height() - 350.0,
+                            screen_width() - 150.0 + 10.0,
+                            screen_height() - 350.0 - 10.0,
                             100.0,
                             100.0,
                         ),
                         "A",
                         RED,
                     ),
-                    Buttons::Action,
+                    ButtonKind::Action(Buttons::A),
                 ),
                 (
                     XButton::new(
                         Rect::new(
-                            screen_width() - 250.0,
-                            screen_height() - 250.0,
+                            screen_width() - 250.0 - 10.0,
+                            screen_height() - 250.0 + 10.0,
                             100.0,
                             100.0,
                         ),
                         "B",
                         RED,
                     ),
-                    Buttons::Back,
+                    ButtonKind::Action(Buttons::B),
                 ),
                 (
                     XButton::new(
                         Rect::new(
-                            screen_width() / 2.0 - 50.0,
-                            screen_height() - 500.0,
+                            screen_width() - 250.0 - 10.0,
+                            screen_height() - 350.0 - 10.0,
+                            100.0,
+                            100.0,
+                        ),
+                        "X",
+                        RED,
+                    ),
+                    ButtonKind::Action(Buttons::X),
+                ),
+                (
+                    XButton::new(
+                        Rect::new(
+                            screen_width() - 150.0 + 10.0,
+                            screen_height() - 250.0 + 10.0,
+                            100.0,
+                            100.0,
+                        ),
+                        "Y",
+                        RED,
+                    ),
+                    ButtonKind::Action(Buttons::Y),
+                ),
+                (
+                    XButton::new(
+                        Rect::new(
+                            screen_width() / 2.0 - 50.0 - 100.0,
+                            screen_height() - 600.0,
                             100.0,
                             50.0,
                         ),
                         "Start",
                         RED,
                     ),
-                    Buttons::Start,
+                    ButtonKind::Action(Buttons::Start),
+                ),
+                (
+                    XButton::new(
+                        Rect::new(
+                            screen_width() / 2.0 - 50.0 + 100.0,
+                            screen_height() - 600.0,
+                            100.0,
+                            50.0,
+                        ),
+                        "Select",
+                        RED,
+                    ),
+                    ButtonKind::Action(Buttons::Select),
                 ),
             ],
             button_state: ButtonState::new(),

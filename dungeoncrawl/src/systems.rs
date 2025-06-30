@@ -82,7 +82,7 @@ pub fn controller_update(
 }
 
 pub fn restart_system(button_state: Res<ButtonState>, mut commands: Commands) {
-    if button_state.action {
+    if button_state.buttons.contains(Buttons::A) {
         commands.run_schedule(Startup);
     }
 }
