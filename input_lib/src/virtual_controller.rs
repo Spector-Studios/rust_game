@@ -81,116 +81,49 @@ pub struct Controller {
 impl Controller {
     #[must_use]
     pub fn new() -> Self {
+        let sw = screen_width();
+        let sh = screen_height();
+
         Self {
             buttons: [
                 (
-                    XButton::new(
-                        Rect::new(200.0, screen_height() - 400.0, 100.0, 100.0),
-                        "↑",
-                        RED,
-                    ),
+                    xbutton(200.0, sh - 400.0, 100.0, 100.0, "↑"),
                     ButtonKind::DPad(DPadButtons::Up),
                 ),
                 (
-                    XButton::new(
-                        Rect::new(200.0, screen_height() - 200.0, 100.0, 100.0),
-                        "↓",
-                        RED,
-                    ),
+                    xbutton(200.0, sh - 200.0, 100.0, 100.0, "↓"),
                     ButtonKind::DPad(DPadButtons::Down),
                 ),
                 (
-                    XButton::new(
-                        Rect::new(100.0, screen_height() - 300.0, 100.0, 100.0),
-                        "←",
-                        RED,
-                    ),
+                    xbutton(100.0, sh - 300.0, 100.0, 100.0, "←"),
                     ButtonKind::DPad(DPadButtons::Left),
                 ),
                 (
-                    XButton::new(
-                        Rect::new(300.0, screen_height() - 300.0, 100.0, 100.0),
-                        "→",
-                        RED,
-                    ),
+                    xbutton(300.0, sh - 300.0, 100.0, 100.0, "→"),
                     ButtonKind::DPad(DPadButtons::Right),
                 ),
                 (
-                    XButton::new(
-                        Rect::new(
-                            screen_width() - 150.0 + 10.0,
-                            screen_height() - 350.0 - 10.0,
-                            100.0,
-                            100.0,
-                        ),
-                        "A",
-                        RED,
-                    ),
+                    xbutton(sw - 150.0 + 10.0, sh - 350.0 - 10.0, 100.0, 100.0, "A"),
                     ButtonKind::Action(Buttons::A),
                 ),
                 (
-                    XButton::new(
-                        Rect::new(
-                            screen_width() - 250.0 - 10.0,
-                            screen_height() - 250.0 + 10.0,
-                            100.0,
-                            100.0,
-                        ),
-                        "B",
-                        RED,
-                    ),
+                    xbutton(sw - 250.0 - 10.0, sh - 250.0 + 10.0, 100.0, 100.0, "B"),
                     ButtonKind::Action(Buttons::B),
                 ),
                 (
-                    XButton::new(
-                        Rect::new(
-                            screen_width() - 250.0 - 10.0,
-                            screen_height() - 350.0 - 10.0,
-                            100.0,
-                            100.0,
-                        ),
-                        "X",
-                        RED,
-                    ),
+                    xbutton(sw - 250.0 - 10.0, sh - 350.0 - 10.0, 100.0, 100.0, "X"),
                     ButtonKind::Action(Buttons::X),
                 ),
                 (
-                    XButton::new(
-                        Rect::new(
-                            screen_width() - 150.0 + 10.0,
-                            screen_height() - 250.0 + 10.0,
-                            100.0,
-                            100.0,
-                        ),
-                        "Y",
-                        RED,
-                    ),
+                    xbutton(sw - 150.0 + 10.0, sh - 250.0 + 10.0, 100.0, 100.0, "Y"),
                     ButtonKind::Action(Buttons::Y),
                 ),
                 (
-                    XButton::new(
-                        Rect::new(
-                            screen_width() / 2.0 - 50.0 - 100.0,
-                            screen_height() - 600.0,
-                            100.0,
-                            50.0,
-                        ),
-                        "Start",
-                        RED,
-                    ),
+                    xbutton(sw / 2.0 - 50.0 - 100.0, sh - 600.0, 100.0, 50.0, "Start"),
                     ButtonKind::Action(Buttons::Start),
                 ),
                 (
-                    XButton::new(
-                        Rect::new(
-                            screen_width() / 2.0 - 50.0 + 100.0,
-                            screen_height() - 600.0,
-                            100.0,
-                            50.0,
-                        ),
-                        "Select",
-                        RED,
-                    ),
+                    xbutton(sw / 2.0 - 50.0 + 100.0, sh - 600.0, 100.0, 50.0, "Select"),
                     ButtonKind::Action(Buttons::Select),
                 ),
             ],
@@ -219,4 +152,9 @@ impl Default for Controller {
     fn default() -> Self {
         Self::new()
     }
+}
+
+#[inline]
+fn xbutton(x: f32, y: f32, w: f32, h: f32, label: &str) -> XButton {
+    XButton::new(Rect::new(x, y, w, h), label, RED)
 }
