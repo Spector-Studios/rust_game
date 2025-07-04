@@ -155,10 +155,10 @@ fn window_conf() -> Conf {
 
         #[cfg(not(target_family = "wasm"))]
         high_dpi: true,
-        platform: Platform {
-            webgl_version: WebGLVersion::WebGL2,
-            ..Default::default()
-        },
+        // platform: Platform {
+        //     webgl_version: WebGLVersion::WebGL2,
+        //     ..Default::default()
+        // },
 
         ..Default::default()
     }
