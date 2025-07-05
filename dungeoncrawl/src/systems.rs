@@ -12,6 +12,7 @@ pub mod random_move;
 pub mod update_pathfinding;
 
 use crate::PathfindingMap;
+use crate::events::{WantsToAttack, WantsToMove};
 use crate::resources::FontResource;
 use crate::{TurnState, prelude::*};
 use bevy_app::Startup;
@@ -23,23 +24,18 @@ use bracket_pathfinding::prelude::Algorithm2D;
 pub fn setup_system(world: &mut World, p_commands: &mut SystemState<Commands>) {
     info!("setup start");
 
-    World::clear_entities(world);
+    world.clear_entities();
+    world
+        .get_resource_mut::<Events<WantsToAttack>>()
+        .unwrap()
+        .clear();
+    world
+        .get_resource_mut::<Events<WantsToMove>>()
+        .unwrap()
+        .clear();
 
     {
         let mut commands = p_commands.get_mut(world);
-
-        /* let sprite_sheet = SpriteSheet {
-            // TODO Use Bevy Asset Server
-            sprites: Texture2D::from_image(
-                &Image::from_file_with_format(
-                    include_bytes!("../assets/sprites.png"),
-                    Some(ImageFormat::Png),
-                )
-                .unwrap(),
-            ),
-        };
-
-        commands.insert_resource(sprite_sheet); */
 
         commands.insert_resource(Controller::new());
         commands.insert_resource(input_lib::ButtonState::new());
