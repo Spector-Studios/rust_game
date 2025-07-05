@@ -5,21 +5,23 @@ pub fn hud_render_system(
     button_state: Res<ButtonState>,
     viewport: Res<Viewport>,
     turn_state: Res<State<TurnState>>,
-    player_query: Query<(&Health, &FieldOfView), With<Player>>,
+    player_query: Query<(Entity, &Health, &FieldOfView), With<Player>>,
     enemy_query: Query<(&EntityName, &TilePoint, Option<&Health>), Without<Player>>,
+    item_query: Query<(&Carried, &EntityName), With<Item>>,
 ) {
-    let (player_health, player_fov) = player_query.single().expect("No player health component.");
+    let (player_entity, player_health, player_fov) =
+        player_query.single().expect("No player health component.");
 
     draw_rectangle(
-        viewport.get_hud_screen_x(0),
-        viewport.get_hud_screen_y(0),
+        Viewport::get_hud_screen_x(0),
+        Viewport::get_hud_screen_y(0),
         VIEWPORT_WIDTH,
         30.0,
         MAROON,
     );
     draw_rectangle(
-        viewport.get_hud_screen_x(0),
-        viewport.get_hud_screen_y(0),
+        Viewport::get_hud_screen_x(0),
+        Viewport::get_hud_screen_y(0),
         VIEWPORT_WIDTH * ((player_health.current) as f32 / player_health.max as f32),
         30.0,
         RED,
@@ -41,6 +43,16 @@ pub fn hud_render_system(
         100.0,
         WHITE,
     );
+
+    let mut y = Viewport::get_hud_screen_y(2);
+    let x = Viewport::get_hud_screen_x(1);
+    item_query
+        .iter()
+        .filter(|(carry, _)| carry.0 == player_entity)
+        .for_each(|(_, name)| {
+            draw_text(&name.0, x, y, 30.0, WHITE);
+            y += 31.0;
+        });
 
     if button_state.buttons.contains(Buttons::B) {
         enemy_query

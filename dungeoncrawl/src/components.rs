@@ -40,6 +40,9 @@ pub struct ProvidesDungeonMap;
 #[derive(Component, Debug)]
 pub struct EntityName(pub String);
 
+#[derive(Component, Debug)]
+pub struct Carried(pub Entity);
+
 // TODO Make the texture a Rect or something
 #[derive(Component, Debug)]
 pub struct Render {

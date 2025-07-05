@@ -92,7 +92,7 @@ fn main() {
         .set(|error, context| {
             error!("{}", error);
             error!("{}", context);
-            panic!("{}\n{}", error, context);
+            panic!("{error}\n{context}");
         })
         .expect("Error");
 
@@ -159,7 +159,6 @@ fn window_conf() -> Conf {
         //     webgl_version: WebGLVersion::WebGL2,
         //     ..Default::default()
         // },
-
         ..Default::default()
     }
 }

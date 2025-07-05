@@ -25,26 +25,32 @@ impl Viewport {
         )
     }
 
+    #[inline]
     pub fn x_offset() -> f32 {
         (screen_width() - VIEWPORT_WIDTH) / 2.0
     }
 
+    #[inline]
     pub fn y_offset() -> f32 {
         ((screen_height() - VIEWPORT_HEIGHT) / 2.0) * 0.7
     }
 
-    pub fn get_hud_screen_x(&self, tile_x: i32) -> f32 {
+    #[inline]
+    pub fn get_hud_screen_x(tile_x: i32) -> f32 {
         tile_x as f32 * TILE_SIZE + Self::x_offset()
     }
 
-    pub fn get_hud_screen_y(&self, tile_y: i32) -> f32 {
+    #[inline]
+    pub fn get_hud_screen_y(tile_y: i32) -> f32 {
         tile_y as f32 * TILE_SIZE + Self::y_offset()
     }
 
+    #[inline]
     pub fn get_screen_x(&self, tile_x: i32) -> f32 {
         (tile_x - self.view_area.x1) as f32 * TILE_SIZE + Self::x_offset()
     }
 
+    #[inline]
     pub fn get_screen_y(&self, tile_y: i32) -> f32 {
         (tile_y - self.view_area.y1) as f32 * TILE_SIZE + Self::y_offset()
     }
