@@ -1,15 +1,16 @@
 use crate::{TurnState, prelude::*};
 use bevy_state::prelude::State;
+use std::ops::Deref;
 
 pub fn hud_render_system(
     button_state: Res<ButtonState>,
     viewport: Res<Viewport>,
     turn_state: Res<State<TurnState>>,
-    player_query: Query<(Entity, &Health, &FieldOfView), With<Player>>,
+    player_query: Query<(Entity, &Health, &FieldOfView, Option<&SelectedItemIndex>), With<Player>>,
     enemy_query: Query<(&EntityName, &TilePoint, Option<&Health>), Without<Player>>,
     item_query: Query<(&Carried, &EntityName), With<Item>>,
 ) {
-    let (player_entity, player_health, player_fov) =
+    let (player_entity, player_health, player_fov, selected_item) =
         player_query.single().expect("No player health component.");
 
     draw_rectangle(
@@ -49,7 +50,13 @@ pub fn hud_render_system(
     item_query
         .iter()
         .filter(|(carry, _)| carry.0 == player_entity)
-        .for_each(|(_, name)| {
+        .enumerate()
+        .for_each(|(index, (_, name))| {
+            if let Some(i) = selected_item {
+                if index == **i {
+                    draw_rectangle(x, y - 15.0, 200.0, 30.0, BLUE);
+                }
+            }
             draw_text(&name.0, x, y, 30.0, WHITE);
             y += 31.0;
         });

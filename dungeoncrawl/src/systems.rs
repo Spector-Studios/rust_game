@@ -12,7 +12,7 @@ pub mod random_move;
 pub mod update_pathfinding;
 
 use crate::PathfindingMap;
-use crate::events::{WantsToAttack, WantsToMove};
+use crate::events::{ActivateItem, WantsToAttack, WantsToMove};
 use crate::resources::FontResource;
 use crate::{TurnState, prelude::*};
 use bevy_app::Startup;
@@ -31,6 +31,10 @@ pub fn setup_system(world: &mut World, p_commands: &mut SystemState<Commands>) {
         .clear();
     world
         .get_resource_mut::<Events<WantsToMove>>()
+        .unwrap()
+        .clear();
+    world
+        .get_resource_mut::<Events<ActivateItem>>()
         .unwrap()
         .clear();
 

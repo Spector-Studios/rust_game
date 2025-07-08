@@ -1,4 +1,7 @@
-use std::collections::HashSet;
+use std::{
+    collections::HashSet,
+    ops::{Deref, DerefMut},
+};
 
 use bracket_pathfinding::prelude::Point;
 
@@ -42,6 +45,23 @@ pub struct EntityName(pub String);
 
 #[derive(Component, Debug)]
 pub struct Carried(pub Entity);
+
+#[derive(Component, Debug)]
+pub struct SelectedItemIndex(pub usize);
+
+impl Deref for SelectedItemIndex {
+    type Target = usize;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl DerefMut for SelectedItemIndex {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
 
 // TODO Make the texture a Rect or something
 #[derive(Component, Debug)]

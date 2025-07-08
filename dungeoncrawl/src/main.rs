@@ -9,15 +9,16 @@ mod systems;
 mod texture_store;
 mod viewport;
 
+use crate::events::ActivateItem;
 use crate::movement::movement_system;
+use crate::prelude::player_input::player_menu_input_system;
 use crate::prelude::*;
 use crate::resources::FontResource;
 use bevy_app::prelude::*;
 use bevy_ecs::error::GLOBAL_ERROR_HANDLER;
 use bevy_state::app::AppExtStates;
 use bevy_state::app::StatesPlugin;
-use bevy_state::prelude::in_state;
-use bevy_state::state::States;
+use bevy_state::prelude::*;
 use events::WantsToAttack;
 use events::WantsToMove;
 use macroquad::miniquad::conf::Platform;
@@ -34,7 +35,7 @@ use prelude::random_move::random_move_system;
 use prelude::update_pathfinding::update_pathfinding;
 use resources::PathfindingMap;
 use std::panic;
-use systems::player_input::player_input_system;
+use systems::player_input::player_move_input_system;
 
 const FRAGMENT_SHADER: &str = "
 #version 100
@@ -65,7 +66,7 @@ void main() {
 }
 ";
 
-#[derive(Resource, Debug, Clone, PartialEq, Eq, Hash, Default, States)]
+#[derive(States, Resource, Debug, Clone, PartialEq, Eq, Hash, Default)]
 enum TurnState {
     #[default]
     AwaitingInput,
@@ -73,6 +74,14 @@ enum TurnState {
     MonsterTurn,
     GameOver,
     Victory,
+}
+
+#[derive(SubStates, Resource, Clone, PartialEq, Eq, Hash, Default, Debug)]
+#[source(TurnState = TurnState::AwaitingInput)]
+enum InMenu {
+    #[default]
+    Move,
+    Menu,
 }
 
 fn main() {
@@ -101,13 +110,19 @@ fn main() {
         .add_plugins(MacroquadRunner("Hello"))
         //.init_state::<TurnState>()
         .insert_state(TurnState::AwaitingInput)
+        .add_sub_state::<InMenu>()
         .add_event::<WantsToAttack>()
         .add_event::<WantsToMove>()
+        .add_event::<ActivateItem>()
         .add_systems(Startup, setup_system)
         .add_systems(PreUpdate, controller_update)
         .add_systems(
             Update,
-            player_input_system.run_if(in_state(TurnState::AwaitingInput)),
+            player_move_input_system.run_if(in_state(InMenu::Move)),
+        )
+        .add_systems(
+            Update,
+            player_menu_input_system.run_if(in_state(InMenu::Menu)),
         )
         // TODO Use System Configs to better determine order irrespective of state
         // E.g. fov system needs to run after movement system to avoid flickering of map
