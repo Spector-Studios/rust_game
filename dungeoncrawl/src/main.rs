@@ -11,6 +11,7 @@ mod viewport;
 
 use crate::events::ActivateItem;
 use crate::movement::movement_system;
+use crate::prelude::event_readers::use_item;
 use crate::prelude::player_input::player_menu_input_system;
 use crate::prelude::*;
 use crate::resources::FontResource;
@@ -116,6 +117,7 @@ fn main() {
         .add_event::<ActivateItem>()
         .add_systems(Startup, setup_system)
         .add_systems(PreUpdate, controller_update)
+        .add_systems(Update, use_item)
         .add_systems(
             Update,
             player_move_input_system.run_if(in_state(InMenu::Move)),

@@ -3,6 +3,7 @@ pub mod chasing;
 pub mod combat;
 pub mod end_turn;
 pub mod entity_render;
+pub mod event_readers;
 pub mod fov;
 pub mod hud_render;
 pub mod map_render;

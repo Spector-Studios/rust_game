@@ -13,14 +13,14 @@ pub fn player_move_input_system(
     mut pathfinding_map: ResMut<PathfindingMap>,
     mut next_turn_state: ResMut<NextState<TurnState>>,
     mut next_menu_state: ResMut<NextState<InMenu>>,
-    mut player_query: Query<(Entity, &TilePoint, &mut Health, &mut Timer), With<Player>>,
+    mut player_query: Query<(Entity, &TilePoint, &mut Timer), With<Player>>,
     enemy_pos_query: Query<(Entity, &TilePoint), With<Enemy>>,
     item_pos_query: Query<(Entity, &TilePoint), With<Item>>,
     mut move_writer: EventWriter<WantsToMove>,
     mut attack_writer: EventWriter<WantsToAttack>,
     mut commands: Commands,
 ) {
-    let (player_entity, player_pos, mut health, mut timer) = player_query
+    let (player_entity, player_pos, mut timer) = player_query
         .single_mut()
         .expect("More than one or no players");
 
@@ -40,15 +40,12 @@ pub fn player_move_input_system(
             });
     } else if *button_state != ButtonState::new() && !button_state.buttons.contains(Buttons::B) {
         timer.time = 0.0;
-        let mut did_something = false;
         let mut hit_something = false;
 
         let delta = TilePoint::new(button_state.dpad_x, -(button_state.dpad_y));
         let destination = *player_pos + delta;
 
         if delta != TilePoint::zero() {
-            did_something = true;
-
             enemy_pos_query
                 .iter()
                 .filter(|(_, pos)| **pos == destination)
@@ -69,10 +66,6 @@ pub fn player_move_input_system(
                 is_player: true,
             });
             pathfinding_map.is_stale = true;
-        }
-
-        if !did_something {
-            health.current = i32::min(health.max, health.current + 1);
         }
 
         next_turn_state.set(TurnState::PlayerTurn);
