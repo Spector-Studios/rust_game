@@ -86,12 +86,14 @@ android {
 }
 
 afterEvaluate {
-    tasks.named("generateDebugAssets").configure {
-        dependsOn(":rustlib:copyAssets")
-    }
-
-    tasks.named("generateReleaseAssets").configure {
-        dependsOn(":rustlib:copyAssets")
+    listOf(
+        "generateDebugAssets",
+        "generateReleaseAssets",
+        "generateReleaseLintVitalReportModel"
+    ).forEach {taskName ->
+        tasks.named(taskName).configure {
+            dependsOn(":rustlib:copyAssets")
+        }
     }
     
     tasks.named("mergeDebugJniLibFolders").configure {
