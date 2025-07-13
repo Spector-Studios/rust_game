@@ -85,7 +85,7 @@ enum InMenu {
     Menu,
 }
 
-fn main() {
+fn build_app() -> App {
     panic::set_hook(Box::new(|panic_info| {
         if let Some(s) = panic_info.payload().downcast_ref::<&str>() {
             error!("panic occurred: {s:?}");
@@ -108,7 +108,7 @@ fn main() {
 
     let mut app = App::new();
     app.add_plugins(StatesPlugin)
-        .add_plugins(MacroquadRunner("Hello"))
+        // .add_plugins(MacroquadRunner("Hello"))
         //.init_state::<TurnState>()
         .insert_state(TurnState::AwaitingInput)
         .add_sub_state::<InMenu>()
@@ -162,8 +162,11 @@ fn main() {
             fov.run_if(not(
                 in_state(TurnState::GameOver).or(in_state(TurnState::Victory))
             )),
-        )
-        .run();
+        );
+
+    app.finish();
+    app.cleanup();
+    app
 }
 
 fn window_conf() -> Conf {
@@ -180,58 +183,55 @@ fn window_conf() -> Conf {
     }
 }
 
-pub struct MacroquadRunner(pub &'static str);
-impl Plugin for MacroquadRunner {
-    fn build(&self, app: &mut App) {
-        app.set_runner(macroquad_runner);
-    }
-}
+#[macroquad::main(window_conf)]
+pub async fn main() {
+    let mut app = build_app();
 
-fn macroquad_runner(mut app: App) -> AppExit {
-    app.finish();
-    app.cleanup();
-
-    macroquad::Window::from_config(window_conf(), async move {
-        set_panic_handler(|msg, backtrace| async move {
-            loop {
-                clear_background(BLACK);
-                ui::root_ui().label(None, &msg);
-                for line in backtrace.split('\n') {
-                    ui::root_ui().label(None, line);
-                }
-                next_frame().await;
-            }
-        });
-
-        // DEFAULTS
-        set_pc_assets_folder("assets");
-        set_default_filter_mode(FilterMode::Nearest);
-
-        let sprite_sheet = SpriteSheet::new().await;
-        let font = load_ttf_font("font.ttf").await.unwrap();
-
-        // XXX WARNING Finish loading all the textures before this
-        build_textures_atlas();
-        // XXX WARNING -------------------------------------------
-
-        app.insert_resource(sprite_sheet);
-        app.insert_resource(FontResource(font));
-
+    set_panic_handler(|msg, backtrace| async move {
         loop {
             clear_background(BLACK);
-            app.update();
-
-            draw_rectangle_lines(
-                Viewport::x_offset(),
-                Viewport::y_offset(),
-                VIEWPORT_WIDTH,
-                VIEWPORT_HEIGHT,
-                10.0,
-                WHITE,
-            );
-
+            ui::root_ui().label(None, &msg);
+            for line in backtrace.split('\n') {
+                ui::root_ui().label(None, line);
+            }
             next_frame().await;
         }
     });
-    bevy_app::AppExit::Success
+
+    // DEFAULTS
+    set_pc_assets_folder("assets");
+    set_default_filter_mode(FilterMode::Nearest);
+
+    async_bevy_setup(&mut app).await;
+
+    loop {
+        macroquad_loop(&mut app);
+        next_frame().await;
+    }
+}
+
+fn macroquad_loop(app: &mut App) {
+    clear_background(BLACK);
+    app.update();
+
+    draw_rectangle_lines(
+        Viewport::x_offset(),
+        Viewport::y_offset(),
+        VIEWPORT_WIDTH,
+        VIEWPORT_HEIGHT,
+        10.0,
+        WHITE,
+    );
+}
+
+async fn async_bevy_setup(app: &mut App) {
+    let sprite_sheet = SpriteSheet::new().await;
+    let font = load_ttf_font("font.ttf").await.unwrap();
+
+    // XXX WARNING Finish loading all the textures before this
+    build_textures_atlas();
+    // XXX WARNING -------------------------------------------
+
+    app.insert_resource(sprite_sheet);
+    app.insert_resource(FontResource(font));
 }
