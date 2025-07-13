@@ -22,38 +22,51 @@ android {
 
     signingConfigs {
         // TODO Create a seperate debug signing
-        getByName("debug") {
-            if (System.getenv()["CI"].toBoolean()) { // CI=true is exported by Codemagic
-                storeFile = file(System.getenv("KEYSTORE_PATH") ?: error("Store path"))
-                storePassword = System.getenv("KEYSTORE_PASSWORD") ?: error("Store pass")
-                keyAlias = System.getenv("KEY_ALIAS") ?: error("Key alias")
-                keyPassword = System.getenv("KEY_PASSWORD") ?: error("Key pass")
-            } else {
-                storeFile = file(project.findProperty("keyStoreFile") as? String ?: error("Store path P"))
-                storePassword = project.findProperty("keyStorePassword") as? String ?: error("Store pass P")
-                keyAlias = project.findProperty("keyAlias") as? String ?: error("Key alias P")
-                keyPassword = project.findProperty("keyPassword") as? String ?: error("Key pass P")
-            }
-        }
-
         create("release") {
-            if (System.getenv()["CI"].toBoolean()) { // CI=true is exported by Codemagic
-                storeFile = file(System.getenv("KEYSTORE_PATH") ?: error("Store path"))
-                storePassword = System.getenv("KEYSTORE_PASSWORD") ?: error("Store pass")
-                keyAlias = System.getenv("KEY_ALIAS") ?: error("Key alias")
-                keyPassword = System.getenv("KEY_PASSWORD") ?: error("Key pass")
+            val inCI = System.getenv("CI")?.toBoolean() ?: false
+
+            val storePath: String?
+            val storePassword: String?
+            val keyAlias: String?
+            val keyPassword: String?
+
+            if (inCI) {
+                storePath = System.getenv("KEYSTORE_PATH")
+                storePassword = System.getenv("KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("KEY_ALIAS")
+                keyPassword = System.getenv("KEY_PASSWORD")
             } else {
-                storeFile = file(project.findProperty("keyStoreFile") as? String ?: error("Store path P"))
-                storePassword = project.findProperty("keyStorePassword") as? String ?: error("Store pass P")
-                keyAlias = project.findProperty("keyAlias") as? String ?: error("Key alias P")
-                keyPassword = project.findProperty("keyPassword") as? String ?: error("Key pass P")
+                storePath = project.findProperty("keyStoreFile") as? String
+                storePassword = project.findProperty("keyStorePassword") as? String
+                keyAlias = project.findProperty("keyAlias") as? String
+                keyPassword = project.findProperty("keyPassword") as? String
+            }
+
+            if (storePath != null && storePassword != null && keyAlias != null && keyPassword != null) {
+                println("✅ Using custom debug signing config")
+                storeFile = file(storePath)
+                this.storePassword = storePassword
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
+            } else {
+                println("⚠️ No signing config found — will use default Android debug keystore")
+                // Do NOT set any properties — Android will fall back to default
             }
         }
     }
-    
+
     buildTypes {
+        getByName("debug") {
+            // Only assign signing config if it was successfully configured
+            if (signingConfigs.findByName("customDebug")?.storeFile != null) {
+                signingConfig = signingConfigs.getByName("customDebug")
+            }
+        }
+
         getByName("release") {
-            signingConfig = signingConfigs.getByName("release")
+            if (signingConfigs.findByName("customDebug")?.storeFile != null) {
+                signingConfig = signingConfigs.getByName("customDebug")
+            }
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
