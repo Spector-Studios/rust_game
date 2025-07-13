@@ -46,6 +46,7 @@ abstract class BuildRustLibs: DefaultTask() {
         
         getExecOperations().exec(Action<ExecSpec> {
             environment("CARGO_TERM_COLORS", "always")
+            environment("CARGO_TAGET_DIR", "../build/target")
             workingDir = cargoProjectDir.get().asFile
             commandLine(buildCommand)
             standardOutput = System.out

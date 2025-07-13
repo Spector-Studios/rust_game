@@ -74,7 +74,7 @@ jobs:
           cache-name: ndk-r25b-cache
         uses: actions/cache@v4
         with:
-          path: ./android
+          path: ${{env.ANDROID_HOME}}/ndk/27.1.12297006
           key: build-${{ env.cache-name }}
 
       - name: Download NDK
@@ -97,7 +97,7 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           #ANDROID_NDK_HOME: $ANDROID_NDK_ROOT
-        run: ./gradlew assembleDebug
+        run: ./gradlew assemble
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
