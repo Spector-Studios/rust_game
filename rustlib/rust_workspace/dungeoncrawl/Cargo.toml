@@ -1,0 +1,39 @@
+[package]
+name = "dungeoncrawl"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "dungeoncrawl"
+crate-type = ["lib", "cdylib"]
+
+[dependencies]
+fastrand = "2.3.0"
+input_lib = { version = "0.1.0", path = "../input_lib" }
+macroquad = { version = "=0.4.13", features = ["backtrace"] }
+getrandom = { version = "*", features = ["js"] }
+bevy_ecs = { version = "0.16.0", features = ["configurable_error_handler"] }
+strum = "0.27.1"
+strum_macros = "0.27.1"
+bracket-pathfinding = "0.8.7"
+bevy_time = "0.16.0"
+bevy_app = "0.16.1"
+bevy_state = "0.16.1"
+fnv = "1.0.7"
+
+[package.metadata.android]
+build_targets = [ "aarch64-linux-android" ]
+package_name = "dev.spectorstudios.dungeoncrawl"
+label = "Dungeon Crawl"
+assets = "assets"
+res = "android_res"
+icon = "@mipmap/ic_launcher"
+version_code = 2
+version_name = "0.0.2"
+
+[package.metadata.android.application_attributes]
+"android:hardwareAccelerated" = "true"
+"android:appCategory" = "game"
+
+[package.metadata.android.activity_attributes]
+"android:exported" = "true"

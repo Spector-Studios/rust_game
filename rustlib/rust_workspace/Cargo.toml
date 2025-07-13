@@ -1,0 +1,23 @@
+[workspace]
+resolver = "2"
+members = [ "macroquad_ex_ui", "input_lib", "dungeoncrawl"]
+
+[patch.crates-io]
+miniquad = { git = 'https://github.com/Spector-Studios/miniquad.git', branch = "v0.4.6" }
+
+[profile.dev]
+opt-level = "z"
+
+[profile.web-release]
+inherits = "release"
+strip = "debuginfo"
+lto = "thin"
+panic = 'unwind'
+codegen-units = 8
+
+[profile.release]
+opt-level = 3
+strip = "debuginfo"
+lto = "thin"
+panic = 'unwind'
+codegen-units = 8
