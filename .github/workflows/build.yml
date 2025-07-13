@@ -91,7 +91,7 @@ jobs:
       - name: Build APK's
         env:
           CI: true
-          KEYSTORE_PATH: $(pwd)/apk.keystore
+          KEYSTORE_PATH: apk.keystore
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}

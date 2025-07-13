@@ -17,7 +17,7 @@ for arg in "$@"; do
   fi
 done
 
-for name in dungeoncrawl srpg_game
+for name in dungeoncrawl
 do
   mkdir "${WASM_OUTPUT_DIR}"/${name}/assets -p
   cp wasm_helper/game/* "${WASM_OUTPUT_DIR}"/${name}/ -r
