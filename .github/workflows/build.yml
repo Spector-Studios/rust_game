@@ -96,7 +96,7 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          ANDROID_NDK_HOME: $ANDROID_HOME/ndk/27.1.12297006
+          ANDROID_NDK_HOME: $ANDROID_NDK_ROOT
         run: ./gradlew assembleDebug
 
       - name: Upload APK
