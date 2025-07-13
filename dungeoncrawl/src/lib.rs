@@ -67,6 +67,22 @@ void main() {
 }
 ";
 
+#[cfg(target_os = "android")]
+mod __android_glue {
+    #[unsafe(no_mangle)]
+    pub extern "C" fn quad_main() {
+        super::main()
+    }
+}
+
+#[cfg(target_arch = "wasm32")]
+mod __wasm_glue {
+    #[unsafe(no_mangle)]
+    pub extern "C" fn main() {
+        super::main();
+    }
+}
+
 #[derive(States, Resource, Debug, Clone, PartialEq, Eq, Hash, Default)]
 enum TurnState {
     #[default]
