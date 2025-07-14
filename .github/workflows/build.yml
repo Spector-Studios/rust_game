@@ -89,7 +89,7 @@ jobs:
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
-          echo "$KEYSTORE_BASE64" | base64 -d > ./apk.keystore
+          echo "$KEYSTORE_BASE64" | base64 -d > ./app/apk.keystore
           ls -la
 
       - name: Build APK's
