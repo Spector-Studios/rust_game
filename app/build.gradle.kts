@@ -13,7 +13,7 @@ android {
     defaultConfig {
         applicationId = "dev.spectorstudios.dungeoncrawl"
         namespace = "dev.spectorstudios.dungeoncrawl"
-        minSdk = 25
+        minSdk = 28
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -86,8 +86,13 @@ android {
 }
 
 afterEvaluate {
-    tasks.named("preBuild").configure {
-        dependsOn(":rustlib:copyAssets")
+    listOf(
+        "preBuild",
+        "explodeAssetSourceRelease"
+    ).forEach {taskName ->
+        tasks.named(taskName).configure {
+            dependsOn(":rustlib:copyAssets")
+        }
     }
     
     tasks.named("mergeDebugJniLibFolders").configure {
@@ -101,9 +106,8 @@ afterEvaluate {
 
 dependencies {
     implementation("androidx.appcompat:appcompat:1.2.0")
-    implementation("com.google.android.material:material:1.2.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.0.4")
     testImplementation("junit:junit:4.13.1")
-    androidTestImplementation("androidx.test.ext:junit:1.1.2")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test:monitor:1.6.1")
+    androidTestImplementation("junit:junit:4.13.2")
 }

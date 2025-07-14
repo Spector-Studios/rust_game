@@ -65,6 +65,7 @@ tasks.register<BuildRustLibs>("buildRustLibsDebug") {
     
     sourceFiles.setFrom(fileTree("rust_workspace") {
         include("**/*.rs", "**/Cargo.toml", "Cargo.lock")
+        exclude("target/**")
     })
 
     outputDir.set(layout.buildDirectory.dir("debug/jniLibs"))
@@ -85,6 +86,7 @@ tasks.register<BuildRustLibs>("buildRustLibsRelease") {
     
     sourceFiles.setFrom(fileTree("rust_workspace") {
         include("**/*.rs", "**/Cargo.toml", "Cargo.lock")
+        exclude("target/**")
     })
 
     outputDir.set(layout.buildDirectory.dir("release/jniLibs"))

@@ -92,6 +92,9 @@ jobs:
           echo "$KEYSTORE_BASE64" | base64 -d > ./app/apk.keystore
           ls -la
 
+      - name: Check Dependencies
+        run: ./gradlew projectHealth
+
       - name: Build APK's
         env:
           CI: true
