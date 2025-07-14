@@ -22,7 +22,7 @@ android {
 
     signingConfigs {
         // TODO Create a seperate debug signing
-        create("release") {
+        create("releaseSigning") {
             val inCI = System.getenv("CI")?.toBoolean() ?: false
 
             val storePath: String?
@@ -58,14 +58,14 @@ android {
     buildTypes {
         getByName("debug") {
             // Only assign signing config if it was successfully configured
-            if (signingConfigs.findByName("customDebug")?.storeFile != null) {
-                signingConfig = signingConfigs.getByName("customDebug")
+            if (signingConfigs.findByName("releaseSigning")?.storeFile != null) {
+                signingConfig = signingConfigs.getByName("releaseSigning")
             }
         }
 
         getByName("release") {
-            if (signingConfigs.findByName("customDebug")?.storeFile != null) {
-                signingConfig = signingConfigs.getByName("customDebug")
+            if (signingConfigs.findByName("releaseSigning")?.storeFile != null) {
+                signingConfig = signingConfigs.getByName("releaseSigning")
             }
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
