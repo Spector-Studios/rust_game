@@ -86,14 +86,8 @@ android {
 }
 
 afterEvaluate {
-    listOf(
-        "generateDebugAssets",
-        "generateReleaseAssets",
-        "generateReleaseLintVitalReportModel"
-    ).forEach {taskName ->
-        tasks.named(taskName).configure {
-            dependsOn(":rustlib:copyAssets")
-        }
+    tasks.named("preBuild").configure {
+        dependsOn(":rustlib:copyAssets")
     }
     
     tasks.named("mergeDebugJniLibFolders").configure {
