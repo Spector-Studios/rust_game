@@ -9,7 +9,6 @@
         android:hardwareAccelerated="true"
         android:appCategory="game">
         <activity
-            android:label="@strings/app_name"
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
