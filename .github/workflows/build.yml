@@ -36,7 +36,7 @@ jobs:
       - name: Setup Rust
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          target: "wasm32-unknown-unknown, aarch64-linux-android, armv7-linux-androideabi, i686-linux-android, x86-64-linux-android"
+          target: "wasm32-unknown-unknown, aarch64-linux-android, armv7-linux-androideabi, i686-linux-android, x86_64-linux-android"
           cache-workspaces: "./rustlib/rust_workspace"
 
       - name: Install cargo-ndk
@@ -112,6 +112,7 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           components: rustfmt
-          cache-workspaces: "./rustlib/rust_workspace"
       - name: Rustfmt Check
         uses: actions-rust-lang/rustfmt@v1
+        with:
+          manifest-path: ./rustlib/rust_workspace/Cargo.toml
