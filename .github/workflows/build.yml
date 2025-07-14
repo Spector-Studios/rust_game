@@ -38,6 +38,7 @@ jobs:
         with:
           target: "wasm32-unknown-unknown, aarch64-linux-android, armv7-linux-androideabi, i686-linux-android, x86_64-linux-android"
           cache-workspaces: "./rustlib/rust_workspace"
+          rustflags: ""
 
       - name: Install cargo-ndk
         run: cargo install cargo-ndk
