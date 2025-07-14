@@ -80,10 +80,10 @@ jobs:
           path: /usr/local/lib/android/sdk/ndk/27.1.12297006
           key: build-${{ env.cache-name }}
 
-      #- name: Download NDK
-        #run: |
-          #cd $ANDROID_HOME/cmdline-tools/latest/bin
-          #./sdkmanager "ndk;27.1.12297006"
+      - name: Download NDK
+        run: |
+          cd $ANDROID_HOME/cmdline-tools/latest/bin
+          ./sdkmanager "ndk;27.1.12297006"
 
       - name: Write Keystore file
         env:
