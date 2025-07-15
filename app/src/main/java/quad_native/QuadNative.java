@@ -2,6 +2,8 @@ package quad_native;
 
 import android.view.Surface;
 
+// Taken from https://github.com/not-fl3/miniquad/blob/master/java/QuadNative.java
+
 // Java force the MainActivity class to belong to a specially named package
 // this package name is forced to be different for each app
 // and Java do not have any way to specify a native symbol lookup name..
