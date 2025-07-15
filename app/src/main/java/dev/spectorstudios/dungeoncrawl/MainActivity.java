@@ -1,3 +1,5 @@
+// Taken from https://github.com/not-fl3/miniquad/blob/master/java/MainActivity.java
+
 package dev.spectorstudios.dungeoncrawl;
 
 import javax.microedition.khronos.egl.EGLConfig;
