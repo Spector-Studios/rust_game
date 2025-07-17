@@ -7,6 +7,10 @@ repositories {
     mavenCentral()
 }
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21)) // or 11
+}
+
 android {
     compileSdk = 30
     ndkVersion = "27.1.12297006"
@@ -83,6 +87,10 @@ android {
             jniLibs.srcDirs(project(":rustlib").layout.buildDirectory.dir("release/jniLibs").get().asFile)
         }
     }
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    options.compilerArgs.add("-Xlint:deprecation")
 }
 
 afterEvaluate {
