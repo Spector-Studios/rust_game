@@ -2,6 +2,16 @@ use bracket_pathfinding::prelude::{Algorithm2D, DijkstraMap, DistanceAlg};
 
 use crate::prelude::*;
 
+/// Updates all entities with the `ChasePlayer` component to move toward the player using Dijkstra pathfinding.
+///
+/// For each chaser entity, determines the optimal adjacent tile to approach the player and inserts a movement animation toward that destination. If the chaser is within close proximity to the player, it targets the player's exact position. Panics if there is not exactly one player entity.
+///
+/// # Examples
+///
+/// ```
+/// // System usage in Bevy schedule:
+/// app.add_system(chasing_system);
+/// ```
 pub fn chasing_system(
     mut commands: Commands,
     map: Res<Map>,

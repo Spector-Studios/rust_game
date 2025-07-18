@@ -56,6 +56,15 @@ enum TurnState {
 }
 
 impl TurnState {
+    /// Returns a mutable reference to the entity queue for the current turn phase.
+    ///
+    /// # Panics
+    ///
+    /// Panics if called when the turn state is `AwaitingInput`.
+    ///
+    /// # Returns
+    ///
+    /// A mutable reference to the queue of entities for player or monster turns.
     pub fn get_mut_queue(&mut self) -> &mut VecDeque<Entity> {
         match self {
             TurnState::AwaitingInput => {error!("Requested queue on AwaitingInput"); panic!()},
@@ -64,6 +73,15 @@ impl TurnState {
         }
     }
 
+    /// Returns an immutable reference to the entity queue for the current turn phase.
+    ///
+    /// # Panics
+    ///
+    /// Panics if called when the turn state is `AwaitingInput`.
+    ///
+    /// # Returns
+    ///
+    /// An immutable reference to the queue of entities for player or monster turns.
     pub fn get_queue(&self) -> &VecDeque<Entity> {
         match self {
             TurnState::AwaitingInput => {error!("Requested queue on AwaitingInput"); panic!()},
@@ -85,6 +103,16 @@ struct Game {
 }
 
 impl Game {
+    /// Initializes a new game instance with ECS world, resources, and system schedules.
+    ///
+    /// Sets up the game state by generating a map, inserting core resources (including the sprite sheet, viewport, turn state, animation queue, and event queues), and spawning the player and enemies. Returns a fully initialized `Game` struct ready for the main loop.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let sprite_sheet = SpriteSheet::load("assets/sprites.png");
+    /// let game = Game::new(sprite_sheet);
+    /// ```
     fn new(
         sprite_sheet: SpriteSheet,
         //player_texture: Texture2D,
@@ -126,6 +154,9 @@ impl Game {
             controller: Controller::new(),
         }
     }
+    /// Advances the game state by processing input, executing systems based on the current turn, updating events, and rendering the frame.
+    ///
+    /// This method updates the input controller, inserts the latest button state into the ECS, runs the appropriate system schedule depending on the current `TurnState` (input, player, or monster turn), executes rendering systems, updates movement and attack event queues, and draws the controller UI.
     fn tick(&mut self) {
         self.controller.update(); // TODO Move to ecs
         self.ecs.insert_resource(self.controller.button_state);

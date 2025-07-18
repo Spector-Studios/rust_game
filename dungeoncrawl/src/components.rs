@@ -49,6 +49,17 @@ pub struct Animation {
 }
 
 impl Animation {
+    /// Creates a movement animation from one tile to another with a 500ms duration.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let anim = Animation::new_movement(TilePoint::new(1, 2), TilePoint::new(3, 4));
+    /// if let AnimationType::Move { from, to } = anim.animation_type {
+    ///     assert_eq!(from, TilePoint::new(1, 2));
+    ///     assert_eq!(to, TilePoint::new(3, 4));
+    /// }
+    /// ```
     pub fn new_movement(from: TilePoint, to: TilePoint) -> Self {
         Self {
             animation_type: AnimationType::Move { from, to },
@@ -78,6 +89,19 @@ pub struct PlayerBundle {
 }
 
 impl PlayerBundle {
+    /// Creates a new player entity bundle with default health, render, and input timer values.
+    ///
+    /// The player is initialized at the specified tile position with 13 current health, 20 maximum health,
+    /// the player texture, and an input timer set to zero.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let position = TilePoint::new(5, 7);
+    /// let player_bundle = PlayerBundle::new(position);
+    /// assert_eq!(player_bundle.pos, position);
+    /// assert_eq!(player_bundle.health.current, 13);
+    /// ```
     pub fn new(pos: TilePoint) -> Self {
         Self {
             player: Player,
