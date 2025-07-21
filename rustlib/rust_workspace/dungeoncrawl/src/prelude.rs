@@ -27,8 +27,8 @@ pub const VIEWPORT_HEIGHT: f32 = (VIEWPORT_HEIGHT_T + 2) as f32 * TILE_SIZE;
 
 pub const TILE_SIZE: f32 = 40.0;
 
-pub const TILE_MAP_WIDTH: i32 = 100;
-pub const TILE_MAP_HEIGHT: i32 = 70;
+pub const TILE_MAP_WIDTH: i32 = 70;
+pub const TILE_MAP_HEIGHT: i32 = 40;
 pub const NUM_TILES: usize = (TILE_MAP_WIDTH * TILE_MAP_HEIGHT) as usize;
 
 pub const D_UP: TilePoint = TilePoint::new(0, 1);
@@ -130,7 +130,10 @@ impl TileRect {
     }
 
     pub fn intersects(&self, other: &TileRect) -> bool {
-        self.x1 <= other.x2 && self.x2 >= other.x1 && self.y1 <= other.y2 && self.y2 >= other.y2
+        (self.x1 <= other.x2)
+            && (self.x2 >= other.x1)
+            && (self.y1 <= other.y2)
+            && (self.y2 >= other.y1)
     }
 
     pub fn centre(&self) -> TilePoint {
@@ -161,5 +164,27 @@ impl TileRect {
     }
 }
 
-/* #[derive(Resource)]
-pub struct FrameTime(pub f32); */
+pub fn draw_text_centered(
+    text: &str,
+    x: f32,
+    y: f32,
+    color: Color,
+    font: Option<&Font>,
+    font_size: u16,
+    rotation: f32,
+) {
+    let centre = get_text_center(text, font, font_size, 1.0, rotation);
+    draw_text_ex(
+        text,
+        x - centre.x,
+        y - centre.y,
+        TextParams {
+            font,
+            font_size,
+            font_scale: 1.0,
+            font_scale_aspect: 1.0,
+            rotation,
+            color,
+        },
+    );
+}
