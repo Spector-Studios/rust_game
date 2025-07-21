@@ -11,6 +11,7 @@ mod viewport;
 
 use crate::events::ActivateItem;
 use crate::movement::movement_system;
+use crate::prelude::advance_level::advance_level;
 use crate::prelude::event_readers::use_item;
 use crate::prelude::player_input::player_menu_input_system;
 use crate::prelude::*;
@@ -22,8 +23,6 @@ use bevy_state::app::StatesPlugin;
 use bevy_state::prelude::*;
 use events::WantsToAttack;
 use events::WantsToMove;
-use macroquad::miniquad::conf::Platform;
-use macroquad::miniquad::conf::WebGLVersion;
 use macroquad::ui;
 use prelude::chasing::chasing_system;
 use prelude::combat::combat_system;
@@ -32,13 +31,12 @@ use prelude::entity_render::entity_render_system;
 use prelude::fov::fov;
 use prelude::hud_render::hud_render_system;
 use prelude::map_render::map_render_system;
-use prelude::random_move::random_move_system;
 use prelude::update_pathfinding::update_pathfinding;
 use resources::PathfindingMap;
 use std::panic;
 use systems::player_input::player_move_input_system;
 
-const FRAGMENT_SHADER: &str = "
+/* const FRAGMENT_SHADER: &str = "
 #version 100
 precision mediump float;
 
@@ -65,7 +63,7 @@ void main() {
     gl_Position = Projection * Model * vec4(position, 1);
     iTime = _Time.x;
 }
-";
+"; */
 
 #[cfg(target_os = "android")]
 mod __android_glue {
@@ -91,6 +89,7 @@ enum TurnState {
     MonsterTurn,
     GameOver,
     Victory,
+    NextLevel,
 }
 
 #[derive(SubStates, Resource, Clone, PartialEq, Eq, Hash, Default, Debug)]
@@ -178,7 +177,8 @@ fn build_app() -> App {
             fov.run_if(not(
                 in_state(TurnState::GameOver).or(in_state(TurnState::Victory))
             )),
-        );
+        )
+        .add_systems(Update, advance_level.run_if(in_state(TurnState::NextLevel)));
 
     app.finish();
     app.cleanup();
@@ -188,9 +188,8 @@ fn build_app() -> App {
 fn window_conf() -> Conf {
     Conf {
         window_title: "Test".to_owned(),
-
-        #[cfg(not(target_family = "wasm"))]
-        high_dpi: true,
+        // #[cfg(not(target_family = "wasm"))]
+        // high_dpi: true,
         // platform: Platform {
         //     webgl_version: WebGLVersion::WebGL2,
         //     ..Default::default()

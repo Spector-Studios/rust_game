@@ -25,9 +25,7 @@ pub fn map_render_system(
                     GRAY
                 };
 
-                // TODO Make Rng a resource
-                let mut rng = Rng::with_seed(macroquad::miniquad::date::now() as _);
-                let source = Some(theme.tile_to_render(map.tiles[idx], &mut rng));
+                let source = Some(theme.tile_to_render(map.tiles[idx]));
                 draw_texture_ex(
                     theme.texture(&sprite_sheet),
                     screen_x,

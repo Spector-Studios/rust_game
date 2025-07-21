@@ -5,6 +5,7 @@ use bracket_pathfinding::prelude::{Algorithm2D, DistanceAlg, Point, SmallVec};
 pub enum TileType {
     Wall,
     Floor,
+    Stair,
 }
 
 pub fn map_idx<T: Into<TilePoint>>(pos: T) -> usize {
@@ -36,7 +37,11 @@ impl Map {
     }
 
     pub fn can_enter_tile(&self, point: TilePoint) -> bool {
-        self.in_bounds(point) && (self.tiles[map_idx(point)] == TileType::Floor)
+        if !self.in_bounds(point) {
+            return false;
+        }
+        let tile_type = self.tiles[map_idx(point)];
+        tile_type == TileType::Floor || tile_type == TileType::Stair
     }
 
     pub fn try_idx(&self, point: TilePoint) -> Option<usize> {

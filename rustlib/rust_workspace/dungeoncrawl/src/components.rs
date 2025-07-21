@@ -20,7 +20,9 @@ pub enum EntityType {
 } */
 
 #[derive(Component, Debug)]
-pub struct Player;
+pub struct Player {
+    pub map_level: u8,
+}
 
 #[derive(Component, Debug)]
 pub struct Enemy;
@@ -124,7 +126,7 @@ pub struct PlayerBundle {
 impl PlayerBundle {
     pub fn new(pos: TilePoint) -> Self {
         Self {
-            player: Player,
+            player: Player { map_level: 0 },
             pos,
             health: Health {
                 current: 13,

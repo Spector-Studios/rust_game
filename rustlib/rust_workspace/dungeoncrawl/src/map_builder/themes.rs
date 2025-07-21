@@ -9,10 +9,11 @@ impl FortressTheme {
     }
 }
 impl MapTheme for FortressTheme {
-    fn tile_to_render(&self, tile_type: TileType, _rng: &mut Rng) -> Rect {
+    fn tile_to_render(&self, tile_type: TileType) -> Rect {
         let (x, y) = match tile_type {
             TileType::Wall => (16.0, 16.0),
             TileType::Floor => (16.0, 0.0), // TileType::Floor => rng.choice([(0.0, 0.0), (0.0, 16.0), (16.0, 0.0)]).unwrap(),
+            TileType::Stair => (32.0, 16.0),
         };
 
         Rect::new(x, y, 16.0, 16.0)
@@ -40,10 +41,11 @@ impl ForestTheme {
     }
 }
 impl MapTheme for ForestTheme {
-    fn tile_to_render(&self, tile_type: TileType, _rng: &mut Rng) -> Rect {
+    fn tile_to_render(&self, tile_type: TileType) -> Rect {
         let (x, y) = match tile_type {
             TileType::Wall => (16.0, 16.0),
             TileType::Floor => (16.0, 0.0), // TileType::Floor => rng.choice([(0.0, 0.0), (0.0, 16.0), (16.0, 0.0)]).unwrap(),
+            TileType::Stair => (32.0, 16.0),
         };
 
         Rect::new(x, y, 16.0, 16.0)

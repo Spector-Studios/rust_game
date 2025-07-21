@@ -1,4 +1,5 @@
 // TODO Do better organisation of these
+pub mod advance_level;
 pub mod chasing;
 pub mod combat;
 pub mod end_turn;
@@ -46,14 +47,17 @@ pub fn setup_system(world: &mut World, p_commands: &mut SystemState<Commands>) {
         commands.insert_resource(input_lib::ButtonState::new());
 
         let mut rng = Rng::with_seed(macroquad::miniquad::date::now() as _);
-        let map_builder = MapBuilder::new(&mut rng);
+        let mut map_builder = MapBuilder::new(&mut rng);
 
         let player_idx = map_builder
             .map
             .point2d_to_index(map_builder.player_start.into());
 
         spawn_player(&mut commands, map_builder.player_start);
-        spawn_amulet(&mut commands, map_builder.amulet_start);
+        let exit_idx = map_builder
+            .map
+            .point2d_to_index(map_builder.amulet_start.into());
+        map_builder.map.tiles[exit_idx] = TileType::Stair;
 
         map_builder
             .monster_spawns

@@ -31,8 +31,8 @@ pub struct Theme {
 }
 
 impl Theme {
-    pub fn tile_to_render(&self, tile_type: TileType, rng: &mut Rng) -> Rect {
-        self.theme.tile_to_render(tile_type, rng)
+    pub fn tile_to_render(&self, tile_type: TileType) -> Rect {
+        self.theme.tile_to_render(tile_type)
     }
 
     pub fn map_sheet_path(&self) -> String {

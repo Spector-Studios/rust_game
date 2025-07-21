@@ -12,7 +12,6 @@ use crate::{
 };
 use automata::CellularAutomataArchitect;
 use bracket_pathfinding::prelude::{Algorithm2D, DijkstraMap, DistanceAlg};
-use empty::EmptyArchitect;
 use rooms::RoomsArchitect;
 
 trait MapArchitect {
@@ -20,13 +19,13 @@ trait MapArchitect {
 }
 
 pub trait MapTheme: Send + Sync {
-    fn tile_to_render(&self, tile_type: TileType, rng: &mut Rng) -> Rect;
+    fn tile_to_render(&self, tile_type: TileType) -> Rect;
     fn map_sheet_path(&self) -> String;
     fn clone(&self) -> Box<dyn MapTheme>;
     fn texture<'a>(&self, sprite_sheet: &'a SpriteSheet) -> &'a Texture2D;
 }
 
-const NUM_ROOMS: usize = 20;
+const NUM_ROOMS: usize = 10;
 const PADDING: i32 = 4;
 
 pub struct MapBuilder {

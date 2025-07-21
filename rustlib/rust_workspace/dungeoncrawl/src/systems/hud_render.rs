@@ -1,16 +1,21 @@
 use crate::{TurnState, prelude::*};
 use bevy_state::prelude::State;
-use std::ops::Deref;
 
 pub fn hud_render_system(
     button_state: Res<ButtonState>,
     viewport: Res<Viewport>,
     turn_state: Res<State<TurnState>>,
-    player_query: Query<(Entity, &Health, &FieldOfView, Option<&SelectedItemIndex>), With<Player>>,
+    player_query: Query<(
+        Entity,
+        &Health,
+        &FieldOfView,
+        Option<&SelectedItemIndex>,
+        &Player,
+    )>,
     enemy_query: Query<(&EntityName, &TilePoint, Option<&Health>), Without<Player>>,
     item_query: Query<(&Carried, &EntityName), With<Item>>,
 ) {
-    let (player_entity, player_health, player_fov, selected_item) =
+    let (player_entity, player_health, player_fov, selected_item, player) =
         player_query.single().expect("No player health component.");
 
     draw_rectangle(
@@ -34,6 +39,7 @@ pub fn hud_render_system(
         TurnState::MonsterTurn => "Processing",
         TurnState::GameOver => "Game Over",
         TurnState::Victory => "Victory",
+        TurnState::NextLevel => "Loading",
     };
 
     let centre = get_text_center(msg, None, 100, 1.0, 0.0);
@@ -43,6 +49,16 @@ pub fn hud_render_system(
         VIEWPORT_HEIGHT / 2.0 + Viewport::y_offset() - centre.y,
         100.0,
         WHITE,
+    );
+
+    draw_text_centered(
+        &(format!("Floor Level: {}", player.map_level + 1)),
+        Viewport::get_hud_screen_x(VIEWPORT_WIDTH_T - 5),
+        Viewport::get_hud_screen_y(1),
+        BLACK,
+        None,
+        50,
+        0.0,
     );
 
     let mut y = Viewport::get_hud_screen_y(2);
