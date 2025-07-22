@@ -69,7 +69,7 @@ void main() {
 mod __android_glue {
     #[unsafe(no_mangle)]
     pub extern "C" fn quad_main() {
-        super::main()
+        std::panic::catch_unwind(|| super::main()).unwrap_or_else(|_k| std::process::exit(1));
     }
 }
 
@@ -111,6 +111,8 @@ fn build_app() -> App {
         }
 
         error!("{}", panic_info);
+
+        std::process::exit(1);
     }));
 
     GLOBAL_ERROR_HANDLER
