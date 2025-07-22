@@ -69,7 +69,10 @@ void main() {
 mod __android_glue {
     #[unsafe(no_mangle)]
     pub extern "C" fn quad_main() {
-        std::panic::catch_unwind(|| super::main()).unwrap_or_else(|_k| std::process::exit(1));
+        std::panic::catch_unwind(super::main).unwrap_or_else(|_| {
+            // TODO Call into JAVA to exit the app
+            std::process::exit(1);
+        });
     }
 }
 

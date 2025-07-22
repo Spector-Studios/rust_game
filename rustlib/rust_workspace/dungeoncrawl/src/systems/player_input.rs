@@ -26,6 +26,8 @@ pub fn player_move_input_system(
 
     if timer.time < 0.2 {
         timer.time += get_frame_time();
+    } else if button_state.buttons.contains(Buttons::Y) {
+        panic!("test");
     } else if button_state.buttons.contains(Buttons::Select) {
         timer.time = 0.0;
         commands.entity(player_entity).insert(SelectedItemIndex(0));
