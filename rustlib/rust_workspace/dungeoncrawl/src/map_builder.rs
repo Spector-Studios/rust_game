@@ -20,8 +20,6 @@ trait MapArchitect {
 
 pub trait MapTheme: Send + Sync {
     fn tile_to_render(&self, tile_type: TileType) -> Rect;
-    fn map_sheet_path(&self) -> String;
-    fn clone(&self) -> Box<dyn MapTheme>;
     fn texture<'a>(&self, sprite_sheet: &'a SpriteSheet) -> &'a Texture2D;
 }
 

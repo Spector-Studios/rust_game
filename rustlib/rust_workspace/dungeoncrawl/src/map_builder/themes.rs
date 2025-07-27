@@ -19,14 +19,6 @@ impl MapTheme for FortressTheme {
         Rect::new(x, y, 16.0, 16.0)
     }
 
-    fn map_sheet_path(&self) -> String {
-        String::from("map_fortress.png")
-    }
-
-    fn clone(&self) -> Box<dyn MapTheme> {
-        Box::new(Self)
-    }
-
     fn texture<'a>(&self, sprite_sheet: &'a SpriteSheet) -> &'a Texture2D {
         &sprite_sheet.map_fortress
     }
@@ -49,14 +41,6 @@ impl MapTheme for ForestTheme {
         };
 
         Rect::new(x, y, 16.0, 16.0)
-    }
-
-    fn map_sheet_path(&self) -> String {
-        String::from("map_forest.png")
-    }
-
-    fn clone(&self) -> Box<dyn MapTheme> {
-        Box::new(Self)
     }
 
     fn texture<'a>(&self, sprite_sheet: &'a SpriteSheet) -> &'a Texture2D {

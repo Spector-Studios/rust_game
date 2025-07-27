@@ -35,10 +35,6 @@ impl Theme {
         self.theme.tile_to_render(tile_type)
     }
 
-    pub fn map_sheet_path(&self) -> String {
-        self.theme.map_sheet_path()
-    }
-
     pub fn texture<'a>(&self, sprite_sheet: &'a SpriteSheet) -> &'a Texture2D {
         self.theme.texture(sprite_sheet)
     }
