@@ -75,7 +75,7 @@ jobs:
           ls -la
 
       - name: Check Dependencies
-        run: ./gradlew projectHealth
+        run: ./gradlew buildHealth
 
       - name: Build APK's
         env:
