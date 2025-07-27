@@ -45,7 +45,6 @@ abstract class BuildRustLibs: DefaultTask() {
             environment(
                 mapOf(
                     "CARGO_TERM_COLORS" to "always",
-                    "CARGO_TARGET_DIR" to "../build/target"
                 )
             )
             
