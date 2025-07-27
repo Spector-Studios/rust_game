@@ -8,11 +8,11 @@ abstract class BuildRustLibs: DefaultTask() {
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val sourceFiles: ConfigurableFileCollection
 
-    @get:InputDirectory
+    @get:Internal
     abstract val cargoProjectDir: DirectoryProperty
 
     @get:Input
-    abstract var targetArchs: List<String>
+    abstract val targetArchs: ListProperty<String>
 
     @get:Input
     abstract val release: Property<Boolean>
@@ -31,12 +31,9 @@ abstract class BuildRustLibs: DefaultTask() {
         val buildCommand = buildList {
             addAll(listOf("cargo", "ndk"))
 
-            targetArchs.forEach { arch ->
-                addAll(listOf("-t", arch))
-            }
+            addAll(targetArchs.get().flatMap { listOf("-t", it) })
 
-            val jniOutPath = outDir.absolutePath
-            addAll(listOf("-o", jniOutPath))
+            addAll(listOf("-o", outDir.absolutePath))
 
             add("build")
             addAll(listOf("--package", "dungeoncrawl"))
@@ -45,12 +42,19 @@ abstract class BuildRustLibs: DefaultTask() {
         }
         
         getExecOperations().exec(Action<ExecSpec> {
-            environment("CARGO_TERM_COLORS", "always")
-            environment("CARGO_TAGET_DIR", "../build/target")
+            environment(
+                mapOf(
+                    "CARGO_TERM_COLORS" to "always",
+                    "CARGO_TARGET_DIR" to "../build/target"
+                )
+            )
+            
             workingDir = cargoProjectDir.get().asFile
             commandLine(buildCommand)
-            standardOutput = System.out
-            errorOutput = System.err
+
+            isIgnoreExitValue = false
+            // standardOutput = System.out
+            // errorOutput = System.err
         })
     }
     
@@ -61,7 +65,7 @@ tasks.register<BuildRustLibs>("buildRustLibsDebug") {
     description = "Build debug shared libraries"
 
     release.set(false)
-    targetArchs = listOf("arm64-v8a")
+    targetArchs.set(listOf("arm64-v8a"))
     
     sourceFiles.setFrom(fileTree("rust_workspace") {
         include("**/*.rs", "**/Cargo.toml", "Cargo.lock")
@@ -77,11 +81,13 @@ tasks.register<BuildRustLibs>("buildRustLibsRelease") {
     description = "Build release shared libraries"
 
     release.set(true)
-    targetArchs = listOf(
-        "arm64-v8a",
-        "armeabi-v7a",
-        "x86",
-        "x86_64"
+    targetArchs.set(
+        listOf(
+            "arm64-v8a",
+            "armeabi-v7a",
+            "x86",
+            "x86_64"
+        )
     )
     
     sourceFiles.setFrom(fileTree("rust_workspace") {
