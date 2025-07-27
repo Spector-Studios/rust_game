@@ -44,7 +44,7 @@ abstract class BuildRustLibs: DefaultTask() {
         getExecOperations().exec(Action<ExecSpec> {
             environment(
                 mapOf(
-                    "CARGO_TERM_COLORS" to "always",
+                    "CARGO_TERM_COLOR" to "always",
                 )
             )
             
