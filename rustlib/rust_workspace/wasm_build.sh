@@ -2,7 +2,7 @@
 
 : "${WASM_OUTPUT_DIR:="dist"}"
 
-rm -r "${WASM_OUTPUT_DIR}"
+rm -r ${WASM_OUTPUT_DIR}/*
 
 cargo build --target=wasm32-unknown-unknown "$@" || exit 1
 
