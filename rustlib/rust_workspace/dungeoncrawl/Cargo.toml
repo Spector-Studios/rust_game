@@ -20,20 +20,22 @@ bevy_time = "0.16.0"
 bevy_app = "0.16.1"
 bevy_state = "0.16.1"
 fnv = "1.0.7"
+serde = { version = "1.0.219", features = ["derive"] }
+ron = "0.10.1"
 
-[package.metadata.android]
-build_targets = [ "aarch64-linux-android" ]
-package_name = "dev.spectorstudios.dungeoncrawl"
-label = "Dungeon Crawl"
-assets = "assets"
-res = "android_res"
-icon = "@mipmap/ic_launcher"
-version_code = 2
-version_name = "0.0.2"
+# [package.metadata.android]
+# build_targets = [ "aarch64-linux-android" ]
+# package_name = "dev.spectorstudios.dungeoncrawl"
+# label = "Dungeon Crawl"
+# assets = "assets"
+# res = "android_res"
+# icon = "@mipmap/ic_launcher"
+# version_code = 2
+# version_name = "0.0.2"
 
-[package.metadata.android.application_attributes]
-"android:hardwareAccelerated" = "true"
-"android:appCategory" = "game"
+# [package.metadata.android.application_attributes]
+# "android:hardwareAccelerated" = "true"
+# "android:appCategory" = "game"
 
-[package.metadata.android.activity_attributes]
-"android:exported" = "true"
+# [package.metadata.android.activity_attributes]
+# "android:exported" = "true"
