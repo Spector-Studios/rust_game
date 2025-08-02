@@ -2,7 +2,7 @@
 
 : "${WASM_OUTPUT_DIR:="dist"}"
 
-rm -r ${WASM_OUTPUT_DIR}/*
+rm -r "${WASM_OUTPUT_DIR:?}"/*
 
 cargo build --target=wasm32-unknown-unknown "$@" || exit 1
 
@@ -17,6 +17,7 @@ for arg in "$@"; do
   fi
 done
 
+# shellcheck disable=SC2043
 for name in dungeoncrawl
 do
   mkdir "${WASM_OUTPUT_DIR}"/${name}/assets -p
