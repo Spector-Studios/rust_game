@@ -115,4 +115,4 @@ jobs:
       - name: Rustfmt Check
         uses: actions-rust-lang/rustfmt@v1
         with:
-          manifest-path: ./rustlib/rust_workspace/Cargo.toml
+          manifest-path: ./Cargo.toml
