@@ -66,7 +66,12 @@ tasks.register<BuildRustLibs>("buildRustLibsDebug") {
     targetArchs.set(listOf("arm64-v8a"))
     
     sourceFiles.setFrom(fileTree(rootProject.layout.projectDirectory) {
-        include("**/*.rs", "**/Cargo.toml", "Cargo.lock")
+        include(
+            "src/**/*.rs",
+            "crates/**/*.rs",
+            "crates/**/Cargo.toml",
+            "Cargo.toml",
+            "Cargo.lock")
         exclude("**/target/**", "**/build/**")
     })
 
@@ -87,9 +92,14 @@ tasks.register<BuildRustLibs>("buildRustLibsRelease") {
             "x86_64"
         )
     )
-    
+
     sourceFiles.setFrom(fileTree(rootProject.layout.projectDirectory) {
-        include("**/*.rs", "**/Cargo.toml", "Cargo.lock")
+        include(
+            "src/**/*.rs",
+            "crates/**/*.rs",
+            "crates/**/Cargo.toml",
+            "Cargo.toml",
+            "Cargo.lock")
         exclude("**/target/**", "**/build/**")
     })
 

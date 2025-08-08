@@ -9,7 +9,7 @@ crate-type = ["lib", "cdylib"]
 
 [dependencies]
 fastrand = "2.3.0"
-input_lib = { version = "0.1.0", path = "input_lib" }
+input_lib = { version = "0.1.0", path = "crates/input_lib" }
 macroquad = { version = "=0.4.13", features = ["backtrace"] }
 getrandom = { version = "*", features = ["js"] }
 bevy_ecs = { version = "0.16.0", features = ["configurable_error_handler"] }
@@ -25,7 +25,7 @@ ron = "0.10.1"
 
 [workspace]
 resolver = "3"
-members = [ "macroquad_ex_ui", "input_lib"]
+members = [ "crates/macroquad_ex_ui", "crates/input_lib"]
 
 [profile.dev]
 opt-level = 0
