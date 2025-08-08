@@ -23,7 +23,7 @@ do
   mkdir "${WASM_OUTPUT_DIR}"/${name}/assets -p
   cp wasm_helper/game/* "${WASM_OUTPUT_DIR}"/${name}/ -r
   
-  cp ${name}/assets/* "${WASM_OUTPUT_DIR}"/${name}/assets/ -r
+  cp assets/* "${WASM_OUTPUT_DIR}"/${name}/assets/ -r
   cp wasm_helper/index.html "${WASM_OUTPUT_DIR}"/index.html
   cp wasm_helper/favicon.ico "${WASM_OUTPUT_DIR}"/favicon.ico
     

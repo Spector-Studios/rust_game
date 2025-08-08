@@ -36,7 +36,6 @@ abstract class BuildRustLibs: DefaultTask() {
             addAll(listOf("-o", outDir.absolutePath))
 
             add("build")
-            addAll(listOf("--package", "dungeoncrawl"))
 
             if (release.get()) add("--release")
         }
@@ -66,13 +65,13 @@ tasks.register<BuildRustLibs>("buildRustLibsDebug") {
     release.set(false)
     targetArchs.set(listOf("arm64-v8a"))
     
-    sourceFiles.setFrom(fileTree("rust_workspace") {
+    sourceFiles.setFrom(fileTree(rootProject.layout.projectDirectory) {
         include("**/*.rs", "**/Cargo.toml", "Cargo.lock")
-        exclude("target/**")
+        exclude("**/target/**", "**/build/**")
     })
 
     outputDir.set(layout.buildDirectory.dir("debug/jniLibs"))
-    cargoProjectDir.set(layout.projectDirectory.dir("rust_workspace"))
+    cargoProjectDir.set(rootProject.layout.projectDirectory)
 }
 
 tasks.register<BuildRustLibs>("buildRustLibsRelease") {
@@ -89,16 +88,16 @@ tasks.register<BuildRustLibs>("buildRustLibsRelease") {
         )
     )
     
-    sourceFiles.setFrom(fileTree("rust_workspace") {
+    sourceFiles.setFrom(fileTree(rootProject.layout.projectDirectory) {
         include("**/*.rs", "**/Cargo.toml", "Cargo.lock")
-        exclude("target/**")
+        exclude("**/target/**", "**/build/**")
     })
 
     outputDir.set(layout.buildDirectory.dir("release/jniLibs"))
-    cargoProjectDir.set(layout.projectDirectory.dir("rust_workspace"))
+    cargoProjectDir.set(rootProject.layout.projectDirectory)
 }
 
 tasks.register<Copy>("copyAssets") {
-    from(layout.projectDirectory.dir("rust_workspace/dungeoncrawl/assets"))
+    from(rootProject.layout.projectDirectory.dir("assets"))
     into(layout.buildDirectory.dir("assets"))
 }

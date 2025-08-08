@@ -13,5 +13,5 @@ plugins {
 
 rootProject.name = "my-app"
 
-include(":rustlib")
+include(":rust-android-build")
 include(":app")

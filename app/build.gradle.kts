@@ -47,7 +47,7 @@ android {
             }
 
             if (storePath != null && storePassword != null && keyAlias != null && keyPassword != null) {
-                println("✅ Using custom debug signing config")
+                println("✅ Using custom signing config")
                 storeFile = file(storePath)
                 this.storePassword = storePassword
                 this.keyAlias = keyAlias
@@ -78,13 +78,13 @@ android {
 
     sourceSets {
         getByName("main") {
-            assets.srcDirs(project(":rustlib").layout.buildDirectory.dir("assets").get().asFile)
+            assets.srcDirs(project(":rust-android-build").layout.buildDirectory.dir("assets").get().asFile)
         }
         getByName("debug") {
-            jniLibs.srcDirs(project(":rustlib").layout.buildDirectory.dir("debug/jniLibs").get().asFile)
+            jniLibs.srcDirs(project(":rust-android-build").layout.buildDirectory.dir("debug/jniLibs").get().asFile)
         }
         getByName("release") {
-            jniLibs.srcDirs(project(":rustlib").layout.buildDirectory.dir("release/jniLibs").get().asFile)
+            jniLibs.srcDirs(project(":rust-android-build").layout.buildDirectory.dir("release/jniLibs").get().asFile)
         }
     }
 }
@@ -99,16 +99,16 @@ afterEvaluate {
         "explodeAssetSourceRelease"
     ).forEach {taskName ->
         tasks.named(taskName).configure {
-            dependsOn(":rustlib:copyAssets")
+            dependsOn(":rust-android-build:copyAssets")
         }
     }
     
     tasks.named("mergeDebugJniLibFolders").configure {
-        dependsOn(":rustlib:buildRustLibsDebug")
+        dependsOn(":rust-android-build:buildRustLibsDebug")
     }
     
     tasks.named("mergeReleaseJniLibFolders").configure {
-        dependsOn(":rustlib:buildRustLibsRelease")
+        dependsOn(":rust-android-build:buildRustLibsRelease")
     }
 }
 

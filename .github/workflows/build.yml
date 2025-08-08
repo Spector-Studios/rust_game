@@ -37,21 +37,20 @@ jobs:
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           target: "wasm32-unknown-unknown, aarch64-linux-android, armv7-linux-androideabi, i686-linux-android, x86_64-linux-android"
-          cache-workspaces: "./rustlib/rust_workspace"
+          cache-workspaces: "."
           rustflags: ""
 
       - name: Install cargo-ndk
         run: cargo install cargo-ndk
 
       - name: Build WASM
-        working-directory: ./rustlib/rust_workspace
         run: ./wasm_build.sh --profile web-release
 
       - name: Upload WASM Artifacts
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload dist folder
-          path: './rustlib/rust_workspace/dist'
+          path: './dist'
 
       - name: NDK cache
         id: cache-ndk
