@@ -68,7 +68,7 @@ impl DerefMut for SelectedItemIndex {
 // TODO Make the texture a Rect or something
 #[derive(Component, Debug)]
 pub struct Render {
-    pub texture: EntityType,
+    pub texture: RenderKey,
 }
 
 #[derive(Component, Debug)]
@@ -133,7 +133,7 @@ impl PlayerBundle {
                 max: 20,
             },
             render: Render {
-                texture: EntityType::Player,
+                texture: RenderKey::Player,
             },
             field_of_view: FieldOfView::new(8),
             timer: Timer { time: 0.0 },

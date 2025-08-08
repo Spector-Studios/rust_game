@@ -1,0 +1,44 @@
+Templates(
+    entities: [
+        Template(
+            entity_type: Item,
+            name: "Healing Potion",
+            texture: HealthPotion,
+            levels: [0, 1, 2],
+            provides: Some([("Healing", 6)]),
+            frequency: 2,
+        ),
+        Template(
+            entity_type: Item,
+            name: "Map",
+            texture: Map,
+            levels: [0, 1, 2],
+            provides: Some([("Map", 6)]),
+            frequency: 1,
+        ),
+        Template(
+            entity_type: Item,
+            name: "Unsupported Test",
+            texture: Map,
+            levels: [0, 1, 2],
+            provides: Some([("Test", 7)]),
+            frequency: 2,
+        ),
+        Template(
+            entity_type: Enemy,
+            name: "Bat",
+            texture: Bat,
+            levels: [0, 1, 2],
+            frequency: 3,
+            hp: Some(1),
+        ),
+        Template(
+            entity_type: Enemy,
+            name: "Ghost",
+            texture: Ghost,
+            levels: [0, 1, 2],
+            frequency: 2,
+            hp: Some(2),
+        ),
+    ]
+)

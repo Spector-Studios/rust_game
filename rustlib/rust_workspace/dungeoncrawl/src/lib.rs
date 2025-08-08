@@ -14,6 +14,7 @@ use crate::movement::movement_system;
 use crate::prelude::advance_level::advance_level;
 use crate::prelude::event_readers::use_item;
 use crate::prelude::player_input::player_menu_input_system;
+use crate::prelude::template::Templates;
 use crate::prelude::*;
 use crate::resources::FontResource;
 use bevy_app::prelude::*;
@@ -254,4 +255,7 @@ async fn async_bevy_setup(app: &mut App) {
 
     app.insert_resource(sprite_sheet);
     app.insert_resource(FontResource(font));
+
+    let template = Templates::load().await;
+    app.insert_resource(template);
 }

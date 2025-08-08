@@ -3,10 +3,14 @@ use std::collections::HashSet;
 use bevy_state::state::NextState;
 use bracket_pathfinding::prelude::Algorithm2D;
 
-use crate::{TurnState, prelude::*};
+use crate::{
+    TurnState,
+    prelude::{template::Templates, *},
+};
 
 pub fn advance_level(
     mut next_state: ResMut<NextState<TurnState>>,
+    template: Res<Templates>,
     mut player: Query<(Entity, &mut FieldOfView, &mut TilePoint, &mut Player)>,
     carried: Query<(Entity, &Carried)>,
     all_entities: Query<Entity>,
@@ -45,9 +49,13 @@ pub fn advance_level(
         mb.map.tiles[end_idx] = TileType::Stair;
     }
 
-    mb.monster_spawns
-        .iter()
-        .for_each(|pos| spawn_entity(&mut commands, *pos, &mut rng));
+    spawn_level(
+        &mut commands,
+        &template,
+        &mut rng,
+        player.map_level as usize,
+        &mb.monster_spawns,
+    );
 
     commands.insert_resource(mb.map);
     commands.insert_resource(Viewport::new(mb.player_start));

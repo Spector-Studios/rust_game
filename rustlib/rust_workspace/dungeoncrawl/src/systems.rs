@@ -16,6 +16,7 @@ pub mod update_pathfinding;
 use crate::PathfindingMap;
 use crate::events::{ActivateItem, WantsToAttack, WantsToMove};
 use crate::resources::FontResource;
+use crate::template::Templates;
 use crate::{TurnState, prelude::*};
 use bevy_app::Startup;
 use bevy_ecs::system::SystemState;
@@ -23,7 +24,7 @@ use bevy_state::commands::CommandsStatesExt;
 use bracket_pathfinding::prelude::Algorithm2D;
 
 // TODO Make a better way to restart
-pub fn setup_system(world: &mut World, p_commands: &mut SystemState<Commands>) {
+pub fn setup_system(world: &mut World, p_commands: &mut SystemState<(Commands, Res<Templates>)>) {
     info!("setup start");
 
     world.clear_entities();
@@ -41,7 +42,7 @@ pub fn setup_system(world: &mut World, p_commands: &mut SystemState<Commands>) {
         .clear();
 
     {
-        let mut commands = p_commands.get_mut(world);
+        let (mut commands, template) = p_commands.get_mut(world);
 
         commands.insert_resource(Controller::new());
         commands.insert_resource(input_lib::ButtonState::new());
@@ -59,10 +60,13 @@ pub fn setup_system(world: &mut World, p_commands: &mut SystemState<Commands>) {
             .point2d_to_index(map_builder.amulet_start.into());
         map_builder.map.tiles[exit_idx] = TileType::Stair;
 
-        map_builder
-            .monster_spawns
-            .iter()
-            .for_each(|pos| spawn_entity(&mut commands, *pos, &mut rng));
+        spawn_level(
+            &mut commands,
+            &template,
+            &mut rng,
+            0,
+            &map_builder.monster_spawns,
+        );
 
         commands.insert_resource(Viewport::new(map_builder.player_start));
         commands.insert_resource(PathfindingMap::new(&[player_idx], &map_builder.map));

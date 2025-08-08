@@ -1,10 +1,11 @@
+use serde::Deserialize;
 use strum_macros::{AsRefStr, EnumIter};
 
 use crate::prelude::*;
 
-#[derive(EnumIter, AsRefStr, Debug, Hash, PartialEq, Eq)]
+#[derive(Deserialize, EnumIter, AsRefStr, Debug, Hash, PartialEq, Eq, Clone, Copy)]
 // #[strum(suffix = ".png")] INFO Waiting for #440 on strum
-pub enum EntityType {
+pub enum RenderKey {
     // Player
     Player,
 
@@ -20,17 +21,17 @@ pub enum EntityType {
     Map,
 }
 
-impl EntityType {
+impl RenderKey {
     pub fn get_texture_source(&self) -> Rect {
         let (x, y) = match self {
-            EntityType::Player => (16.0, 32.0),
-            EntityType::Bat => (16.0, 0.0),
-            EntityType::Cyclops => (0.0, 16.0),
-            EntityType::Ghost => (16.0, 16.0),
-            EntityType::Mage => (0.0, 32.0),
-            EntityType::Amulet => (0.0, 0.0),
-            EntityType::HealthPotion => (32.0, 0.0),
-            EntityType::Map => (32.0, 16.0),
+            RenderKey::Player => (16.0, 32.0),
+            RenderKey::Bat => (16.0, 0.0),
+            RenderKey::Cyclops => (0.0, 16.0),
+            RenderKey::Ghost => (16.0, 16.0),
+            RenderKey::Mage => (0.0, 32.0),
+            RenderKey::Amulet => (0.0, 0.0),
+            RenderKey::HealthPotion => (32.0, 0.0),
+            RenderKey::Map => (32.0, 16.0),
         };
 
         Rect::new(x, y, 16.0, 16.0)
