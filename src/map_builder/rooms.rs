@@ -8,7 +8,7 @@ use bracket_pathfinding::prelude::DijkstraMap;
 pub struct RoomsArchitect {}
 
 impl MapArchitect for RoomsArchitect {
-    fn build(&mut self, rng: &mut Rng) -> MapBuilder {
+    fn build(&mut self) -> MapBuilder {
         let mut mb = MapBuilder {
             map: Map::new(),
             rooms: Vec::new(),
@@ -21,7 +21,7 @@ impl MapArchitect for RoomsArchitect {
         };
 
         mb.fill(TileType::Wall);
-        mb.build_random_rooms(rng);
+        mb.build_random_rooms();
         mb.build_corridor();
         mb.player_start = mb.rooms[0].centre();
 

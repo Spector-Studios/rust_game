@@ -1,7 +1,7 @@
-use serde::Deserialize;
-use strum_macros::{AsRefStr, EnumIter};
-
 use crate::prelude::*;
+use serde::Deserialize;
+use strum::AsRefStr;
+use strum::EnumIter;
 
 #[derive(Deserialize, EnumIter, AsRefStr, Debug, Hash, PartialEq, Eq, Clone, Copy)]
 // #[strum(suffix = ".png")] INFO Waiting for #440 on strum

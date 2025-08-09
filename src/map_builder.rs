@@ -15,7 +15,7 @@ use bracket_pathfinding::prelude::{Algorithm2D, DijkstraMap, DistanceAlg};
 use rooms::RoomsArchitect;
 
 trait MapArchitect {
-    fn build(&mut self, rng: &mut Rng) -> MapBuilder;
+    fn build(&mut self) -> MapBuilder;
 }
 
 pub trait MapTheme: Send + Sync {
@@ -48,16 +48,16 @@ impl MapBuilder {
             },
         }
     }
-    pub fn new(rng: &mut Rng) -> Self {
-        let mut architect: Box<dyn MapArchitect> = match rng.i8(0..3) {
+    pub fn new() -> Self {
+        let mut architect: Box<dyn MapArchitect> = match gen_range(0, 3) {
             0 => Box::new(DrunkardsWalkArchitect {}),
             1 => Box::new(RoomsArchitect {}),
             _ => Box::new(CellularAutomataArchitect {}),
         };
-        let mut mb = architect.build(rng);
-        apply_prefab(&mut mb, rng);
+        let mut mb = architect.build();
+        apply_prefab(&mut mb);
 
-        mb.theme.theme = match rng.i8(0..2) {
+        mb.theme.theme = match gen_range(0, 2) {
             0 => {
                 info!("Fortress Theme");
                 themes::FortressTheme::boxed_new()
@@ -97,7 +97,7 @@ impl MapBuilder {
         )
     }
 
-    fn spawn_monsters(&self, start: TilePoint, rng: &mut Rng) -> Vec<TilePoint> {
+    fn spawn_monsters(&self, start: TilePoint) -> Vec<TilePoint> {
         const NUM_MONSTERS: usize = 50;
 
         let mut spawnable_tiles: Vec<TilePoint> = self
@@ -116,7 +116,7 @@ impl MapBuilder {
 
         let mut spawns = Vec::new();
         for _ in 0..NUM_MONSTERS {
-            let target_idx = rng.usize(0..spawnable_tiles.len());
+            let target_idx = gen_range(0, spawnable_tiles.len());
             spawns.push(spawnable_tiles[target_idx]);
             spawnable_tiles.remove(target_idx);
         }
@@ -124,13 +124,13 @@ impl MapBuilder {
         spawns
     }
 
-    fn build_random_rooms(&mut self, rng: &mut Rng) {
+    fn build_random_rooms(&mut self) {
         while self.rooms.len() < NUM_ROOMS {
             let room = TileRect::with_size(
-                rng.i32(1..TILE_MAP_WIDTH - 10),
-                rng.i32(1..TILE_MAP_HEIGHT - 10),
-                rng.i32(4..10),
-                rng.i32(4..10),
+                gen_range(1, TILE_MAP_WIDTH - 10),
+                gen_range(1, TILE_MAP_HEIGHT - 10),
+                gen_range(4, 10),
+                gen_range(4, 10),
             );
 
             let mut overlaps = false;

@@ -3,15 +3,13 @@ use crate::{
     prelude::*,
 };
 
+#[allow(dead_code)]
 pub fn random_move_system(
     mut move_writer: EventWriter<WantsToMove>,
     mut attack_writer: EventWriter<WantsToAttack>,
     mut random_move_query: Query<(Entity, &TilePoint), With<MovesRandomly>>,
     entity_pos_query: Query<(Entity, &TilePoint, Option<&Player>)>,
 ) {
-    // TODO Make Rng a resource
-    let mut rng = Rng::with_seed(macroquad::miniquad::date::now() as _);
-
     const DIRECTIONS: [TilePoint; 4] = [
         TilePoint::new(0, 1),
         TilePoint::new(0, -1),
@@ -19,7 +17,7 @@ pub fn random_move_system(
         TilePoint::new(-1, 0),
     ];
     for (enemy_entity, mover_pos) in random_move_query.iter_mut() {
-        let destination = rng.choice(DIRECTIONS).expect("Rng movement") + *mover_pos;
+        let destination = *DIRECTIONS.choose().expect("Rng movement") + *mover_pos;
         let mut attacked = false;
 
         entity_pos_query

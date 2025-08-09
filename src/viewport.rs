@@ -18,6 +18,7 @@ impl Viewport {
         }
     }
 
+    #[allow(dead_code)]
     pub fn viewport_centre() -> Vec2 {
         vec2(
             Self::x_offset() + VIEWPORT_WIDTH / 2.0,

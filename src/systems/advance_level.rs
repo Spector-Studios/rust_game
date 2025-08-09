@@ -34,8 +34,7 @@ pub fn advance_level(
         .filter(|e| !entities_to_keep.contains(e))
         .for_each(|e| commands.entity(e).despawn());
 
-    let mut rng = Rng::with_seed(macroquad::miniquad::date::now() as u64);
-    let mut mb = MapBuilder::new(&mut rng);
+    let mut mb = MapBuilder::new();
 
     player_fov.is_stale = true;
     let curr_level = player.map_level;
@@ -52,7 +51,6 @@ pub fn advance_level(
     spawn_level(
         &mut commands,
         &template,
-        &mut rng,
         player.map_level as usize,
         &mb.monster_spawns,
     );

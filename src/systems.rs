@@ -47,8 +47,7 @@ pub fn setup_system(world: &mut World, p_commands: &mut SystemState<(Commands, R
         commands.insert_resource(Controller::new());
         commands.insert_resource(input_lib::ButtonState::new());
 
-        let mut rng = Rng::with_seed(macroquad::miniquad::date::now() as _);
-        let mut map_builder = MapBuilder::new(&mut rng);
+        let mut map_builder = MapBuilder::new();
 
         let player_idx = map_builder
             .map
@@ -60,13 +59,7 @@ pub fn setup_system(world: &mut World, p_commands: &mut SystemState<(Commands, R
             .point2d_to_index(map_builder.amulet_start.into());
         map_builder.map.tiles[exit_idx] = TileType::Stair;
 
-        spawn_level(
-            &mut commands,
-            &template,
-            &mut rng,
-            0,
-            &map_builder.monster_spawns,
-        );
+        spawn_level(&mut commands, &template, 0, &map_builder.monster_spawns);
 
         commands.insert_resource(Viewport::new(map_builder.player_start));
         commands.insert_resource(PathfindingMap::new(&[player_idx], &map_builder.map));

@@ -222,6 +222,7 @@ pub async fn main() {
     // DEFAULTS
     set_pc_assets_folder("assets");
     set_default_filter_mode(FilterMode::Nearest);
+    srand(macroquad::miniquad::date::now() as u64);
 
     async_bevy_setup(&mut app).await;
 

@@ -8,7 +8,7 @@ const DESIRED_FLOOR: usize = NUM_TILES / 3;
 pub struct DrunkardsWalkArchitect {}
 
 impl DrunkardsWalkArchitect {
-    fn drunkard(&self, start: TilePoint, rng: &mut Rng, map: &mut Map) {
+    fn drunkard(&self, start: TilePoint, map: &mut Map) {
         let mut drunkard_pos = start;
         let mut distance_staggered = 0;
 
@@ -16,7 +16,7 @@ impl DrunkardsWalkArchitect {
             let drunkard_idx = map.point2d_to_index(drunkard_pos.into());
             map.tiles[drunkard_idx] = TileType::Floor;
 
-            match rng.i32(0..4) {
+            match gen_range(0, 4) {
                 0 => drunkard_pos.x += 1,
                 1 => drunkard_pos.x -= 1,
                 2 => drunkard_pos.y += 1,
@@ -36,12 +36,12 @@ impl DrunkardsWalkArchitect {
 }
 
 impl MapArchitect for DrunkardsWalkArchitect {
-    fn build(&mut self, rng: &mut Rng) -> MapBuilder {
+    fn build(&mut self) -> MapBuilder {
         let mut mb = MapBuilder::empty();
 
         mb.fill(TileType::Wall);
         let center = TilePoint::new(TILE_MAP_WIDTH / 2, TILE_MAP_HEIGHT / 2);
-        self.drunkard(center, rng, &mut mb.map);
+        self.drunkard(center, &mut mb.map);
 
         while mb
             .map
@@ -52,8 +52,7 @@ impl MapArchitect for DrunkardsWalkArchitect {
             < DESIRED_FLOOR
         {
             self.drunkard(
-                TilePoint::new(rng.i32(0..TILE_MAP_WIDTH), rng.i32(0..TILE_MAP_HEIGHT)),
-                rng,
+                TilePoint::new(gen_range(0, TILE_MAP_WIDTH), gen_range(0, TILE_MAP_HEIGHT)),
                 &mut mb.map,
             );
 
@@ -73,7 +72,7 @@ impl MapArchitect for DrunkardsWalkArchitect {
                 .for_each(|(idx, _)| mb.map.tiles[idx] = TileType::Wall);
         }
 
-        mb.monster_spawns = mb.spawn_monsters(center, rng);
+        mb.monster_spawns = mb.spawn_monsters(center);
         mb.player_start = center;
         mb.amulet_start = mb.find_most_distant().into();
 

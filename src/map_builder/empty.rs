@@ -4,7 +4,7 @@ use crate::{map_builder::themes::FortressTheme, prelude::*, resources::Theme};
 pub struct EmptyArchitect {}
 
 impl MapArchitect for EmptyArchitect {
-    fn build(&mut self, rng: &mut Rng) -> MapBuilder {
+    fn build(&mut self) -> MapBuilder {
         let mut mb = MapBuilder {
             map: Map::new(),
             rooms: Vec::new(),
@@ -22,8 +22,8 @@ impl MapArchitect for EmptyArchitect {
 
         for _ in 0..50 {
             mb.monster_spawns.push(TilePoint::new(
-                rng.i32(1..TILE_MAP_WIDTH),
-                rng.i32(1..TILE_MAP_HEIGHT),
+                gen_range(1, TILE_MAP_WIDTH),
+                gen_range(1, TILE_MAP_HEIGHT),
             ));
         }
 

@@ -42,7 +42,6 @@ impl Templates {
     pub fn spawn_entities(
         &self,
         commands: &mut Commands,
-        rng: &mut Rng,
         level: usize,
         spawn_points: &[TilePoint],
     ) {
@@ -57,7 +56,7 @@ impl Templates {
             });
 
         spawn_points.iter().for_each(|pt| {
-            if let Some(entity) = rng.choice(&available_entities) {
+            if let Some(entity) = available_entities.choose() {
                 self.spawn_entity(pt, entity, commands);
             }
         });

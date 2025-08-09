@@ -20,7 +20,7 @@ const FORTRESS: (&str, i32, i32) = (
     11,
 );
 
-pub fn apply_prefab(mb: &mut MapBuilder, rng: &mut Rng) {
+pub fn apply_prefab(mb: &mut MapBuilder) {
     let mut placement = None;
 
     let dijkstra_map = DijkstraMap::new(
@@ -34,8 +34,8 @@ pub fn apply_prefab(mb: &mut MapBuilder, rng: &mut Rng) {
     let mut attempts = 0;
     while placement.is_none() && attempts < 10 {
         let dimensions = TileRect::with_size(
-            rng.i32(0..TILE_MAP_WIDTH - FORTRESS.1),
-            rng.i32(0..TILE_MAP_HEIGHT - FORTRESS.2),
+            gen_range(0, TILE_MAP_WIDTH - FORTRESS.1),
+            gen_range(0, TILE_MAP_HEIGHT - FORTRESS.2),
             FORTRESS.1,
             FORTRESS.2,
         );

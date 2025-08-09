@@ -1,8 +1,8 @@
 pub use bevy_ecs::prelude::*;
 use bracket_pathfinding::prelude::Point;
-pub use fastrand::Rng;
 pub use input_lib::*;
 pub use macroquad::prelude::*;
+pub use macroquad::rand::*;
 use std::collections::HashSet;
 
 pub use crate::components::*;

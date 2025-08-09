@@ -41,11 +41,10 @@ pub fn spawn_amulet(ecs: &mut Commands, pos: TilePoint) {
 pub fn spawn_level(
     ecs: &mut Commands,
     template: &Templates,
-    rng: &mut Rng,
     level: usize,
     spawn_points: &[TilePoint],
 ) {
-    template.spawn_entities(ecs, rng, level, spawn_points);
+    template.spawn_entities(ecs, level, spawn_points);
 }
 
 // pub fn spawn_healing_potion(ecs: &mut Commands, pos: TilePoint) {

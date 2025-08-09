@@ -7,9 +7,9 @@ use super::MapArchitect;
 pub struct CellularAutomataArchitect {}
 
 impl CellularAutomataArchitect {
-    fn random_noise_map(&self, rng: &mut Rng, map: &mut Map) {
+    fn random_noise_map(&self, map: &mut Map) {
         map.tiles.iter_mut().for_each(|t| {
-            let roll = rng.i32(0..100);
+            let roll = gen_range(0, 100);
             if roll > 55 {
                 *t = TileType::Floor;
             } else {
@@ -74,10 +74,10 @@ impl CellularAutomataArchitect {
 }
 
 impl MapArchitect for CellularAutomataArchitect {
-    fn build(&mut self, rng: &mut Rng) -> MapBuilder {
+    fn build(&mut self) -> MapBuilder {
         let mut mb = MapBuilder::empty();
 
-        self.random_noise_map(rng, &mut mb.map);
+        self.random_noise_map(&mut mb.map);
 
         for _ in 0..10 {
             self.iteration(&mut mb.map);
@@ -85,7 +85,7 @@ impl MapArchitect for CellularAutomataArchitect {
 
         mb.player_start = self.find_start(&mb.map);
         mb.amulet_start = mb.find_most_distant().into();
-        mb.monster_spawns = mb.spawn_monsters(mb.player_start, rng);
+        mb.monster_spawns = mb.spawn_monsters(mb.player_start);
 
         mb
     }
