@@ -24,7 +24,7 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
+  android-build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -36,21 +36,12 @@ jobs:
       - name: Setup Rust
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          target: "wasm32-unknown-unknown, aarch64-linux-android, armv7-linux-androideabi, i686-linux-android, x86_64-linux-android"
+          target: "aarch64-linux-android, armv7-linux-androideabi, i686-linux-android, x86_64-linux-android"
           cache-workspaces: "."
           rustflags: ""
 
       - name: Install cargo-ndk
         run: cargo install cargo-ndk
-
-      - name: Build WASM
-        run: ./wasm_build.sh --profile web-release
-
-      - name: Upload WASM Artifacts
-        uses: actions/upload-pages-artifact@v3
-        with:
-          # Upload dist folder
-          path: './dist'
 
       - name: NDK cache
         id: cache-ndk
@@ -92,8 +83,29 @@ jobs:
           name: Built-APK
           path: ./app/build/outputs/apk
 
+  web-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          target: "wasm32-unknown-unknown"
+          cache-workspaces: "."
+          rustflags: ""
+
+      - name: Build WASM
+        run: ./wasm_build.sh --profile web-release
+
+      - name: Upload WASM Artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
   deploy:
-    needs: build
+    needs: web-build
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
