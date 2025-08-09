@@ -74,7 +74,7 @@ jobs:
           ls -la
 
       - name: Check Dependencies
-        run: ./gradlew buildHealth --scan
+        run: ./gradlew buildHealth
 
       - name: Build APK's
         env:
@@ -84,7 +84,7 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           #ANDROID_NDK_HOME: $ANDROID_NDK_ROOT
-        run: ./gradlew assemble --scan
+        run: ./gradlew assemble
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
