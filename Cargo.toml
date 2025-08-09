@@ -10,7 +10,7 @@ crate-type = ["lib", "cdylib"]
 [dependencies]
 fastrand = "2.3.0"
 input_lib = { version = "0.1.0", path = "crates/input_lib" }
-macroquad = { version = "=0.4.13", features = ["backtrace"] }
+macroquad = { version = "0.4.13" }
 getrandom = { version = "*", features = ["js"] }
 bevy_ecs = { version = "0.16.0", features = ["configurable_error_handler"] }
 strum = "0.27.1"
