@@ -95,11 +95,11 @@ impl Controller {
                     ButtonKind::DPad(DPadButtons::Down),
                 ),
                 (
-                    xbutton(100.0, sh - 300.0, 100.0, 100.0, "←"),
+                    xbutton(100.0, sh - 300.0, 100.0, 100.0, "<-"),
                     ButtonKind::DPad(DPadButtons::Left),
                 ),
                 (
-                    xbutton(300.0, sh - 300.0, 100.0, 100.0, "→"),
+                    xbutton(300.0, sh - 300.0, 100.0, 100.0, "=>"),
                     ButtonKind::DPad(DPadButtons::Right),
                 ),
                 (
